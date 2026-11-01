@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class VillageProfile extends Model
 {
-    /** @use HasFactory<\Database\Factories\VillageProfileFactory> */
     use HasFactory;
+
+    protected $guarded = ['id'];
 }

@@ -1,0 +1,5 @@
+VillageRegulation/StoreVillageRegulationRequest
+VillageRegulation/UpdateVillageRegulationRequest
+
+/controller
+Public/illageRegulationControlle

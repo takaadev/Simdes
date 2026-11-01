@@ -36,4 +36,9 @@ class Dusun extends Model
     {
         return $this->hasMany(ResidentMutation::class, 'destination_dusun_id');
     }
+
+    public function populationRecapitulationDetails(): HasMany
+    {
+        return $this->hasMany(PopulationRecapitulationDetail::class);
+    }
 }

@@ -1,4 +1,4 @@
-import $ from 'jquery';
+import { $ } from '../bootstrap';
 
 $.ajaxSetup({
     headers: {
@@ -7,8 +7,8 @@ $.ajaxSetup({
             ?.getAttribute('content'),
 
         'X-Requested-With': 'XMLHttpRequest',
-        'Accept': 'application/json'
-    }
+        'Accept': 'application/json',
+    },
 });
 
 export default $;

@@ -10,15 +10,21 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class VillageProfileFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    protected $model = VillageProfile::class;
+
     public function definition(): array
     {
         return [
-            //
+            'village_name' => 'Desa ' . fake()->city(),
+            'district' => fake()->city(),
+            'regency' => fake()->city(),
+            'province' => 'Jambi',
+            'postal_code' => fake()->numerify('#####'),
+            'office_address' => fake()->address(),
+            'phone' => fake()->numerify('08##########'),
+            'email' => fake()->optional(0.7)->safeEmail(),
+            'village_head_name' => fake()->name(),
+            'village_logo' => null,
         ];
     }
 }

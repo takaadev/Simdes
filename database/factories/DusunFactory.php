@@ -10,11 +10,15 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class DusunFactory extends Factory
 {
+    protected $model = Dusun::class;
+
     public function definition(): array
     {
+        $number = fake()->unique()->numberBetween(1, 9999);
+
         return [
-            'name' => 'Dusun ' . fake()->unique()->numberBetween(1, 99),
-            'code' => fake()->unique()->numerify('DSN-####'),
+            'name' => 'Dusun ' . $number,
+            'code' => 'DSN-' . str_pad($number, 4, '0', STR_PAD_LEFT),
             'description' => fake()->optional()->sentence(),
             'is_active' => true,
         ];

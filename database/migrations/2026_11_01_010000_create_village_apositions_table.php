@@ -11,9 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('village_officials', function (Blueprint $table) {
+        Schema::create('village_positions', function (Blueprint $table) {
             $table->id();
+            $table->string('name', 150);
+            $table->string('code', 50)->nullable()->unique();
+            $table->string('category', 50);
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
+            $table->softDeletes();
+            $table->index(['category', 'is_active']);
         });
     }
 
@@ -22,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('village_officials');
+        Schema::dropIfExists('village_positions');
     }
 };
