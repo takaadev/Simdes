@@ -1,0 +1,2467 @@
+/* ==========================================================================
+   SIMDES DESA TIARO — Reusable UI Components
+   Buttons, Cards, Forms, Breadcrumbs, Dropdowns, Modals, Badges, Tables
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Buttons
+   -------------------------------------------------------------------------- */
+.btn-simdes-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.15rem;
+  min-block-size: 42px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--simdes-primary);
+  background-color: var(--simdes-primary);
+  color: #FFFFFF;
+  box-shadow: 0 2px 6px rgba(23, 76, 58, 0.18);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.btn-simdes-primary:hover {
+  background-color: var(--simdes-deep-green);
+  border-color: var(--simdes-deep-green);
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(16, 56, 45, 0.24);
+}
+
+.btn-simdes-primary:active {
+  transform: translateY(1px);
+}
+
+.btn-simdes-primary:disabled {
+  opacity: 0.68;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-simdes-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.58rem 1rem;
+  min-block-size: 42px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--simdes-border);
+  background-color: var(--simdes-surface);
+  color: var(--simdes-text);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.btn-simdes-outline:hover:not(:disabled) {
+  background-color: var(--simdes-primary-soft);
+  border-color: var(--simdes-secondary);
+  color: var(--simdes-primary);
+}
+
+.btn-simdes-outline:disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+}
+
+.btn-simdes-excel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.58rem 1rem;
+  min-block-size: 42px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(30, 111, 80, 0.34);
+  background-color: var(--simdes-success-bg);
+  color: var(--simdes-primary);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.btn-simdes-excel i {
+  color: var(--simdes-success);
+}
+
+.btn-simdes-excel:hover:not(:disabled) {
+  background-color: #DCEFE5;
+  border-color: var(--simdes-primary);
+  color: var(--simdes-deep-green);
+  box-shadow: var(--shadow-xs);
+}
+
+.btn-simdes-excel:disabled {
+  opacity: 0.52;
+  cursor: not-allowed;
+}
+
+.btn-simdes-accent {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.58rem 1.05rem;
+  min-block-size: 42px;
+  font-weight: 700;
+  font-size: 0.875rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--simdes-accent);
+  background-color: var(--simdes-accent);
+  color: var(--simdes-deep-green);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.btn-simdes-accent:hover {
+  background-color: var(--simdes-accent-hover);
+  border-color: var(--simdes-accent-hover);
+  color: var(--simdes-deep-green);
+}
+
+.btn-icon-topbar {
+  inline-size: 40px;
+  block-size: 40px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--simdes-border);
+  background-color: var(--simdes-surface);
+  color: var(--simdes-text);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.btn-icon-topbar:hover {
+  background-color: var(--simdes-primary-soft);
+  border-color: rgba(23, 76, 58, 0.25);
+  color: var(--simdes-primary);
+}
+
+/* --------------------------------------------------------------------------
+   Breadcrumbs (Topbar & Page Heading)
+   -------------------------------------------------------------------------- */
+.simdes-breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.8125rem;
+  color: var(--simdes-text-muted);
+}
+
+.simdes-breadcrumb li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.simdes-breadcrumb li + li::before {
+  content: "/";
+  color: var(--simdes-text-light);
+  font-weight: 500;
+}
+
+.simdes-breadcrumb a {
+  color: var(--simdes-secondary);
+  font-weight: 500;
+}
+
+.simdes-breadcrumb a:hover {
+  color: var(--simdes-primary);
+  text-decoration: underline;
+}
+
+.simdes-breadcrumb .active {
+  color: var(--simdes-text);
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   Topbar Search, Fiscal Pill, Notifications & User Menu
+   -------------------------------------------------------------------------- */
+.topbar-search {
+  position: relative;
+  inline-size: clamp(210px, 24vw, 330px);
+}
+
+.topbar-search-input {
+  inline-size: 100%;
+  block-size: 40px;
+  padding-inline: 2.35rem 3.8rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--simdes-border);
+  background-color: var(--simdes-bg);
+  color: var(--simdes-text);
+  font-size: 0.84rem;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.topbar-search-input::placeholder {
+  color: var(--simdes-text-light);
+}
+
+.topbar-search-input:focus {
+  outline: none;
+  background-color: var(--simdes-surface);
+  border-color: var(--simdes-secondary);
+  box-shadow: 0 0 0 3px rgba(23, 76, 58, 0.1);
+}
+
+.topbar-search-icon {
+  position: absolute;
+  inset-inline-start: 0.85rem;
+  inset-block-start: 50%;
+  transform: translateY(-50%);
+  color: var(--simdes-text-light);
+  font-size: 0.85rem;
+  pointer-events: none;
+}
+
+.topbar-search-kbd {
+  position: absolute;
+  inset-inline-end: 0.55rem;
+  inset-block-start: 50%;
+  transform: translateY(-50%);
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 0.12rem 0.42rem;
+  border-radius: 5px;
+  background-color: var(--simdes-surface);
+  border: 1px solid var(--simdes-border);
+  color: var(--simdes-text-muted);
+  pointer-events: none;
+}
+
+.topbar-search-results {
+  position: absolute;
+  inset-block-start: calc(100% + 6px);
+  inset-inline: 0;
+  background-color: var(--simdes-surface);
+  border: 1px solid var(--simdes-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  padding: 0.45rem;
+  z-index: 1050;
+  display: none;
+}
+
+.topbar-search-results.show {
+  display: block;
+}
+
+.search-result-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: var(--radius-xs);
+  color: var(--simdes-text);
+  font-size: 0.83rem;
+  cursor: pointer;
+  inline-size: 100%;
+  border: 0;
+  background: transparent;
+  text-align: start;
+}
+
+.search-result-item:hover,
+.search-result-item:focus-visible {
+  background-color: var(--simdes-primary-soft);
+  color: var(--simdes-primary);
+}
+
+.fiscal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.38rem 0.75rem;
+  border-radius: 999px;
+  background-color: var(--simdes-primary-soft);
+  border: 1px solid rgba(23, 76, 58, 0.16);
+  color: var(--simdes-primary);
+  font-size: 0.76rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.notif-dot {
+  position: absolute;
+  inset-block-start: 7px;
+  inset-inline-end: 8px;
+  inline-size: 8px;
+  block-size: 8px;
+  border-radius: 50%;
+  background-color: var(--simdes-accent);
+  box-shadow: 0 0 0 2px var(--simdes-surface);
+}
+
+.notif-dot.hidden {
+  display: none;
+}
+
+.topbar-profile-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.28rem 0.65rem 0.28rem 0.32rem;
+  border-radius: 999px;
+  border: 1px solid var(--simdes-border);
+  background-color: var(--simdes-surface);
+  color: var(--simdes-text);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.topbar-profile-btn:hover {
+  background-color: var(--simdes-bg);
+  border-color: var(--simdes-secondary);
+}
+
+.topbar-avatar {
+  inline-size: 32px;
+  block-size: 32px;
+  border-radius: 50%;
+  background-color: var(--simdes-primary);
+  color: #FFFFFF;
+  font-size: 0.78rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.topbar-profile-info {
+  text-align: start;
+  line-height: 1.2;
+}
+
+.topbar-profile-name {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--simdes-text);
+}
+
+.topbar-profile-role {
+  display: block;
+  font-size: 0.69rem;
+  color: var(--simdes-text-muted);
+}
+
+/* Custom Dropdown Menus (Bootstrap 5 Enhanced) */
+.simdes-dropdown-menu {
+  border: 1px solid var(--simdes-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  padding: 0.5rem;
+  background-color: var(--simdes-surface);
+  min-inline-size: 240px;
+}
+
+.simdes-notif-menu {
+  inline-size: min(360px, 92dvw);
+  padding: 0;
+  overflow: clip;
+}
+
+.notif-header {
+  padding: 0.85rem 1rem;
+  border-block-end: 1px solid var(--simdes-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--simdes-bg);
+}
+
+.notif-list {
+  max-block-size: 310px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.notif-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-block-end: 1px solid var(--simdes-border);
+  transition: background-color var(--transition-fast);
+}
+
+.notif-item:last-child {
+  border-block-end: 0;
+}
+
+.notif-item.unread {
+  background-color: rgba(23, 76, 58, 0.035);
+}
+
+.notif-item:hover {
+  background-color: var(--simdes-bg);
+}
+
+.notif-icon {
+  inline-size: 34px;
+  block-size: 34px;
+  flex: 0 0 34px;
+  border-radius: var(--radius-xs);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+}
+
+.simdes-dropdown-menu .dropdown-item {
+  border-radius: var(--radius-xs);
+  padding: 0.55rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--simdes-text);
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.simdes-dropdown-menu .dropdown-item:hover,
+.simdes-dropdown-menu .dropdown-item:focus {
+  background-color: var(--simdes-primary-soft);
+  color: var(--simdes-primary);
+}
+
+.simdes-dropdown-menu .dropdown-item.text-danger:hover {
+  background-color: var(--simdes-danger-bg);
+  color: var(--simdes-danger) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Cards & Badges
+   -------------------------------------------------------------------------- */
+.simdes-card {
+  background-color: var(--simdes-surface);
+  border: 1px solid var(--simdes-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xs);
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+  transition: box-shadow var(--transition-fast), border-color var(--transition-fast);
+}
+
+.simdes-card-header {
+  padding: 1.1rem 1.35rem;
+  border-block-end: 1px solid var(--simdes-border);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.simdes-card-title {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--simdes-text);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.simdes-card-subtitle {
+  font-size: 0.8rem;
+  color: var(--simdes-text-muted);
+  margin: 0.15rem 0 0;
+}
+
+.simdes-card-body {
+  padding: 1.35rem;
+  flex: 1 1 auto;
+}
+
+/* KPI Stat Card */
+.stat-card {
+  background-color: var(--simdes-surface);
+  border: 1px solid var(--simdes-border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem 1.3rem;
+  box-shadow: var(--shadow-xs);
+  position: relative;
+  overflow: clip;
+  block-size: 100%;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+  border-color: rgba(71, 117, 104, 0.35);
+}
+
+.stat-card::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  inline-size: 100%;
+  block-size: 3px;
+  background: linear-gradient(90deg, var(--simdes-primary), var(--simdes-secondary));
+  opacity: 0.85;
+}
+
+.stat-card.accent-gold::after {
+  background: linear-gradient(90deg, var(--simdes-accent), #E6C473);
+}
+
+.stat-icon-box {
+  inline-size: 46px;
+  block-size: 46px;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  flex-shrink: 0;
+}
+
+.stat-icon-primary {
+  background-color: var(--simdes-primary-soft);
+  color: var(--simdes-primary);
+}
+
+.stat-icon-secondary {
+  background-color: var(--simdes-secondary-soft);
+  color: var(--simdes-secondary);
+}
+
+.stat-icon-accent {
+  background-color: var(--simdes-accent-soft);
+  color: #9A711D;
+}
+
+.stat-icon-info {
+  background-color: var(--simdes-info-bg);
+  color: var(--simdes-info);
+}
+
+.stat-icon-danger {
+  background-color: var(--simdes-danger-bg);
+  color: var(--simdes-danger);
+}
+
+.stat-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--simdes-text-muted);
+  margin-block-end: 0.35rem;
+}
+
+.stat-value {
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: var(--simdes-deep-green);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-meta {
+  margin-block-start: 0.75rem;
+  padding-block-start: 0.65rem;
+  border-block-start: 1px dashed var(--simdes-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.77rem;
+  color: var(--simdes-text-muted);
+}
+
+/* Badges */
+.badge-simdes {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.32rem;
+  padding: 0.24rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.73rem;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.badge-simdes-success {
+  background-color: var(--simdes-success-bg);
+  color: var(--simdes-success);
+}
+
+.badge-simdes-warning {
+  background-color: var(--simdes-warning-bg);
+  color: var(--simdes-warning);
+}
+
+.badge-simdes-primary {
+  background-color: var(--simdes-primary-soft);
+  color: var(--simdes-primary);
+}
+
+.badge-simdes-accent {
+  background-color: var(--simdes-accent-soft);
+  color: #8A6416;
+  border: 1px solid var(--simdes-accent-border);
+}
+
+.badge-simdes-neutral {
+  background-color: var(--simdes-bg);
+  color: var(--simdes-text-muted);
+  border: 1px solid var(--simdes-border);
+}
+
+.badge-simdes-danger {
+  background-color: var(--simdes-danger-bg);
+  color: var(--simdes-danger);
+}
+
+/* --------------------------------------------------------------------------
+   Forms & Interaction-Aware Validation
+   -------------------------------------------------------------------------- */
+.simdes-field {
+  margin-block-end: 1.15rem;
+}
+
+.simdes-label {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--simdes-text);
+  margin-block-end: 0.38rem;
+}
+
+.simdes-field-hint {
+  display: block;
+  font-size: 0.77rem;
+  color: var(--simdes-text-muted);
+  margin-block-end: 0.35rem;
+}
+
+.simdes-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.simdes-input-icon {
+  position: absolute;
+  inset-inline-start: 0.95rem;
+  color: var(--simdes-text-light);
+  font-size: 0.92rem;
+  pointer-events: none;
+  transition: color var(--transition-fast);
+}
+
+.simdes-input {
+  inline-size: 100%;
+  min-block-size: 48px;
+  padding: 0.68rem 0.95rem;
+  font-size: 1rem; /* >=16px prevents mobile browser auto-zoom */
+  font-family: var(--font-sans);
+  color: var(--simdes-text);
+  background-color: var(--simdes-surface);
+  border: 1.5px solid var(--simdes-border);
+  border-radius: var(--radius-sm);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
+}
+
+.simdes-input.has-start-icon {
+  padding-inline-start: 2.65rem;
+}
+
+.simdes-input.has-end-btn {
+  padding-inline-end: 3rem;
+}
+
+.simdes-input::placeholder {
+  color: #93A39B;
+}
+
+.simdes-input:focus {
+  outline: none;
+  border-color: var(--simdes-primary);
+  box-shadow: 0 0 0 3.5px rgba(23, 76, 58, 0.12);
+}
+
+.simdes-input-wrap:focus-within .simdes-input-icon {
+  color: var(--simdes-primary);
+}
+
+/* Password Show/Hide Button */
+.password-toggle-btn {
+  position: absolute;
+  inset-inline-end: 0.35rem;
+  inline-size: 40px;
+  block-size: 40px;
+  border: 0;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--simdes-text-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.password-toggle-btn:hover {
+  color: var(--simdes-primary);
+  background-color: var(--simdes-bg);
+}
+
+/* Checkbox Accent Branding */
+.simdes-checkbox {
+  inline-size: 1.1rem;
+  block-size: 1.1rem;
+  accent-color: var(--simdes-primary);
+  cursor: pointer;
+}
+
+/* Interaction-deferred Validation States (:user-invalid + JS WeakMap Fallback) */
+.simdes-input:user-invalid,
+.simdes-input.user-invalid-fallback,
+.simdes-input.is-invalid-field {
+  border-color: var(--simdes-danger);
+  background-color: #FFF9F9;
+}
+
+.simdes-input:user-valid,
+.simdes-input.user-valid-fallback {
+  border-color: rgba(30, 111, 80, 0.55);
+}
+
+.field-error-msg {
+  display: none;
+  align-items: center;
+  gap: 0.4rem;
+  margin-block-start: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--simdes-danger);
+}
+
+.simdes-field:has(.simdes-input:user-invalid) .field-error-msg,
+.simdes-field:has(.simdes-input.user-invalid-fallback) .field-error-msg,
+.simdes-field.has-error .field-error-msg {
+  display: flex;
+}
+
+/* Modals & Toasts */
+.simdes-modal .modal-content {
+  border: 1px solid var(--simdes-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: clip;
+}
+
+.simdes-modal .modal-header {
+  background-color: var(--simdes-bg);
+  border-block-end: 1px solid var(--simdes-border);
+  padding: 1.1rem 1.35rem;
+}
+
+.simdes-modal .modal-title {
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--simdes-deep-green);
+}
+
+.simdes-toast-container {
+  position: fixed;
+  inset-block-end: 1.25rem;
+  inset-inline-end: 1.25rem;
+  z-index: 1090;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  max-inline-size: min(380px, 92dvw);
+}
+
+.simdes-toast {
+  background-color: var(--simdes-surface);
+  border: 1px solid var(--simdes-border);
+  border-inline-start: 4px solid var(--simdes-primary);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  padding: 0.85rem 1rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  animation: toastSlideIn 220ms var(--ease-standard);
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Segmented Filter Pills */
+.simdes-segmented {
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--simdes-bg);
+  border: 1px solid var(--simdes-border);
+  border-radius: var(--radius-sm);
+  padding: 0.2rem;
+  gap: 0.15rem;
+}
+
+.simdes-segmented-btn {
+  border: 0;
+  background: transparent;
+  color: var(--simdes-text-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+  border-radius: calc(var(--radius-sm) - 3px);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.simdes-segmented-btn:hover {
+  color: var(--simdes-text);
+}
+
+.simdes-segmented-btn.active {
+  background-color: var(--simdes-surface);
+  color: var(--simdes-primary);
+  box-shadow: var(--shadow-xs);
+}
+
+
+/* ==========================================================================
+   Administrative Book Ledger Components (Tables, Filters, Modals & Print)
+   ========================================================================== */
+
+/* Sample Data Notice Banner */
+.sample-data-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.7rem 1.05rem;
+  margin-block-end: 1.15rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--simdes-accent-soft);
+  border: 1px solid var(--simdes-accent-border);
+  color: #6E4F10;
+  font-size: 0.8125rem;
+}
+
+/* Ledger Filter & Search Toolbar */
+.ledger-toolbar {
+  padding: 1.05rem 1.35rem;
+  border-block-end: 1px solid var(--simdes-border);
+  background-color: #FAFBF9;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem;
+}
+
+.ledger-search-wrap {
+  position: relative;
+  flex: 1 1 280px;
+  max-inline-size: 440px;
+}
+
+.ledger-search-input {
+  inline-size: 100%;
+  min-block-size: 42px;
+  padding-inline: 2.45rem 2.35rem;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--simdes-border);
+  background-color: var(--simdes-surface);
+  color: var(--simdes-text);
+  font-size: 0.875rem;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.ledger-search-input:focus {
+  outline: none;
+  border-color: var(--simdes-primary);
+  box-shadow: 0 0 0 3px rgba(23, 76, 58, 0.1);
+}
+
+.ledger-search-icon {
+  position: absolute;
+  inset-inline-start: 0.9rem;
+  inset-block-start: 50%;
+  transform: translateY(-50%);
+  color: var(--simdes-text-light);
+  font-size: 0.86rem;
+  pointer-events: none;
+}
+
+.ledger-search-clear {
+  position: absolute;
+  inset-inline-end: 0.4rem;
+  inset-block-start: 50%;
+  transform: translateY(-50%);
+  inline-size: 30px;
+  block-size: 30px;
+  border: 0;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--simdes-text-muted);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.ledger-search-clear.visible {
+  display: inline-flex;
+}
+
+.ledger-search-clear:hover {
+  background-color: var(--simdes-bg);
+  color: var(--simdes-danger);
+}
+
+.ledger-filters-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.simdes-select {
+  min-block-size: 42px;
+  padding: 0.48rem 2.1rem 0.48rem 0.85rem;
+  font-size: 0.84rem;
+  font-weight: 500;
+  font-family: var(--font-sans);
+  color: var(--simdes-text);
+  background-color: var(--simdes-surface);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23477568' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 12px 12px;
+  appearance: none;
+  border: 1.5px solid var(--simdes-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.simdes-select:focus {
+  outline: none;
+  border-color: var(--simdes-primary);
+  box-shadow: 0 0 0 3px rgba(23, 76, 58, 0.1);
+}
+
+.simdes-field .simdes-select {
+  inline-size: 100%;
+  min-block-size: 48px;
+  padding: 0.68rem 2.35rem 0.68rem 0.95rem;
+  font-size: 1rem;
+}
+
+.simdes-select:user-invalid,
+.simdes-select.user-invalid-fallback,
+.simdes-select.is-invalid-field {
+  border-color: var(--simdes-danger);
+  background-color: #FFF9F9;
+}
+
+.simdes-field:has(.simdes-select:user-invalid) .field-error-msg,
+.simdes-field:has(.simdes-select.user-invalid-fallback) .field-error-msg {
+  display: flex;
+}
+
+/* Accessible Scrollable Table Container */
+.simdes-table-wrapper {
+  inline-size: 100%;
+  max-inline-size: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-gutter: stable;
+}
+
+.simdes-table-wrapper:focus-visible {
+  outline: 2px solid var(--simdes-primary);
+  outline-offset: -2px;
+}
+
+.simdes-ledger-table {
+  inline-size: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 0;
+}
+
+/* Horizontal scroll only when needed on smaller viewports */
+@media (max-width: 991.98px) {
+  .simdes-ledger-table {
+    min-inline-size: 840px;
+  }
+}
+
+.simdes-ledger-table thead {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 2;
+}
+
+.simdes-ledger-table thead th {
+  background-color: #EFF3EE;
+  color: var(--simdes-deep-green);
+  font-size: 0.735rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  line-height: 1.4;
+  padding: 0.85rem 0.9rem;
+  vertical-align: middle;
+  white-space: normal;
+  border-block-end: 2px solid #CED9D1;
+  border-inline-end: 1px solid var(--simdes-border);
+}
+
+.simdes-ledger-table thead th:last-child {
+  border-inline-end: 0;
+}
+
+/* Sortable Column Header Button */
+.th-sort-btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  inline-size: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.45rem;
+  color: inherit;
+  font: inherit;
+  text-transform: inherit;
+  letter-spacing: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.th-sort-btn:hover {
+  color: var(--simdes-primary);
+}
+
+.th-sort-icon {
+  font-size: 0.72rem;
+  color: var(--simdes-text-light);
+  flex-shrink: 0;
+}
+
+.th-sort-btn.is-sorted .th-sort-icon {
+  color: var(--simdes-primary);
+}
+
+.simdes-ledger-table tbody td {
+  padding: 0.9rem 0.9rem;
+  vertical-align: top;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: var(--simdes-text);
+  border-block-end: 1px solid var(--simdes-border);
+  border-inline-end: 1px solid rgba(228, 233, 227, 0.65);
+  background-color: var(--simdes-surface);
+  overflow-wrap: break-word;
+}
+
+.simdes-ledger-table tbody td:last-child {
+  border-inline-end: 0;
+}
+
+.simdes-ledger-table tbody tr:hover td {
+  background-color: #F8FAF7;
+}
+
+.col-no-urut {
+  inline-size: 64px;
+  text-align: center;
+  font-weight: 700;
+  color: var(--simdes-deep-green);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Combined Number & Date Display in One Cell */
+.doc-num-badge {
+  display: inline-block;
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: var(--simdes-deep-green);
+  background-color: var(--simdes-primary-soft);
+  border: 1px solid rgba(23, 76, 58, 0.14);
+  padding: 0.18rem 0.52rem;
+  border-radius: 6px;
+  margin-block-end: 0.32rem;
+  font-variant-numeric: tabular-nums;
+  word-break: break-word;
+}
+
+.doc-num-badge.report-badge {
+  background-color: var(--simdes-bg);
+  color: var(--simdes-text);
+  border-color: var(--simdes-border);
+}
+
+.doc-date-line {
+  display: flex;
+  align-items: center;
+  gap: 0.38rem;
+  font-size: 0.78rem;
+  color: var(--simdes-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.tentang-title-btn {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  text-align: start;
+  font-weight: 700;
+  font-size: 0.865rem;
+  color: var(--simdes-text);
+  line-height: 1.45;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.tentang-title-btn:hover {
+  color: var(--simdes-primary);
+  text-decoration: underline;
+}
+
+/* KET. Cell with Non-Print Row Actions */
+.ket-cell-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.6rem;
+  min-block-size: 100%;
+}
+
+.ket-text {
+  font-size: 0.815rem;
+  color: var(--simdes-text-muted);
+}
+
+.row-action-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.btn-row-action {
+  inline-size: 32px;
+  block-size: 32px;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--simdes-border);
+  background-color: var(--simdes-surface);
+  color: var(--simdes-text-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.btn-row-action:hover {
+  background-color: var(--simdes-primary-soft);
+  border-color: rgba(23, 76, 58, 0.28);
+  color: var(--simdes-primary);
+}
+
+.btn-row-action.action-delete:hover {
+  background-color: var(--simdes-danger-bg);
+  border-color: rgba(184, 58, 50, 0.35);
+  color: var(--simdes-danger);
+}
+
+/* Empty State inside Table */
+.table-empty-state {
+  padding: 3rem 1.5rem;
+  text-align: center;
+  color: var(--simdes-text-muted);
+}
+
+.table-empty-icon {
+  inline-size: 56px;
+  block-size: 56px;
+  margin-inline: auto;
+  margin-block-end: 0.9rem;
+  border-radius: 50%;
+  background-color: var(--simdes-bg);
+  color: var(--simdes-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+}
+
+/* Pagination Footer */
+.ledger-pagination-bar {
+  padding: 0.95rem 1.35rem;
+  background-color: var(--simdes-surface);
+  border-block-start: 1px solid var(--simdes-border);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem;
+}
+
+.pagination-info {
+  font-size: 0.82rem;
+  color: var(--simdes-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.simdes-pagination {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.simdes-page-btn {
+  min-inline-size: 36px;
+  block-size: 36px;
+  padding-inline: 0.65rem;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--simdes-border);
+  background-color: var(--simdes-surface);
+  color: var(--simdes-text);
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.simdes-page-btn:hover:not(:disabled):not(.active) {
+  background-color: var(--simdes-primary-soft);
+  border-color: rgba(23, 76, 58, 0.25);
+  color: var(--simdes-primary);
+}
+
+.simdes-page-btn.active {
+  background-color: var(--simdes-primary);
+  border-color: var(--simdes-primary);
+  color: #FFFFFF;
+}
+
+.simdes-page-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Modal Form Fieldsets & Textarea */
+.simdes-fieldset {
+  border: 1px solid var(--simdes-border);
+  border-radius: var(--radius-md);
+  padding: 1.1rem 1.2rem 0.35rem;
+  margin: 0 0 1.15rem;
+  background-color: #FCFDFB;
+}
+
+.simdes-fieldset:last-of-type {
+  margin-block-end: 0.25rem;
+}
+
+.simdes-legend {
+  float: none;
+  inline-size: auto;
+  padding: 0.2rem 0.7rem;
+  margin-block-end: 0.65rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--simdes-primary);
+  background-color: var(--simdes-primary-soft);
+  border: 1px solid rgba(23, 76, 58, 0.16);
+  border-radius: 999px;
+}
+
+.simdes-textarea {
+  inline-size: 100%;
+  min-block-size: 92px;
+  padding: 0.7rem 0.95rem;
+  font-size: 0.95rem;
+  font-family: var(--font-sans);
+  line-height: 1.55;
+  color: var(--simdes-text);
+  background-color: var(--simdes-surface);
+  border: 1.5px solid var(--simdes-border);
+  border-radius: var(--radius-sm);
+  resize: vertical;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.simdes-textarea:focus {
+  outline: none;
+  border-color: var(--simdes-primary);
+  box-shadow: 0 0 0 3.5px rgba(23, 76, 58, 0.12);
+}
+
+.simdes-textarea:user-invalid,
+.simdes-textarea.user-invalid-fallback,
+.simdes-textarea.is-invalid-field {
+  border-color: var(--simdes-danger);
+  background-color: #FFF9F9;
+}
+
+.simdes-field:has(.simdes-textarea:user-invalid) .field-error-msg,
+.simdes-field:has(.simdes-textarea.user-invalid-fallback) .field-error-msg {
+  display: flex;
+}
+
+.req-star {
+  color: var(--simdes-danger);
+  margin-inline-start: 2px;
+}
+
+/* Detail View Grid inside Detail Modal */
+.detail-sheet-box {
+  background-color: var(--simdes-bg);
+  border: 1px solid var(--simdes-border);
+  border-radius: var(--radius-md);
+  padding: 1.15rem 1.25rem;
+}
+
+.detail-item-label {
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--simdes-text-muted);
+  margin-block-end: 0.25rem;
+}
+
+.detail-item-value {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--simdes-text);
+  line-height: 1.55;
+  white-space: pre-line;
+}
+
+/* Print Header (Hidden on Screen, Visible on Print) */
+.print-ledger-header {
+  display: none;
+}
+
+@media print {
+  @page {
+    size: landscape;
+    margin: 12mm;
+  }
+
+  body {
+    background-color: #FFFFFF !important;
+    color: #000000 !important;
+    font-size: 10pt;
+  }
+
+  .app-sidebar,
+  .sidebar-backdrop,
+  .app-topbar,
+  .page-header,
+  .sample-data-banner,
+  .ledger-kpi-row,
+  .ledger-toolbar,
+  .ledger-pagination-bar,
+  .app-footer,
+  .no-print,
+  .simdes-toast-container,
+  .modal {
+    display: none !important;
+  }
+
+  .app-main {
+    margin-inline-start: 0 !important;
+  }
+
+  .app-content {
+    padding: 0 !important;
+    max-inline-size: 100% !important;
+  }
+
+  .simdes-card {
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .print-ledger-header {
+    display: block !important;
+    text-align: center;
+    margin-block-end: 14px;
+    padding-block-end: 8px;
+    border-block-end: 2px solid #000000;
+  }
+
+  .simdes-table-wrapper {
+    overflow: visible !important;
+  }
+
+  .simdes-ledger-table {
+    min-inline-size: 0 !important;
+    inline-size: 100% !important;
+    border-collapse: collapse !important;
+  }
+
+  .simdes-ledger-table thead {
+    position: static !important;
+    display: table-header-group;
+  }
+
+  .simdes-ledger-table thead th,
+  .simdes-ledger-table tbody td {
+    border: 1px solid #222222 !important;
+    background-color: #FFFFFF !important;
+    color: #000000 !important;
+    padding: 6px 8px !important;
+    font-size: 9.5pt !important;
+  }
+
+  .doc-num-badge {
+    background: transparent !important;
+    border: 0 !important;
+    padding: 0 !important;
+    color: #000000 !important;
+  }
+}
+
+/* ==========================================================================
+   Multi-Level Grouped Header Ledger Table (Format A.3 & Wide Books)
+   ========================================================================== */
+
+.simdes-table-wrapper.wide-scroll-ledger {
+  max-block-size: min(680px, 74dvh);
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.simdes-ledger-table.table-multi-header {
+  min-inline-size: 1680px;
+}
+
+.simdes-ledger-table.table-multi-header.compact-no-reserved {
+  min-inline-size: 1320px;
+}
+
+.simdes-ledger-table.table-multi-header thead {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 5;
+}
+
+.simdes-ledger-table.table-multi-header thead th {
+  text-align: center;
+  vertical-align: middle;
+  padding: 0.62rem 0.68rem;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  border-block-end: 1px solid #CFD9D2;
+  border-inline-end: 1px solid #D7E0DA;
+  background-color: #EFF3EE;
+}
+
+.simdes-ledger-table.table-multi-header thead tr:not(:first-child) th:last-child {
+  border-inline-end: 1px solid #D7E0DA;
+}
+
+.simdes-ledger-table.table-multi-header thead tr:first-child th[rowspan="3"],
+.simdes-ledger-table.table-multi-header thead tr:nth-child(2) th[rowspan="2"],
+.simdes-ledger-table.table-multi-header thead tr:nth-child(3) th {
+  border-block-end: 2px solid #BCCAC1;
+}
+
+.simdes-ledger-table.table-multi-header thead th.th-group-top {
+  background-color: #E5ECE7;
+  color: var(--simdes-deep-green);
+  font-weight: 800;
+  letter-spacing: 0.035em;
+}
+
+.simdes-ledger-table.table-multi-header thead th.th-group-sub {
+  background-color: #EBF0EC;
+  color: var(--simdes-primary);
+  font-weight: 700;
+}
+
+.simdes-ledger-table.table-multi-header .group-divider-end {
+  border-inline-end: 2px solid #C2CFC7 !important;
+}
+
+/* Sticky First Column on Desktop/Tablet Landscape for Wide Multi-Column Tables */
+@media (min-width: 768px) {
+  .simdes-ledger-table thead th.sticky-col-first {
+    position: sticky;
+    inset-inline-start: 0;
+    z-index: 6;
+    background-color: #E5ECE7;
+  }
+
+  .simdes-ledger-table tbody td.sticky-col-first {
+    position: sticky;
+    inset-inline-start: 0;
+    z-index: 3;
+    background-color: var(--simdes-surface);
+    box-shadow: 2px 0 4px rgba(16, 56, 45, 0.04);
+  }
+
+  .simdes-ledger-table tbody tr:hover td.sticky-col-first {
+    background-color: #F8FAF7;
+  }
+}
+
+/* Temporary Reserve Columns (12–16) — Visually Distinct Non-Official Styling */
+.simdes-ledger-table thead th.th-placeholder-group {
+  background-color: #FAF6EC !important;
+  color: #7D5E1D !important;
+  border-inline-start: 2px dashed rgba(217, 174, 82, 0.65) !important;
+  border-inline-end: 2px dashed rgba(217, 174, 82, 0.65) !important;
+  border-block-end: 1px dashed rgba(217, 174, 82, 0.65) !important;
+  text-transform: none !important;
+  font-weight: 700;
+}
+
+.simdes-ledger-table thead th.th-placeholder-col {
+  background-color: #FCF9F2 !important;
+  color: #826832 !important;
+  border-inline-end: 1px dashed rgba(217, 174, 82, 0.5) !important;
+  text-transform: none !important;
+  font-weight: 600;
+  min-inline-size: 92px;
+}
+
+.simdes-ledger-table thead th.th-placeholder-col.last-placeholder-col {
+  border-inline-end: 2px dashed rgba(217, 174, 82, 0.65) !important;
+}
+
+.placeholder-slot-code {
+  display: inline-block;
+  font-size: 0.69rem;
+  font-weight: 700;
+  padding: 0.1rem 0.42rem;
+  border-radius: 4px;
+  background-color: rgba(217, 174, 82, 0.18);
+  border: 1px dashed rgba(181, 123, 24, 0.45);
+  color: #7A5915;
+  font-variant-numeric: tabular-nums;
+}
+
+.placeholder-slot-hint {
+  display: block;
+  font-size: 0.64rem;
+  font-style: italic;
+  font-weight: 500;
+  color: #937B49;
+  margin-block-start: 2px;
+}
+
+.simdes-ledger-table tbody td.td-placeholder-col {
+  background-color: #FDFCF9;
+  color: #9AA69F;
+  text-align: center;
+  font-size: 0.78rem;
+  font-style: italic;
+  border-inline-end: 1px dashed rgba(217, 174, 82, 0.35);
+}
+
+.simdes-ledger-table tbody td.td-placeholder-col.last-placeholder-col {
+  border-inline-end: 2px dashed rgba(217, 174, 82, 0.55);
+}
+
+/* Numeric Inventory Cells */
+.td-num {
+  text-align: center;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.td-num.is-zero {
+  color: #A4B2AA;
+  font-weight: 500;
+}
+
+.td-num.is-good {
+  color: var(--simdes-primary);
+}
+
+.td-num.is-damaged {
+  color: var(--simdes-warning);
+}
+
+.td-num.is-removed {
+  color: var(--simdes-danger);
+}
+
+/* Wide 10-Column & 13-Column Single-Header Register Tables (Format A.1 & Kode A.4) */
+.simdes-ledger-table.table-wide-10col {
+  min-inline-size: 1640px;
+}
+
+.simdes-ledger-table.table-wide-13col {
+  min-inline-size: 1920px;
+}
+
+.simdes-ledger-table.table-wide-10col thead th {
+  text-transform: none;
+  font-size: 0.785rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1.4;
+  padding: 0.85rem 0.95rem;
+}
+
+.simdes-ledger-table.table-wide-13col thead th {
+  font-size: 0.735rem;
+  font-weight: 800;
+  letter-spacing: 0.025em;
+  line-height: 1.4;
+  padding: 0.85rem 0.9rem;
+}
+
+.simdes-ledger-table.table-wide-10col tbody td,
+.simdes-ledger-table.table-wide-13col tbody td {
+  padding: 0.92rem 0.92rem;
+}
+
+/* Accessible Radio Card Group (Zero-Click Scanning for <=5 Exclusive Options) */
+.simdes-radio-group {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.simdes-radio-group.cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 575.98px) {
+  .simdes-radio-group.cols-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.simdes-radio-option {
+  position: relative;
+}
+
+.simdes-radio-input {
+  position: absolute;
+  opacity: 0;
+  inline-size: 1px;
+  block-size: 1px;
+  margin: 0;
+}
+
+.simdes-radio-pill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-block-size: 48px;
+  padding: 0.65rem 0.9rem;
+  border: 1.5px solid var(--simdes-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--simdes-surface);
+  color: var(--simdes-text);
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.simdes-radio-pill:hover {
+  border-color: var(--simdes-secondary);
+  background-color: var(--simdes-bg);
+}
+
+.simdes-radio-input:checked + .simdes-radio-pill {
+  border-color: var(--simdes-primary);
+  background-color: var(--simdes-primary-soft);
+  color: var(--simdes-deep-green);
+  font-weight: 700;
+}
+
+.simdes-radio-input:focus-visible + .simdes-radio-pill {
+  outline: none;
+  border-color: var(--simdes-primary);
+  box-shadow: 0 0 0 3.5px rgba(23, 76, 58, 0.14);
+}
+
+.simdes-radio-input:user-invalid + .simdes-radio-pill,
+.simdes-radio-input.user-invalid-fallback + .simdes-radio-pill,
+.simdes-radio-input.is-invalid-field + .simdes-radio-pill {
+  border-color: var(--simdes-danger);
+  background-color: #FFF9F9;
+}
+
+.simdes-field:has(.simdes-radio-input:user-invalid) .field-error-msg,
+.simdes-field:has(.simdes-radio-input.user-invalid-fallback) .field-error-msg {
+  display: flex;
+}
+
+.print-only-inline {
+  display: none;
+}
+
+@media print {
+  .print-only-inline {
+    display: inline !important;
+  }
+
+  .simdes-table-wrapper.wide-scroll-ledger {
+    max-block-size: none !important;
+    overflow: visible !important;
+  }
+
+  .simdes-ledger-table.table-multi-header,
+  .simdes-ledger-table.table-wide-10col,
+  .simdes-ledger-table.table-wide-13col {
+    min-inline-size: 0 !important;
+  }
+
+  .simdes-ledger-table thead th.sticky-col-first,
+  .simdes-ledger-table tbody td.sticky-col-first {
+    position: static !important;
+    box-shadow: none !important;
+  }
+
+  .simdes-ledger-table.table-multi-header thead th,
+  .simdes-ledger-table.table-multi-header tbody td,
+  .simdes-ledger-table.table-wide-10col thead th,
+  .simdes-ledger-table.table-wide-10col tbody td,
+  .simdes-ledger-table.table-wide-13col thead th,
+  .simdes-ledger-table.table-wide-13col tbody td {
+    font-size: 7.5pt !important;
+    padding: 4px 5px !important;
+  }
+}
+
+/* ==========================================================================
+   Extended Ledger Modifiers (Format A.5, A.6, A.8, A.9)
+   ========================================================================== */
+
+.simdes-ledger-table.table-multi-header.table-wide-24col {
+  min-inline-size: 2380px;
+}
+
+.simdes-ledger-table.table-multi-header.table-wide-24col.compact-no-reserved {
+  min-inline-size: 2260px;
+}
+
+.simdes-ledger-table.table-multi-header.table-wide-30col {
+  min-inline-size: 2880px;
+}
+
+.simdes-ledger-table.table-multi-header.table-wide-30col.compact-no-reserved {
+  min-inline-size: 2520px;
+}
+
+/* 2-Row Grouped Multi-Header Table (Format A.9 — Exact 7 Columns, Format A.7 — Exact 11 Columns, Format B.1 — Exact 16 Columns) */
+.simdes-ledger-table.table-multi-header.table-multi-header-7col {
+  min-inline-size: 980px;
+}
+
+.simdes-ledger-table.table-multi-header.table-multi-header-11col {
+  min-inline-size: 1580px;
+}
+
+.simdes-ledger-table.table-multi-header.table-multi-header-16col {
+  min-inline-size: 2220px;
+}
+
+.simdes-ledger-table.table-multi-header.table-multi-header-16col thead th {
+  font-size: 0.73rem;
+  font-weight: 800;
+  padding: 0.68rem 0.78rem;
+}
+
+.simdes-ledger-table.table-multi-header.table-multi-header-16col tbody td {
+  font-size: 0.845rem;
+  padding: 0.86rem 0.85rem;
+}
+
+.simdes-ledger-table.table-multi-header-2row thead tr:first-child th[rowspan="2"],
+.simdes-ledger-table.table-multi-header-2row thead tr:nth-child(2) th {
+  border-block-end: 2px solid #BCCAC1;
+}
+
+.simdes-ledger-table.table-multi-header thead th.th-group-diundangkan,
+.simdes-ledger-table.table-multi-header thead th.th-group-surat-masuk,
+.simdes-ledger-table.table-multi-header thead th.th-group-ttl {
+  background-color: #E2ECE6;
+  color: var(--simdes-deep-green);
+  border-block-start: 3px solid var(--simdes-primary);
+}
+
+.simdes-ledger-table.table-multi-header thead th.th-sub-diundangkan,
+.simdes-ledger-table.table-multi-header thead th.th-sub-surat-masuk,
+.simdes-ledger-table.table-multi-header thead th.th-sub-ttl {
+  background-color: #EAF2EE;
+  color: var(--simdes-primary);
+  font-weight: 800;
+}
+
+/* Read-only Auto-Numbered Form Control (Kode B.1) */
+.simdes-input.simdes-input-readonly,
+.simdes-input[readonly] {
+  background-color: #F2F5F2;
+  border-color: var(--simdes-border);
+  color: var(--simdes-deep-green);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  cursor: default;
+}
+
+.simdes-input.simdes-input-readonly:focus,
+.simdes-input[readonly]:focus {
+  border-color: var(--simdes-secondary);
+  box-shadow: none;
+}
+
+.simdes-ledger-table.table-multi-header thead th.th-group-surat-keluar {
+  background-color: #F4EFE2;
+  color: var(--simdes-deep-green);
+  border-block-start: 3px solid var(--simdes-accent);
+}
+
+.simdes-ledger-table.table-multi-header thead th.th-sub-surat-keluar {
+  background-color: #FAF6EC;
+  color: #5C4618;
+  font-weight: 800;
+}
+
+/* Categorical Check Indicator in Multi-Column Register Matrices (Format A.5) */
+.ledger-check-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 24px;
+  block-size: 24px;
+  border-radius: 999px;
+  background-color: var(--simdes-primary-soft);
+  color: var(--simdes-primary);
+  border: 1px solid rgba(23, 76, 58, 0.2);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+/* Inline Date-Range Filter Controls in Toolbar (Format A.8) */
+.ledger-date-range-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.ledger-date-filter-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background-color: var(--simdes-surface);
+  border: 1.5px solid var(--simdes-border);
+  border-radius: var(--radius-sm);
+  padding: 0.22rem 0.65rem;
+  min-block-size: 42px;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.ledger-date-filter-item:focus-within {
+  border-color: var(--simdes-primary);
+  box-shadow: 0 0 0 3px rgba(23, 76, 58, 0.1);
+}
+
+.ledger-date-filter-label {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--simdes-text-muted);
+  white-space: nowrap;
+}
+
+.simdes-date-filter-input {
+  border: 0;
+  background: transparent;
+  color: var(--simdes-text);
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.15rem 0;
+  outline: none;
+  font-variant-numeric: tabular-nums;
+}
+
+@media print {
+  .simdes-ledger-table.table-multi-header.table-wide-24col,
+  .simdes-ledger-table.table-multi-header.table-wide-30col,
+  .simdes-ledger-table.table-multi-header.table-multi-header-7col,
+  .simdes-ledger-table.table-multi-header.table-multi-header-11col,
+  .simdes-ledger-table.table-multi-header.table-multi-header-16col {
+    min-inline-size: 0 !important;
+    inline-size: 100% !important;
+  }
+
+  .simdes-ledger-table.table-multi-header.table-multi-header-16col thead th,
+  .simdes-ledger-table.table-multi-header.table-multi-header-16col tbody td {
+    font-size: 7pt !important;
+    padding: 3.5px 4px !important;
+    min-inline-size: 0 !important;
+  }
+
+  .simdes-ledger-table.table-multi-header.table-wide-24col thead th,
+  .simdes-ledger-table.table-multi-header.table-wide-24col tbody td,
+  .simdes-ledger-table.table-multi-header.table-wide-30col thead th,
+  .simdes-ledger-table.table-multi-header.table-wide-30col tbody td {
+    font-size: 6.5pt !important;
+    padding: 3px 4px !important;
+    min-inline-size: 0 !important;
+  }
+
+  .ledger-check-mark {
+    background: transparent !important;
+    border: 0 !important;
+    color: #000000 !important;
+    inline-size: auto !important;
+    block-size: auto !important;
+  }
+}
+
+/* ==========================================================================
+   Excel Import Modal & Native File Selector Theming (Kode B.1)
+   ========================================================================== */
+
+.import-template-card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem;
+  padding: 0.95rem 1.1rem;
+  border-radius: var(--radius-md);
+  background-color: var(--simdes-primary-soft);
+  border: 1px solid rgba(23, 76, 58, 0.18);
+  margin-block-end: 1.15rem;
+}
+
+.simdes-excel-dropzone {
+  padding: 1.15rem 1.2rem;
+  border: 2px dashed #BDD0C6;
+  border-radius: var(--radius-md);
+  background-color: #FAFBF9;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.simdes-excel-dropzone:hover,
+.simdes-excel-dropzone.is-dragover {
+  border-color: var(--simdes-primary);
+  background-color: var(--simdes-primary-soft);
+}
+
+.simdes-excel-dropzone:focus-within {
+  border-color: var(--simdes-primary);
+  box-shadow: 0 0 0 3.5px rgba(23, 76, 58, 0.12);
+}
+
+.simdes-file-input {
+  display: block;
+  inline-size: 100%;
+  min-block-size: 48px;
+  padding: 0.42rem 0.55rem;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--simdes-text);
+  background-color: var(--simdes-surface);
+  border: 1.5px solid var(--simdes-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.simdes-file-input:focus {
+  outline: none;
+  border-color: var(--simdes-primary);
+}
+
+.simdes-file-input::file-selector-button {
+  margin-inline-end: 0.85rem;
+  padding: 0.5rem 0.95rem;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--simdes-primary);
+  background-color: var(--simdes-primary);
+  color: #FFFFFF;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.simdes-file-input::file-selector-button:hover {
+  background-color: var(--simdes-deep-green);
+  border-color: var(--simdes-deep-green);
+}
+
+.import-preview-table-wrap {
+  max-block-size: 240px;
+  overflow: auto;
+  border: 1px solid var(--simdes-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--simdes-surface);
+}
+
+.import-preview-table {
+  inline-size: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.8rem;
+}
+
+.import-preview-table thead th {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 2;
+  background-color: #EFF3EE;
+  color: var(--simdes-deep-green);
+  font-size: 0.71rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 0.55rem 0.7rem;
+  border-block-end: 1.5px solid #CED9D1;
+  border-inline-end: 1px solid var(--simdes-border);
+  white-space: nowrap;
+}
+
+.import-preview-table tbody td {
+  padding: 0.52rem 0.7rem;
+  border-block-end: 1px solid var(--simdes-border);
+  border-inline-end: 1px solid rgba(228, 233, 227, 0.65);
+  color: var(--simdes-text);
+  vertical-align: middle;
+}
+
+.import-preview-table tbody tr:last-child td {
+  border-block-end: 0;
+}
+
+/* ==========================================================================
+   Buku Mutasi Penduduk Desa — Period Banner & 13-Column Multi-Header (Kode B.2)
+   ========================================================================== */
+
+.mutasi-period-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.3rem;
+  margin-block-end: 1.25rem;
+  background-color: var(--simdes-surface);
+  border: 1px solid var(--simdes-border);
+  border-inline-start: 4px solid var(--simdes-primary);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xs);
+}
+
+.mutasi-period-heading-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  min-inline-size: 0;
+  flex: 1 1 320px;
+}
+
+.mutasi-period-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.045em;
+  color: var(--simdes-secondary);
+  margin-block-end: 0.2rem;
+}
+
+.mutasi-period-title {
+  margin: 0;
+  font-size: clamp(0.95rem, 1.45vw, 1.12rem);
+  font-weight: 800;
+  letter-spacing: 0.015em;
+  color: var(--simdes-deep-green);
+  line-height: 1.3;
+}
+
+.mutasi-period-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.mutasi-period-select-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.mutasi-period-select-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--simdes-text-muted);
+  margin: 0;
+  white-space: nowrap;
+}
+
+.simdes-ledger-table.table-multi-header.table-multi-header-13col {
+  min-inline-size: 1860px;
+}
+
+.simdes-ledger-table.table-multi-header.table-multi-header-13col thead th {
+  font-size: 0.73rem;
+  font-weight: 800;
+  padding: 0.68rem 0.78rem;
+}
+
+.simdes-ledger-table.table-multi-header.table-multi-header-13col tbody td {
+  font-size: 0.845rem;
+  padding: 0.86rem 0.85rem;
+}
+
+.simdes-ledger-table.table-multi-header thead th.th-group-penambahan {
+  background-color: #E2ECE6;
+  color: var(--simdes-deep-green);
+  border-block-start: 3px solid var(--simdes-primary);
+}
+
+.simdes-ledger-table.table-multi-header thead th.th-sub-penambahan {
+  background-color: #EAF2EE;
+  color: var(--simdes-primary);
+  font-weight: 800;
+}
+
+.simdes-ledger-table.table-multi-header thead th.th-group-pengurangan {
+  background-color: #F4EFE2;
+  color: var(--simdes-deep-green);
+  border-block-start: 3px solid var(--simdes-accent);
+}
+
+.simdes-ledger-table.table-multi-header thead th.th-sub-pengurangan {
+  background-color: #FAF6EC;
+  color: #5C4618;
+  font-weight: 800;
+}
+
+@media print {
+  .mutasi-period-banner {
+    display: none !important;
+  }
+
+  .table-responsive.simdes-table-wrapper {
+    overflow: visible !important;
+  }
+
+  .simdes-ledger-table.table-multi-header.table-multi-header-13col {
+    min-inline-size: 0 !important;
+    inline-size: 100% !important;
+  }
+
+  .simdes-ledger-table.table-multi-header.table-multi-header-13col thead th,
+  .simdes-ledger-table.table-multi-header.table-multi-header-13col tbody td {
+    font-size: 7.2pt !important;
+    padding: 3.5px 4.5px !important;
+    min-inline-size: 0 !important;
+  }
+}
+
+/* ==========================================================================
+   Buku Rekapitulasi Jumlah Penduduk — 33-Position Multi-Header Ledger (Kode B.3)
+   Header dibangun dari konfigurasi (assets/js/buku-rekapitulasi-jumlah-penduduk.js)
+   ========================================================================== */
+
+.simdes-ledger-table.table-multi-header.table-multi-header-33col {
+  min-inline-size: 3040px;
+}
+
+.simdes-ledger-table.table-multi-header.table-multi-header-33col thead th {
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 0.55rem 0.5rem;
+  white-space: nowrap;
+}
+
+.simdes-ledger-table.table-multi-header.table-multi-header-33col tbody td {
+  font-size: 0.845rem;
+  padding: 0.78rem 0.55rem;
+}
+
+.simdes-ledger-table.table-multi-header thead th.th-leaf-num {
+  min-inline-size: 78px;
+}
+
+.simdes-ledger-table.table-multi-header thead th.th-group-awal {
+  background-color: #E2ECE6;
+  color: var(--simdes-deep-green);
+  border-block-start: 3px solid var(--simdes-primary);
+}
+
+.simdes-ledger-table.table-multi-header thead th.th-sub-awal {
+  background-color: #EAF2EE;
+  color: var(--simdes-primary);
+}
+
+.simdes-ledger-table.table-multi-header thead th.th-group-tambahan {
+  background-color: #E1ECEE;
+  color: var(--simdes-deep-green);
+  border-block-start: 3px solid var(--simdes-secondary);
+}
+
+.simdes-ledger-table.table-multi-header thead th.th-sub-tambahan {
+  background-color: #EBF3F4;
+  color: #2F5A56;
+}
+
+.simdes-ledger-table.table-multi-header thead th.th-group-akhir {
+  background-color: #D9E7DE;
+  color: var(--simdes-deep-green);
+  border-block-start: 3px solid var(--simdes-deep-green);
+}
+
+.simdes-ledger-table.table-multi-header thead th.th-sub-akhir {
+  background-color: #E5EFE8;
+  color: var(--simdes-deep-green);
+}
+
+.simdes-ledger-table.table-multi-header thead th.th-colno {
+  background-color: #F6F8F5;
+  color: var(--simdes-text-muted);
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.28rem 0.4rem;
+  font-variant-numeric: tabular-nums;
+  border-block-end: 2px solid #BCCAC1;
+}
+
+.simdes-ledger-table.table-multi-header thead th.th-unnamed {
+  background-image: repeating-linear-gradient(135deg, transparent 0 6px, rgba(71, 117, 104, 0.07) 6px 12px);
+}
+
+.td-recap-num {
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.td-recap-num.is-zero {
+  color: #A4B2AA;
+  font-weight: 500;
+}
+
+.td-recap-num.is-total {
+  font-weight: 800;
+  color: var(--simdes-deep-green);
+  background-color: rgba(23, 76, 58, 0.04);
+}
+
+/* Form Rekapitulasi: Grid Input Angka & Panel Tinjauan Perhitungan */
+.recap-subgroup {
+  border: 1px dashed var(--simdes-border);
+  border-radius: var(--radius-sm);
+  padding: 0.7rem 0.85rem 0.15rem;
+  margin: 0 0 0.85rem;
+  min-inline-size: 0;
+  background-color: var(--simdes-surface);
+}
+
+.recap-subgroup > legend {
+  float: none;
+  inline-size: auto;
+  padding: 0 0.45rem;
+  margin-block-end: 0.4rem;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  color: var(--simdes-secondary);
+}
+
+.recap-input-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.75rem;
+}
+
+.recap-col-badge {
+  display: inline-block;
+  margin-inline-start: 0.35rem;
+  padding: 0.05rem 0.4rem;
+  border-radius: 999px;
+  background-color: var(--simdes-bg);
+  border: 1px solid var(--simdes-border);
+  color: var(--simdes-text-muted);
+  font-size: 0.68rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.recap-auto-switch {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  margin-block-end: 1.15rem;
+  border: 1px solid rgba(23, 76, 58, 0.18);
+  border-radius: var(--radius-md);
+  background-color: var(--simdes-primary-soft);
+}
+
+.recap-review-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.recap-review-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.55rem 0.8rem;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--simdes-border);
+  background-color: var(--simdes-surface);
+  font-size: 0.83rem;
+}
+
+.recap-review-item.is-ok {
+  border-color: rgba(30, 111, 80, 0.3);
+  background-color: var(--simdes-success-bg);
+}
+
+.recap-review-item.is-warn {
+  border-color: rgba(184, 58, 50, 0.32);
+  background-color: var(--simdes-danger-bg);
+}
+
+.recap-review-item .recap-review-value {
+  margin-inline-start: auto;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Detail Rekapitulasi: Kisi Nilai per Kelompok */
+.recap-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 0.6rem;
+}
+
+.recap-detail-cell {
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--simdes-border);
+  border-radius: var(--radius-xs);
+  background-color: var(--simdes-surface);
+}
+
+.recap-detail-cell small {
+  display: block;
+  color: var(--simdes-text-muted);
+  font-size: 0.7rem;
+}
+
+.recap-detail-cell strong {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 575.98px) {
+  .recap-input-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media print {
+  .simdes-ledger-table.table-multi-header.table-multi-header-33col {
+    min-inline-size: 0 !important;
+    inline-size: 100% !important;
+    table-layout: fixed;
+  }
+
+  .simdes-ledger-table.table-multi-header.table-multi-header-33col thead th,
+  .simdes-ledger-table.table-multi-header.table-multi-header-33col tbody td {
+    font-size: 5.8pt !important;
+    padding: 2px 1.5px !important;
+    min-inline-size: 0 !important;
+    white-space: normal !important;
+    word-break: break-word;
+    line-height: 1.25;
+  }
+
+  .simdes-ledger-table.table-multi-header.table-multi-header-33col thead th {
+    background-color: #F1F1F1 !important;
+  }
+
+  .simdes-ledger-table.table-multi-header.table-multi-header-33col thead th.th-unnamed {
+    background-image: none !important;
+  }
+
+  .simdes-ledger-table.table-multi-header.table-multi-header-33col tbody tr {
+    break-inside: avoid;
+  }
+
+  .td-recap-num.is-zero,
+  .td-recap-num.is-total {
+    color: #000000 !important;
+    background-color: transparent !important;
+  }
+}
+
+/* Baris Penomoran Kolom 1–33 (Kode B.3) */
+.simdes-ledger-table.table-multi-header thead tr.th-colno-row th {
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+}
