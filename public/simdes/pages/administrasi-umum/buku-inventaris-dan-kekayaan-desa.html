@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buku Inventaris dan Kekayaan Desa — SIMDES Desa Tiaro</title>
+  <meta name="description" content="Pencatatan inventaris dan kekayaan milik desa berdasarkan jenis, asal, kondisi, serta penghapusan barang dan bangunan.">
+  <link rel="icon" type="image/png" href="../../assets/images/logo.png">
+
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap 5.3 CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+  <!-- Font Awesome 6 CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+  <!-- SIMDES Global & Component Stylesheets -->
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <link rel="stylesheet" href="../../assets/css/components.css">
+  <link rel="stylesheet" href="../../assets/css/pages.css">
+</head>
+<body data-root-prefix="../../" data-active-nav="buku-inventaris-dan-kekayaan-desa">
+  <a href="#mainContent" class="skip-link">Lewati ke konten utama</a>
+
+  <div class="app-shell">
+    <!-- =====================================================================
+         SIDEBAR NAVIGATION (Consistent Global Structure)
+         ===================================================================== -->
+    <aside class="app-sidebar" id="appSidebar" aria-label="Navigasi Utama SIMDES">
+      <div class="sidebar-brand">
+        <img src="../../assets/images/logo.png" alt="Lambang Desa Tiaro" class="sidebar-brand-logo" width="42" height="42">
+        <div class="sidebar-brand-text">
+          <span class="sidebar-brand-title">SIMDES TIARO</span>
+          <span class="sidebar-brand-subtitle">Pemerintah Desa Tiaro</span>
+        </div>
+        <button
+          type="button"
+          id="sidebarCloseMobileBtn"
+          class="sidebar-logout-btn d-lg-none ms-auto"
+          aria-label="Tutup menu navigasi"
+        >
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav-scroll" aria-label="Menu Buku Administrasi">
+        <div class="sidebar-section-label">DASHBOARD</div>
+        <ul class="sidebar-menu mb-2">
+          <li>
+            <a
+              href="../dashboard.html"
+              class="sidebar-link"
+              data-sidebar-tooltip="Dashboard"
+            >
+              <span class="sidebar-link-icon">
+                <i class="fa-solid fa-table-columns" aria-hidden="true"></i>
+              </span>
+              <span class="sidebar-link-text">Dashboard</span>
+            </a>
+          </li>
+        </ul>
+
+        <div class="sidebar-section-label">MODUL ADMINISTRASI</div>
+        <ul class="sidebar-menu">
+          <!-- Group A: Administrasi Umum -->
+          <li>
+            <button
+              type="button"
+              class="sidebar-link active"
+              data-sidebar-group="umum"
+              data-sidebar-tooltip="Administrasi Umum (9 Buku)"
+              aria-expanded="true"
+              aria-controls="sidebarGroupUmumInfo"
+            >
+              <span class="sidebar-link-icon">
+                <i class="fa-solid fa-book-bookmark" aria-hidden="true"></i>
+              </span>
+              <span class="sidebar-link-text">Administrasi Umum</span>
+              <span class="sidebar-badge">9</span>
+              <i class="fa-solid fa-chevron-down sidebar-chevron" aria-hidden="true"></i>
+            </button>
+            <div id="sidebarGroupUmumInfo" class="sidebar-group-panel"></div>
+          </li>
+
+          <!-- Group B: Administrasi Penduduk -->
+          <li>
+            <button
+              type="button"
+              class="sidebar-link"
+              data-sidebar-group="penduduk"
+              data-sidebar-tooltip="Administrasi Penduduk (5 Buku)"
+              aria-expanded="false"
+              aria-controls="sidebarGroupPendudukInfo"
+            >
+              <span class="sidebar-link-icon">
+                <i class="fa-solid fa-users" aria-hidden="true"></i>
+              </span>
+              <span class="sidebar-link-text">Administrasi Penduduk</span>
+              <span class="sidebar-badge">5</span>
+              <i class="fa-solid fa-chevron-down sidebar-chevron" aria-hidden="true"></i>
+            </button>
+            <div id="sidebarGroupPendudukInfo" class="sidebar-group-panel" hidden></div>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user-card">
+          <button
+            type="button"
+            class="border-0 bg-transparent p-0 d-flex align-items-center gap-2 text-start flex-grow-1 min-w-0"
+            data-action="open-profile-modal"
+            data-sidebar-tooltip="Profil Pengguna"
+            aria-label="Lihat profil pengguna"
+          >
+            <span class="sidebar-user-avatar" data-user-initials>BS</span>
+            <span class="sidebar-user-meta">
+              <span class="sidebar-user-name" data-user-fullname>Budi Santoso, S.AP</span>
+              <span class="sidebar-user-role" data-user-role>Sekretaris Desa</span>
+            </span>
+          </button>
+          <button
+            type="button"
+            class="sidebar-logout-btn"
+            data-action="confirm-logout"
+            title="Keluar Sistem"
+            aria-label="Keluar dari SIMDES"
+          >
+            <i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Mobile Offcanvas Backdrop -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+
+    <!-- =====================================================================
+         MAIN WORKSPACE (Topbar + Main Content + Footer)
+         ===================================================================== -->
+    <div class="app-main" id="appMainWrapper">
+      <!-- TOPBAR -->
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button
+            type="button"
+            id="sidebarToggleBtn"
+            class="btn-icon-topbar"
+            aria-label="Ciutkan panel navigasi samping"
+            aria-controls="appSidebar"
+            aria-expanded="true"
+          >
+            <i class="fa-solid fa-bars-staggered" aria-hidden="true"></i>
+          </button>
+
+          <!-- Topbar Breadcrumb -->
+          <nav aria-label="Breadcrumb Topbar" class="d-none d-md-block">
+            <ol class="simdes-breadcrumb">
+              <li><a href="../dashboard.html">Dashboard</a></li>
+              <li><span>Administrasi Umum</span></li>
+              <li class="active" aria-current="page">Buku Inventaris dan Kekayaan Desa</li>
+            </ol>
+          </nav>
+        </div>
+
+        <div class="topbar-right">
+          <!-- Global Quick Search -->
+          <div class="topbar-search d-none d-sm-block">
+            <i class="fa-solid fa-magnifying-glass topbar-search-icon" aria-hidden="true"></i>
+            <input
+              type="search"
+              id="globalSearchInput"
+              class="topbar-search-input"
+              placeholder="Cari ringkasan atau modul..."
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="off"
+              spellcheck="false"
+              aria-label="Pencarian cepat halaman"
+            >
+            <kbd class="topbar-search-kbd d-none d-lg-inline-block">Ctrl K</kbd>
+            <div id="globalSearchResults" class="topbar-search-results" role="listbox" aria-label="Hasil pencarian cepat"></div>
+          </div>
+
+          <span class="fiscal-badge d-none d-xl-inline-flex" title="Tahun Anggaran Pemerintahan Desa Aktif">
+            <i class="fa-regular fa-calendar-check" aria-hidden="true"></i>
+            TA 2026
+          </span>
+
+          <!-- Notifications Dropdown -->
+          <div class="dropdown">
+            <button
+              type="button"
+              class="btn-icon-topbar"
+              id="notifDropdownBtn"
+              data-bs-toggle="dropdown"
+              data-bs-auto-close="outside"
+              aria-expanded="false"
+              aria-label="Notifikasi administrasi desa (3 belum dibaca)"
+            >
+              <i class="fa-regular fa-bell" aria-hidden="true"></i>
+              <span class="notif-dot" id="topbarNotifDot" aria-hidden="true"></span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end simdes-dropdown-menu simdes-notif-menu" aria-labelledby="notifDropdownBtn">
+              <div class="notif-header">
+                <div>
+                  <span class="fw-bold" style="font-size:0.86rem; color:var(--simdes-text);">Pemberitahuan Sistem</span>
+                  <span id="notifCountBadge" class="badge-simdes badge-simdes-accent ms-1">3 Baru</span>
+                </div>
+                <button type="button" id="markAllNotifReadBtn" class="border-0 bg-transparent p-0 fw-semibold text-simdes-primary" style="font-size:0.76rem;">
+                  Tandai dibaca
+                </button>
+              </div>
+              <div class="notif-list">
+                <div class="notif-item unread">
+                  <div class="notif-icon stat-icon-primary">
+                    <i class="fa-solid fa-boxes-stacked" aria-hidden="true"></i>
+                  </div>
+                  <div class="min-w-0">
+                    <div class="fw-semibold" style="font-size:0.81rem; color:var(--simdes-text);">
+                      Buku Inventaris (Kode A.3) aktif
+                    </div>
+                    <div class="text-simdes-muted" style="font-size:0.75rem;">
+                      Mendukung header bertingkat dan konfigurasi slot kolom cadangan 12&ndash;16.
+                    </div>
+                    <small class="text-simdes-muted" style="font-size:0.7rem;">Baru saja</small>
+                  </div>
+                </div>
+                <div class="notif-item unread">
+                  <div class="notif-icon stat-icon-accent">
+                    <i class="fa-solid fa-file-signature" aria-hidden="true"></i>
+                  </div>
+                  <div class="min-w-0">
+                    <div class="fw-semibold" style="font-size:0.81rem; color:var(--simdes-text);">
+                      Buku Keputusan Kepala Desa siap digunakan
+                    </div>
+                    <div class="text-simdes-muted" style="font-size:0.75rem;">
+                      Data simulasi tersimpan lokal di peramban.
+                    </div>
+                    <small class="text-simdes-muted" style="font-size:0.7rem;">Hari ini</small>
+                  </div>
+                </div>
+                <div class="notif-item unread">
+                  <div class="notif-icon stat-icon-secondary">
+                    <i class="fa-solid fa-calendar-day" aria-hidden="true"></i>
+                  </div>
+                  <div class="min-w-0">
+                    <div class="fw-semibold" style="font-size:0.81rem; color:var(--simdes-text);">
+                      Pemeriksaan Fisik Aset Semester II
+                    </div>
+                    <div class="text-simdes-muted" style="font-size:0.75rem;">
+                      Pengingat rekonsiliasi kondisi awal dan akhir tahun.
+                    </div>
+                    <small class="text-simdes-muted" style="font-size:0.7rem;">Hari ini, 08:00 WITA</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- User Profile Dropdown -->
+          <div class="dropdown">
+            <button
+              type="button"
+              class="topbar-profile-btn"
+              id="userDropdownBtn"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+              aria-label="Menu profil pengguna"
+            >
+              <span class="topbar-avatar" data-user-initials>BS</span>
+              <span class="topbar-profile-info d-none d-md-block">
+                <span class="topbar-profile-name" data-user-fullname>Budi Santoso, S.AP</span>
+                <span class="topbar-profile-role" data-user-role>Sekretaris Desa</span>
+              </span>
+              <i class="fa-solid fa-chevron-down text-simdes-muted d-none d-md-inline-block" style="font-size:0.7rem;" aria-hidden="true"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end simdes-dropdown-menu" aria-labelledby="userDropdownBtn">
+              <li class="px-3 py-2 border-bottom mb-1" style="border-color:var(--simdes-border) !important;">
+                <div class="fw-bold" style="font-size:0.84rem;" data-user-fullname>Budi Santoso, S.AP</div>
+                <div class="text-simdes-muted" style="font-size:0.74rem;" data-user-unit>Sekretariat Pemerintah Desa Tiaro</div>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#userProfileModal" data-action="open-profile-modal">
+                  <i class="fa-regular fa-id-badge text-simdes-secondary" aria-hidden="true"></i>
+                  Profil Aparatur
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="../dashboard.html">
+                  <i class="fa-solid fa-table-columns text-simdes-secondary" aria-hidden="true"></i>
+                  Kembali ke Dashboard
+                </a>
+              </li>
+              <li><hr class="dropdown-divider" style="border-color:var(--simdes-border);"></li>
+              <li>
+                <a class="dropdown-item text-danger" href="../../login.html" data-action="confirm-logout">
+                  <i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i>
+                  Keluar Sistem
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </header>
+
+      <!-- MAIN CONTENT -->
+      <main class="app-content" id="mainContent">
+        <div id="bukuInventarisPageRoot">
+          <!-- Page Heading & Breadcrumb -->
+          <div class="page-header">
+            <div>
+              <nav aria-label="Breadcrumb Halaman" class="mb-2">
+                <ol class="simdes-breadcrumb">
+                  <li>
+                    <a href="../dashboard.html">
+                      <i class="fa-solid fa-house-chimney me-1" aria-hidden="true"></i>Dashboard
+                    </a>
+                  </li>
+                  <li><span>Administrasi Umum</span></li>
+                  <li class="active" aria-current="page">Buku Inventaris dan Kekayaan Desa</li>
+                </ol>
+              </nav>
+              <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+                <span class="badge-simdes badge-simdes-primary">Kode A.3 &bull; Administrasi Umum</span>
+              </div>
+              <h1 class="page-header-title">Buku Inventaris dan Kekayaan Desa</h1>
+              <p class="page-header-desc">
+                Pencatatan inventaris dan kekayaan milik desa berdasarkan jenis, asal, kondisi, serta penghapusan barang dan bangunan.
+              </p>
+            </div>
+
+            <div class="page-header-actions">
+              <button type="button" id="btnCetakInventaris" class="btn-simdes-outline">
+                <i class="fa-solid fa-print" aria-hidden="true"></i>
+                <span>Cetak Tabel</span>
+              </button>
+              <button type="button" id="btnTambahInventaris" class="btn-simdes-primary">
+                <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                <span>Tambah Inventaris</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Sample Data & Reserve Column Info Notice -->
+          <div class="sample-data-banner" role="note" aria-label="Keterangan data contoh dan kolom cadangan">
+            <div class="d-flex align-items-start align-items-md-center gap-2">
+              <i class="fa-solid fa-circle-info mt-1 mt-md-0" aria-hidden="true"></i>
+              <span>
+                <strong>Mode Simulasi Antarmuka:</strong> Data awal merupakan <em>data contoh</em> di <code>localStorage</code>. Lima slot cadangan (<strong>Slot 12&ndash;16</strong>) ditandai khusus sebagai penampung sementara yang siap dikonfigurasi pada JavaScript saat label sumber tersedia.
+              </span>
+            </div>
+            <div class="d-flex flex-wrap align-items-center gap-2">
+              <button
+                type="button"
+                id="toggleReservedColsBtn"
+                class="btn-simdes-outline py-1 px-2"
+                style="min-block-size:32px; font-size:0.76rem;"
+                aria-pressed="true"
+                title="Tampilkan atau sembunyikan lima slot kolom cadangan (12–16)"
+              >
+                <i class="fa-solid fa-table-cells-large" aria-hidden="true"></i>
+                <span>Kolom 12–16: Tampil</span>
+              </button>
+              <button
+                type="button"
+                id="btnResetSampleInventaris"
+                class="btn-simdes-outline py-1 px-2"
+                style="min-block-size:32px; font-size:0.76rem;"
+              >
+                <i class="fa-solid fa-arrow-rotate-left" aria-hidden="true"></i>
+                <span>Pulihkan Data Contoh</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Summary KPI Strip (4 Compact Cards) -->
+          <section class="row g-3 mb-4 ledger-kpi-row" aria-label="Ringkasan Inventaris dan Kekayaan Desa">
+            <div class="col-12 col-sm-6 col-xl-3">
+              <article class="stat-card py-3">
+                <div class="d-flex align-items-center justify-content-between gap-2">
+                  <div>
+                    <div class="stat-label mb-1">Jenis Barang/Bangunan</div>
+                    <div class="stat-value fs-3" id="statTotalJenis">0</div>
+                  </div>
+                  <div class="stat-icon-box stat-icon-primary">
+                    <i class="fa-solid fa-boxes-stacked" aria-hidden="true"></i>
+                  </div>
+                </div>
+              </article>
+            </div>
+
+            <div class="col-12 col-sm-6 col-xl-3">
+              <article class="stat-card py-3">
+                <div class="d-flex align-items-center justify-content-between gap-2">
+                  <div>
+                    <div class="stat-label mb-1">Akhir Tahun (Baik)</div>
+                    <div class="stat-value fs-3" id="statTotalAkhirBaik">0</div>
+                  </div>
+                  <div class="stat-icon-box stat-icon-secondary">
+                    <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+                  </div>
+                </div>
+              </article>
+            </div>
+
+            <div class="col-12 col-sm-6 col-xl-3">
+              <article class="stat-card accent-gold py-3">
+                <div class="d-flex align-items-center justify-content-between gap-2">
+                  <div>
+                    <div class="stat-label mb-1">Akhir Tahun (Rusak)</div>
+                    <div class="stat-value fs-3" id="statTotalAkhirRusak">0</div>
+                  </div>
+                  <div class="stat-icon-box stat-icon-accent">
+                    <i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i>
+                  </div>
+                </div>
+              </article>
+            </div>
+
+            <div class="col-12 col-sm-6 col-xl-3">
+              <article class="stat-card py-3">
+                <div class="d-flex align-items-center justify-content-between gap-2">
+                  <div>
+                    <div class="stat-label mb-1">Total Unit Dihapuskan</div>
+                    <div class="stat-value fs-3" id="statTotalPenghapusan">0</div>
+                  </div>
+                  <div class="stat-icon-box stat-icon-info">
+                    <i class="fa-solid fa-file-circle-minus" aria-hidden="true"></i>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <!-- Main Multi-Header Ledger Card -->
+          <section class="simdes-card" aria-label="Tabel Buku Inventaris dan Kekayaan Desa">
+            <!-- Print-Only Header -->
+            <div class="print-ledger-header">
+              <div style="font-size:13pt; font-weight:800; text-transform:uppercase; letter-spacing:0.04em;">
+                BUKU INVENTARIS DAN KEKAYAAN DESA (KODE A.3)
+              </div>
+              <div style="font-size:10pt; font-weight:600; margin-top:2px;">
+                SIMDES TIARO &mdash; CETAKAN SIMULASI FRONTEND (DATA CONTOH)
+              </div>
+              <div id="printInventarisMeta" style="font-size:8.5pt; color:#444; margin-top:4px;"></div>
+            </div>
+
+            <!-- Search & Filter Toolbar -->
+            <div class="ledger-toolbar">
+              <div class="ledger-search-wrap">
+                <i class="fa-solid fa-magnifying-glass ledger-search-icon" aria-hidden="true"></i>
+                <input
+                  type="search"
+                  id="tableSearchInput"
+                  class="ledger-search-input"
+                  placeholder="Cari jenis barang/bangunan atau keterangan..."
+                  autocomplete="off"
+                  autocorrect="off"
+                  autocapitalize="off"
+                  spellcheck="false"
+                  aria-label="Cari berdasarkan jenis barang atau bangunan"
+                >
+                <button
+                  type="button"
+                  id="clearSearchInputBtn"
+                  class="ledger-search-clear"
+                  aria-label="Bersihkan teks pencarian"
+                  title="Bersihkan pencarian"
+                >
+                  <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+              </div>
+
+              <div class="ledger-filters-group">
+                <select id="filterAsalSelect" class="simdes-select" aria-label="Filter berdasarkan kategori asal barang">
+                  <option value="ALL">Semua Asal Barang</option>
+                  <option value="asalDibeli">Dibeli Sendiri</option>
+                  <option value="asalPemerintah">Bantuan Pemerintah</option>
+                  <option value="asalProvinsi">Bantuan Provinsi</option>
+                  <option value="asalKabKota">Bantuan Kabupaten/Kota</option>
+                  <option value="asalSumbangan">Sumbangan</option>
+                </select>
+
+                <select id="filterKondisiSelect" class="simdes-select" aria-label="Filter berdasarkan kondisi atau penghapusan">
+                  <option value="ALL">Semua Kondisi</option>
+                  <option value="GOOD_ONLY">Seluruhnya Baik (Akhir Tahun)</option>
+                  <option value="HAS_DAMAGED">Terdapat Kondisi Rusak</option>
+                  <option value="HAS_DELETION">Terdapat Penghapusan</option>
+                </select>
+
+                <select id="pageSizeSelect" class="simdes-select" aria-label="Jumlah baris per halaman">
+                  <option value="5" selected>5 / halaman</option>
+                  <option value="10">10 / halaman</option>
+                  <option value="25">25 / halaman</option>
+                </select>
+
+                <button
+                  type="button"
+                  id="resetTableFilterBtn"
+                  class="btn-simdes-outline"
+                  disabled
+                  title="Reset pencarian dan filter"
+                >
+                  <i class="fa-solid fa-filter-circle-xmark" aria-hidden="true"></i>
+                  <span>Reset</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Horizontal & Vertical Scrollable Multi-Header Table -->
+            <div
+              class="simdes-table-wrapper wide-scroll-ledger"
+              tabindex="0"
+              role="region"
+              aria-labelledby="inventarisTableCaption"
+            >
+              <table class="simdes-ledger-table table-multi-header" id="inventarisTable">
+                <caption id="inventarisTableCaption" class="visually-hidden-accessible">
+                  Tabel Buku Inventaris dan Kekayaan Desa (Kode A.3) dengan header bertingkat dan lima slot kolom cadangan yang dapat dikonfigurasi
+                </caption>
+                <thead id="inventarisTableHead"></thead>
+                <tbody id="inventarisTableBody"></tbody>
+              </table>
+            </div>
+
+            <!-- Pagination Footer -->
+            <div class="ledger-pagination-bar">
+              <div class="pagination-info" id="tablePaginationInfo" aria-live="polite">
+                Menampilkan 0 data inventaris
+              </div>
+              <nav aria-label="Navigasi halaman tabel inventaris">
+                <ul class="simdes-pagination" id="tablePaginationList"></ul>
+              </nav>
+            </div>
+          </section>
+        </div>
+      </main>
+
+      <!-- FOOTER -->
+      <footer class="app-footer">
+        <div>
+          <strong>SIMDES Desa Tiaro</strong> &mdash; Sistem Informasi Manajemen Desa
+        </div>
+        <div>
+          Administrasi Umum &bull; Buku Inventaris dan Kekayaan Desa (A.3)
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       MODAL FORM TAMBAH & EDIT INVENTARIS (MODAL XL NYAMAN DIGUNAKAN)
+       ======================================================================= -->
+  <div class="modal fade simdes-modal" id="inventarisFormModal" tabindex="-1" aria-labelledby="inventarisFormModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title" id="inventarisFormModalLabel">
+            <i class="fa-solid fa-plus-circle text-simdes-primary me-2" aria-hidden="true"></i>Tambah Inventaris dan Kekayaan Desa
+          </h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup formulir"></button>
+        </div>
+
+        <form id="inventarisForm" novalidate>
+          <div class="modal-body p-4">
+            <input type="hidden" id="invRecordId" name="recordId">
+
+            <div id="inventarisFormAlert" class="login-alert login-alert-error" role="alert" aria-live="assertive">
+              <i class="fa-solid fa-circle-exclamation mt-1" aria-hidden="true"></i>
+              <span id="inventarisFormAlertText"></span>
+            </div>
+
+            <!-- A. Identitas Barang -->
+            <fieldset class="simdes-fieldset">
+              <legend class="simdes-legend">A. Identitas Barang</legend>
+              <div class="simdes-field mb-2">
+                <label for="invJenisBarang" class="simdes-label">
+                  1. Jenis Barang/Bangunan<span class="req-star" aria-hidden="true">*</span>
+                </label>
+                <span id="jenisBarangHint" class="simdes-field-hint">Nama barang inventaris atau bangunan milik desa</span>
+                <input
+                  type="text"
+                  id="invJenisBarang"
+                  name="jenisBarang"
+                  class="simdes-input"
+                  placeholder="Contoh: Meja Kerja Kayu Ruang Pelayanan"
+                  required
+                  minlength="3"
+                  data-field-label="Jenis Barang/Bangunan"
+                  aria-describedby="jenisBarangHint jenisBarangError"
+                >
+                <div id="jenisBarangError" class="field-error-msg" role="status">
+                  <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                  <span class="field-error-text">Jenis Barang/Bangunan wajib diisi (minimal 3 karakter).</span>
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- B. Asal Barang/Bangunan -->
+            <fieldset class="simdes-fieldset">
+              <legend class="simdes-legend">B. Asal Barang/Bangunan</legend>
+              <span class="simdes-field-hint mb-3">Isi jumlah unit berdasarkan perolehan/asal barang atau bangunan (minimal salah satu sumber &gt; 0).</span>
+              <div class="row g-3">
+                <div class="col-6 col-md-4 col-lg">
+                  <div class="simdes-field mb-2">
+                    <label for="invAsalDibeli" class="simdes-label">2. Dibeli Sendiri</label>
+                    <input type="number" id="invAsalDibeli" name="asalDibeli" class="simdes-input tabular-nums" min="0" step="1" value="0" inputmode="numeric" data-field-label="Dibeli Sendiri">
+                  </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg">
+                  <div class="simdes-field mb-2">
+                    <label for="invAsalPemerintah" class="simdes-label">3. Bantuan Pemerintah</label>
+                    <input type="number" id="invAsalPemerintah" name="asalPemerintah" class="simdes-input tabular-nums" min="0" step="1" value="0" inputmode="numeric" data-field-label="Bantuan Pemerintah">
+                  </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg">
+                  <div class="simdes-field mb-2">
+                    <label for="invAsalProvinsi" class="simdes-label">4. Bantuan Provinsi</label>
+                    <input type="number" id="invAsalProvinsi" name="asalProvinsi" class="simdes-input tabular-nums" min="0" step="1" value="0" inputmode="numeric" data-field-label="Bantuan Provinsi">
+                  </div>
+                </div>
+                <div class="col-6 col-md-6 col-lg">
+                  <div class="simdes-field mb-2">
+                    <label for="invAsalKabKota" class="simdes-label">5. Bantuan Kabupaten/Kota</label>
+                    <input type="number" id="invAsalKabKota" name="asalKabKota" class="simdes-input tabular-nums" min="0" step="1" value="0" inputmode="numeric" data-field-label="Bantuan Kabupaten/Kota">
+                  </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg">
+                  <div class="simdes-field mb-2">
+                    <label for="invAsalSumbangan" class="simdes-label">6. Sumbangan</label>
+                    <input type="number" id="invAsalSumbangan" name="asalSumbangan" class="simdes-input tabular-nums" min="0" step="1" value="0" inputmode="numeric" data-field-label="Sumbangan">
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- C. Keadaan Awal Tahun -->
+            <fieldset class="simdes-fieldset">
+              <legend class="simdes-legend">C. Keadaan Awal Tahun</legend>
+              <div class="row g-3">
+                <div class="col-12 col-sm-6">
+                  <div class="simdes-field mb-2">
+                    <label for="invAwalBaik" class="simdes-label">7. Kondisi Baik</label>
+                    <input type="number" id="invAwalBaik" name="awalBaik" class="simdes-input tabular-nums" min="0" step="1" value="0" inputmode="numeric" data-field-label="Kondisi Baik Awal Tahun">
+                  </div>
+                </div>
+                <div class="col-12 col-sm-6">
+                  <div class="simdes-field mb-2">
+                    <label for="invAwalRusak" class="simdes-label">8. Kondisi Rusak</label>
+                    <input type="number" id="invAwalRusak" name="awalRusak" class="simdes-input tabular-nums" min="0" step="1" value="0" inputmode="numeric" data-field-label="Kondisi Rusak Awal Tahun">
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- D. Penghapusan Barang dan Bangunan -->
+            <fieldset class="simdes-fieldset">
+              <legend class="simdes-legend">D. Penghapusan Barang dan Bangunan</legend>
+              <div class="row g-3">
+                <div class="col-12 col-sm-6 col-lg-3">
+                  <div class="simdes-field mb-2">
+                    <label for="invHapusRusak" class="simdes-label">9. Kondisi barang yang dihapus/rusak</label>
+                    <input type="number" id="invHapusRusak" name="hapusRusak" class="simdes-input tabular-nums" min="0" step="1" value="0" inputmode="numeric" data-field-label="Kondisi barang yang dihapus/rusak">
+                  </div>
+                </div>
+                <div class="col-6 col-sm-6 col-lg-3">
+                  <div class="simdes-field mb-2">
+                    <label for="invHapusDijual" class="simdes-label">10. Jumlah dijual</label>
+                    <input type="number" id="invHapusDijual" name="hapusDijual" class="simdes-input tabular-nums" min="0" step="1" value="0" inputmode="numeric" data-field-label="Jumlah dijual">
+                  </div>
+                </div>
+                <div class="col-6 col-sm-6 col-lg-3">
+                  <div class="simdes-field mb-2">
+                    <label for="invHapusDisumbangkan" class="simdes-label">11. Jumlah disumbangkan</label>
+                    <input type="number" id="invHapusDisumbangkan" name="hapusDisumbangkan" class="simdes-input tabular-nums" min="0" step="1" value="0" inputmode="numeric" data-field-label="Jumlah disumbangkan">
+                  </div>
+                </div>
+                <div class="col-12 col-sm-6 col-lg-3">
+                  <div class="simdes-field mb-2">
+                    <label for="invTanggalHapus" class="simdes-label">12. Tanggal penghapusan</label>
+                    <input
+                      type="date"
+                      id="invTanggalHapus"
+                      name="tanggalPenghapusan"
+                      class="simdes-input"
+                      data-field-label="Tanggal penghapusan"
+                      aria-describedby="tglHapusError"
+                    >
+                    <div id="tglHapusError" class="field-error-msg" role="status">
+                      <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                      <span class="field-error-text">Tanggal penghapusan wajib diisi jika ada barang dihapus.</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- E. Keadaan Akhir Tahun -->
+            <fieldset class="simdes-fieldset">
+              <legend class="simdes-legend">E. Keadaan Akhir Tahun</legend>
+              <div class="row g-3">
+                <div class="col-12 col-sm-6">
+                  <div class="simdes-field mb-2">
+                    <label for="invAkhirBaik" class="simdes-label">13. Kondisi Baik</label>
+                    <input type="number" id="invAkhirBaik" name="akhirBaik" class="simdes-input tabular-nums" min="0" step="1" value="0" inputmode="numeric" data-field-label="Kondisi Baik Akhir Tahun">
+                  </div>
+                </div>
+                <div class="col-12 col-sm-6">
+                  <div class="simdes-field mb-2">
+                    <label for="invAkhirRusak" class="simdes-label">14. Kondisi Rusak</label>
+                    <input type="number" id="invAkhirRusak" name="akhirRusak" class="simdes-input tabular-nums" min="0" step="1" value="0" inputmode="numeric" data-field-label="Kondisi Rusak Akhir Tahun">
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- Dynamic Slot Inputs (Hidden unless officialLabel is set in RESERVED_COLUMNS_CONFIG) -->
+            <fieldset class="simdes-fieldset" id="dynamicReservedFieldsWrap" hidden>
+              <legend class="simdes-legend">Kolom Tambahan Terkonfigurasi</legend>
+              <div class="row g-3" id="dynamicReservedFieldsGrid"></div>
+            </fieldset>
+
+            <!-- F. Keterangan -->
+            <fieldset class="simdes-fieldset">
+              <legend class="simdes-legend">F. Keterangan</legend>
+              <div class="simdes-field mb-2">
+                <label for="invKeterangan" class="simdes-label">15. Keterangan Tambahan</label>
+                <textarea
+                  id="invKeterangan"
+                  name="keterangan"
+                  class="simdes-textarea"
+                  rows="2"
+                  style="min-block-size:74px;"
+                  placeholder="Catatan tambahan terkait lokasi, spesifikasi singkat, atau status barang..."
+                  data-field-label="Keterangan Tambahan"
+                ></textarea>
+              </div>
+            </fieldset>
+          </div>
+
+          <div class="modal-footer bg-light border-top px-4 py-3" style="border-color:var(--simdes-border) !important;">
+            <button type="button" class="btn-simdes-outline" data-bs-dismiss="modal">Batal</button>
+            <button type="submit" id="inventarisFormSubmitBtn" class="btn-simdes-primary">
+              <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i>
+              <span>Simpan Inventaris</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       MODAL DETAIL INVENTARIS DAN KEKAYAAN DESA
+       ======================================================================= -->
+  <div class="modal fade simdes-modal" id="inventarisDetailModal" tabindex="-1" aria-labelledby="inventarisDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title" id="inventarisDetailModalLabel">
+            <i class="fa-solid fa-boxes-stacked text-simdes-primary me-2" aria-hidden="true"></i>Detail Inventaris &amp; Kekayaan Desa
+          </h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup detail"></button>
+        </div>
+
+        <div class="modal-body p-4">
+          <div class="detail-sheet-box mb-3">
+            <div class="detail-item-label">Jenis Barang / Bangunan</div>
+            <div class="detail-item-value fs-6 fw-bold" style="color:var(--simdes-deep-green);" id="detJenisBarang">-</div>
+          </div>
+
+          <div class="detail-sheet-box mb-3">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <div class="detail-item-label mb-0">Asal Barang / Bangunan</div>
+              <span class="badge-simdes badge-simdes-primary tabular-nums" id="detTotalAsal">0 unit</span>
+            </div>
+            <div class="row g-2 pt-1">
+              <div class="col-6 col-md-4">
+                <small class="text-simdes-muted d-block">Dibeli Sendiri</small>
+                <strong class="tabular-nums" id="detAsalDibeli">0 unit</strong>
+              </div>
+              <div class="col-6 col-md-4">
+                <small class="text-simdes-muted d-block">Bantuan Pemerintah</small>
+                <strong class="tabular-nums" id="detAsalPemerintah">0 unit</strong>
+              </div>
+              <div class="col-6 col-md-4">
+                <small class="text-simdes-muted d-block">Bantuan Provinsi</small>
+                <strong class="tabular-nums" id="detAsalProvinsi">0 unit</strong>
+              </div>
+              <div class="col-6 col-md-4">
+                <small class="text-simdes-muted d-block">Bantuan Kabupaten/Kota</small>
+                <strong class="tabular-nums" id="detAsalKabKota">0 unit</strong>
+              </div>
+              <div class="col-6 col-md-4">
+                <small class="text-simdes-muted d-block">Sumbangan</small>
+                <strong class="tabular-nums" id="detAsalSumbangan">0 unit</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-12 col-md-6">
+              <div class="detail-sheet-box h-100">
+                <div class="detail-item-label">Keadaan Barang/Bangunan Awal Tahun</div>
+                <div class="d-flex justify-content-between mt-2">
+                  <span>Kondisi Baik:</span>
+                  <strong class="tabular-nums text-simdes-primary" id="detAwalBaik">0 unit</strong>
+                </div>
+                <div class="d-flex justify-content-between mt-1">
+                  <span>Kondisi Rusak:</span>
+                  <strong class="tabular-nums" style="color:var(--simdes-warning);" id="detAwalRusak">0 unit</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <div class="detail-sheet-box h-100">
+                <div class="detail-item-label">Keadaan Barang/Bangunan Akhir Tahun</div>
+                <div class="d-flex justify-content-between mt-2">
+                  <span>Kondisi Baik:</span>
+                  <strong class="tabular-nums text-simdes-primary" id="detAkhirBaik">0 unit</strong>
+                </div>
+                <div class="d-flex justify-content-between mt-1">
+                  <span>Kondisi Rusak:</span>
+                  <strong class="tabular-nums" style="color:var(--simdes-warning);" id="detAkhirRusak">0 unit</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-sheet-box mb-3">
+            <div class="detail-item-label mb-2">Penghapusan Barang dan Bangunan</div>
+            <div class="row g-2">
+              <div class="col-6 col-sm-3">
+                <small class="text-simdes-muted d-block">Rusak</small>
+                <strong class="tabular-nums" id="detHapusRusak">0 unit</strong>
+              </div>
+              <div class="col-6 col-sm-3">
+                <small class="text-simdes-muted d-block">Dijual</small>
+                <strong class="tabular-nums" id="detHapusDijual">0 unit</strong>
+              </div>
+              <div class="col-6 col-sm-3">
+                <small class="text-simdes-muted d-block">Disumbangkan</small>
+                <strong class="tabular-nums" id="detHapusDisumbangkan">0 unit</strong>
+              </div>
+              <div class="col-6 col-sm-3">
+                <small class="text-simdes-muted d-block">Tanggal Penghapusan</small>
+                <strong id="detTanggalHapus">-</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-sheet-box mb-3" id="detConfiguredReservedBox" hidden>
+            <div class="detail-item-label mb-2">Kolom Tambahan Terkonfigurasi</div>
+            <div class="row g-2" id="detConfiguredReservedGrid"></div>
+          </div>
+
+          <div class="detail-sheet-box">
+            <div class="detail-item-label">Keterangan</div>
+            <div class="detail-item-value fw-normal" id="detKeterangan">-</div>
+          </div>
+        </div>
+
+        <div class="modal-footer bg-light border-top px-4 py-3" style="border-color:var(--simdes-border) !important;">
+          <button type="button" class="btn-simdes-outline" data-bs-dismiss="modal">Tutup</button>
+          <button type="button" id="btnEditInventarisFromDetail" class="btn-simdes-primary">
+            <i class="fa-regular fa-pen-to-square" aria-hidden="true"></i>
+            <span>Edit Data Ini</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       MODAL KONFIRMASI HAPUS INVENTARIS
+       ======================================================================= -->
+  <div class="modal fade simdes-modal" id="inventarisDeleteModal" tabindex="-1" aria-labelledby="inventarisDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title" id="inventarisDeleteModalLabel" style="color:var(--simdes-danger);">
+            <i class="fa-solid fa-triangle-exclamation me-2" aria-hidden="true"></i>Konfirmasi Hapus Inventaris
+          </h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup konfirmasi"></button>
+        </div>
+        <div class="modal-body p-4" style="font-size:0.88rem;">
+          <p class="mb-2 text-simdes-muted">
+            Apakah Anda yakin ingin menghapus data barang/bangunan berikut dari <strong>Buku Inventaris dan Kekayaan Desa</strong>?
+          </p>
+          <div class="p-3 rounded-3" style="background-color:var(--simdes-danger-bg); border:1px solid rgba(184, 58, 50, 0.22);">
+            <div class="fw-bold" style="color:var(--simdes-danger);" id="deleteInventarisTargetName">-</div>
+            <div class="mt-1 fw-medium" style="color:var(--simdes-text); font-size:0.81rem;" id="deleteInventarisTargetMeta">-</div>
+          </div>
+        </div>
+        <div class="modal-footer border-0 pt-0 px-4 pb-4">
+          <button type="button" class="btn-simdes-outline" data-bs-dismiss="modal">Batal</button>
+          <button
+            type="button"
+            id="confirmDeleteInventarisBtn"
+            class="btn-simdes-primary"
+            style="background-color:var(--simdes-danger); border-color:var(--simdes-danger);"
+          >
+            <i class="fa-regular fa-trash-can" aria-hidden="true"></i>
+            <span>Ya, Hapus Data</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       MODAL PROFIL PENGGUNA & KELUAR SISTEM (Konsisten Global)
+       ======================================================================= -->
+  <div class="modal fade simdes-modal" id="userProfileModal" tabindex="-1" aria-labelledby="userProfileModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="userProfileModalLabel">
+            <i class="fa-regular fa-id-card text-simdes-primary me-2" aria-hidden="true"></i>Profil Aparatur Pengguna
+          </h3>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+        </div>
+        <div class="modal-body">
+          <div class="d-flex align-items-center gap-3 pb-3 mb-3 border-bottom" style="border-color:var(--simdes-border) !important;">
+            <div class="sidebar-user-avatar" style="width:54px; height:54px; flex-basis:54px; font-size:1.1rem;" data-user-initials>BS</div>
+            <div>
+              <div class="fw-bolder fs-6" style="color:var(--simdes-deep-green);" data-user-fullname>Budi Santoso, S.AP</div>
+              <div class="badge-simdes badge-simdes-primary mt-1" data-user-role>Sekretaris Desa</div>
+            </div>
+          </div>
+          <div class="village-meta-table">
+            <div class="village-meta-row">
+              <span class="village-meta-key">Nama Pengguna</span>
+              <span class="village-meta-val" data-user-username>sekdes.tiaro</span>
+            </div>
+            <div class="village-meta-row">
+              <span class="village-meta-key">NIPD (Dummy)</span>
+              <span class="village-meta-val tabular-nums" data-user-nipd>19880412 201503 1 002</span>
+            </div>
+            <div class="village-meta-row">
+              <span class="village-meta-key">Unit Kerja</span>
+              <span class="village-meta-val" data-user-unit>Sekretariat Pemerintah Desa Tiaro</span>
+            </div>
+            <div class="village-meta-row">
+              <span class="village-meta-key">Hak Akses</span>
+              <span class="village-meta-val">Koordinator Administrasi Desa</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn-simdes-outline" data-bs-dismiss="modal">Tutup</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade simdes-modal" id="logoutConfirmModal" tabindex="-1" aria-labelledby="logoutConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="logoutConfirmModalLabel">Konfirmasi Keluar</h3>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+        </div>
+        <div class="modal-body" style="font-size:0.875rem; color:var(--simdes-text-muted);">
+          Apakah Anda yakin ingin mengakhiri sesi kerja pada <strong>SIMDES Desa Tiaro</strong> dan kembali ke halaman masuk?
+        </div>
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn-simdes-outline" data-bs-dismiss="modal">Batal</button>
+          <button type="button" id="confirmLogoutBtn" class="btn-simdes-primary" style="background-color:var(--simdes-danger); border-color:var(--simdes-danger);">
+            <i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i>
+            <span>Ya, Keluar</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap 5.3 JS Bundle CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+  <!-- SIMDES Vanilla JS Modules -->
+  <script src="../../assets/js/app.js"></script>
+  <script src="../../assets/js/sidebar.js"></script>
+  <script src="../../assets/js/forms.js"></script>
+  <script src="../../assets/js/table.js"></script>
+  <script src="../../assets/js/buku-inventaris-dan-kekayaan-desa.js"></script>
+</body>
+</html>

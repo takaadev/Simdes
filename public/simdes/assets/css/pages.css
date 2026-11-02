@@ -1,0 +1,767 @@
+/* ==========================================================================
+   SIMDES DESA TIARO — Page-Specific Styles
+   1. Halaman Login (login.html)
+   2. Halaman Dashboard (pages/dashboard.html)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. HALAMAN LOGIN (login.html)
+   -------------------------------------------------------------------------- */
+.login-page {
+  min-block-size: 100dvh;
+  display: grid;
+  grid-template-columns: 1.08fr 1fr;
+  background-color: var(--simdes-bg);
+}
+
+/* Left Civic Institutional Panel */
+.login-showcase {
+  position: relative;
+  overflow: clip;
+  background: linear-gradient(155deg, var(--simdes-deep-green) 0%, var(--simdes-primary) 58%, #1D5D48 100%);
+  color: #FFFFFF;
+  padding: clamp(2.25rem, 4vw, 3.75rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+/* Subtle Architectural Nusantara Geometric Pattern */
+.login-showcase::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.06;
+  pointer-events: none;
+  background-image:
+    linear-gradient(30deg, #D9AE52 12%, transparent 12.5%, transparent 87%, #D9AE52 87.5%, #D9AE52),
+    linear-gradient(150deg, #D9AE52 12%, transparent 12.5%, transparent 87%, #D9AE52 87.5%, #D9AE52),
+    linear-gradient(30deg, #D9AE52 12%, transparent 12.5%, transparent 87%, #D9AE52 87.5%, #D9AE52),
+    linear-gradient(150deg, #D9AE52 12%, transparent 12.5%, transparent 87%, #D9AE52 87.5%, #D9AE52);
+  background-size: 64px 112px;
+  background-position: 0 0, 0 0, 32px 56px, 32px 56px;
+}
+
+.login-showcase::after {
+  content: "";
+  position: absolute;
+  inset-inline-end: -120px;
+  inset-block-end: -120px;
+  inline-size: 380px;
+  block-size: 380px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(217, 174, 82, 0.22) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.login-showcase-top,
+.login-showcase-center,
+.login-showcase-bottom {
+  position: relative;
+  z-index: 1;
+}
+
+.login-official-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.42rem 0.9rem;
+  border-radius: 999px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(217, 174, 82, 0.38);
+  color: var(--simdes-accent);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.login-crest-lockup {
+  display: flex;
+  align-items: center;
+  gap: 1.15rem;
+  margin-block-end: 1.75rem;
+}
+
+.login-crest-img {
+  inline-size: 72px;
+  block-size: 72px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.28));
+}
+
+.login-headline {
+  font-size: clamp(1.85rem, 2.7vw, 2.5rem);
+  font-weight: 800;
+  color: #FFFFFF;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  margin-block-end: 1rem;
+}
+
+.login-headline span {
+  color: var(--simdes-accent);
+}
+
+.login-lead {
+  color: rgba(244, 247, 245, 0.82);
+  font-size: 0.98rem;
+  max-inline-size: 52ch;
+  margin-block-end: 2rem;
+}
+
+.login-pillars {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+  max-inline-size: 540px;
+}
+
+.login-pillar-item {
+  background-color: rgba(16, 56, 45, 0.48);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: var(--radius-md);
+  padding: 0.95rem 1.05rem;
+  backdrop-filter: blur(6px);
+}
+
+.login-pillar-icon {
+  color: var(--simdes-accent);
+  font-size: 1rem;
+  margin-block-end: 0.45rem;
+}
+
+.login-pillar-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin-block-end: 0.15rem;
+}
+
+.login-pillar-desc {
+  font-size: 0.76rem;
+  color: rgba(244, 247, 245, 0.72);
+  margin: 0;
+  line-height: 1.45;
+}
+
+.login-showcase-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-block-start: 1.25rem;
+  border-block-start: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 0.78rem;
+  color: rgba(244, 247, 245, 0.7);
+}
+
+/* Right Form Panel */
+.login-panel-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1.5rem, 4vw, 3rem);
+  background-color: var(--simdes-bg);
+}
+
+.login-card {
+  inline-size: 100%;
+  max-inline-size: 440px;
+  background-color: var(--simdes-surface);
+  border: 1px solid var(--simdes-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: clamp(1.65rem, 3.2vw, 2.35rem);
+}
+
+.login-mobile-brand {
+  display: none;
+  align-items: center;
+  gap: 0.85rem;
+  padding-block-end: 1.2rem;
+  margin-block-end: 1.2rem;
+  border-block-end: 1px solid var(--simdes-border);
+}
+
+.login-card-eyebrow {
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--simdes-secondary);
+  margin-block-end: 0.35rem;
+}
+
+.login-card-title {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--simdes-deep-green);
+  margin-block-end: 0.35rem;
+}
+
+.login-card-subtitle {
+  font-size: 0.875rem;
+  color: var(--simdes-text-muted);
+  margin-block-end: 1.5rem;
+}
+
+.login-alert {
+  display: none;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.75rem 0.95rem;
+  border-radius: var(--radius-sm);
+  margin-block-end: 1.15rem;
+  font-size: 0.83rem;
+  font-weight: 500;
+}
+
+.login-alert.show {
+  display: flex;
+}
+
+.login-alert-error {
+  background-color: var(--simdes-danger-bg);
+  border: 1px solid rgba(184, 58, 50, 0.28);
+  color: var(--simdes-danger);
+}
+
+.login-alert-success {
+  background-color: var(--simdes-success-bg);
+  border: 1px solid rgba(30, 111, 80, 0.28);
+  color: var(--simdes-success);
+}
+
+.login-demo-box {
+  margin-block-start: 1.35rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--simdes-bg);
+  border: 1px dashed var(--simdes-border);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+}
+
+.login-demo-text {
+  font-size: 0.78rem;
+  color: var(--simdes-text-muted);
+  line-height: 1.45;
+}
+
+.login-demo-fill-btn {
+  padding: 0.34rem 0.72rem;
+  border-radius: var(--radius-xs);
+  border: 1px solid rgba(23, 76, 58, 0.22);
+  background-color: var(--simdes-primary-soft);
+  color: var(--simdes-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.login-demo-fill-btn:hover {
+  background-color: var(--simdes-primary);
+  color: #FFFFFF;
+}
+
+@media (max-width: 991.98px) {
+  .login-page {
+    grid-template-columns: 1fr;
+  }
+
+  .login-showcase {
+    display: none;
+  }
+
+  .login-panel-wrap {
+    justify-content: flex-start;
+    padding-block-start: 1.75rem;
+  }
+
+  .login-mobile-brand {
+    display: flex;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   2. HALAMAN DASHBOARD (pages/dashboard.html)
+   -------------------------------------------------------------------------- */
+
+/* Greeting Hero Banner */
+.dashboard-welcome {
+  position: relative;
+  overflow: clip;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(128deg, var(--simdes-deep-green) 0%, var(--simdes-primary) 62%, #246650 100%);
+  color: #FFFFFF;
+  padding: clamp(1.35rem, 2.5vw, 1.9rem) clamp(1.35rem, 2.8vw, 2.15rem);
+  margin-block-end: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(217, 174, 82, 0.22);
+}
+
+.dashboard-welcome::before {
+  content: "";
+  position: absolute;
+  inset-inline-end: -45px;
+  inset-block-start: -65px;
+  inline-size: 260px;
+  block-size: 260px;
+  border-radius: 50%;
+  border: 34px solid rgba(217, 174, 82, 0.1);
+  pointer-events: none;
+}
+
+.dashboard-welcome::after {
+  content: "";
+  position: absolute;
+  inset-inline-end: 90px;
+  inset-block-end: -95px;
+  inline-size: 210px;
+  block-size: 210px;
+  border-radius: 50%;
+  border: 24px solid rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+}
+
+.welcome-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+}
+
+.welcome-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--simdes-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-block-end: 0.4rem;
+}
+
+.welcome-title {
+  font-size: clamp(1.25rem, 2vw, 1.58rem);
+  font-weight: 800;
+  color: #FFFFFF;
+  margin-block-end: 0.35rem;
+}
+
+.welcome-desc {
+  margin: 0;
+  font-size: 0.88rem;
+  color: rgba(244, 247, 245, 0.82);
+  max-inline-size: 64ch;
+}
+
+.welcome-meta-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.welcome-pill {
+  background-color: rgba(16, 56, 45, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 0.95rem;
+  min-inline-size: 145px;
+}
+
+.welcome-pill-label {
+  display: block;
+  font-size: 0.69rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(244, 247, 245, 0.65);
+}
+
+.welcome-pill-val {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin-block-start: 2px;
+}
+
+/* Interactive SVG Charts */
+.chart-stage {
+  position: relative;
+  inline-size: 100%;
+  min-block-size: 270px;
+}
+
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-block-end: 0.85rem;
+  font-size: 0.8rem;
+  color: var(--simdes-text-muted);
+}
+
+.chart-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-weight: 600;
+}
+
+.chart-legend-swatch {
+  inline-size: 11px;
+  block-size: 11px;
+  border-radius: 3px;
+}
+
+.svg-bar-group {
+  cursor: pointer;
+}
+
+.svg-bar-rect {
+  transition: opacity var(--transition-fast), filter var(--transition-fast);
+}
+
+.svg-bar-group:hover .svg-bar-rect {
+  filter: brightness(1.08);
+}
+
+.chart-tooltip {
+  position: absolute;
+  pointer-events: none;
+  z-index: 20;
+  background-color: var(--simdes-deep-green);
+  color: #FFFFFF;
+  padding: 0.55rem 0.8rem;
+  border-radius: var(--radius-xs);
+  border: 1px solid rgba(217, 174, 82, 0.45);
+  box-shadow: var(--shadow-md);
+  font-size: 0.76rem;
+  line-height: 1.45;
+  opacity: 0;
+  transform: translate(-50%, -108%);
+  transition: opacity 120ms ease;
+  white-space: nowrap;
+}
+
+.chart-tooltip.visible {
+  opacity: 1;
+}
+
+/* Donut Composition Layout */
+.donut-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.15rem;
+}
+
+.donut-svg-box {
+  position: relative;
+  inline-size: 196px;
+  block-size: 196px;
+}
+
+.donut-center-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  pointer-events: none;
+}
+
+.donut-total-num {
+  font-size: 1.42rem;
+  font-weight: 800;
+  color: var(--simdes-deep-green);
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.donut-total-caption {
+  font-size: 0.72rem;
+  color: var(--simdes-text-muted);
+  font-weight: 600;
+  margin-block-start: 2px;
+}
+
+.donut-slice {
+  cursor: pointer;
+  transition: stroke-width 180ms ease, opacity 180ms ease;
+}
+
+.donut-slice:hover {
+  stroke-width: 26;
+}
+
+.dusun-breakdown-list {
+  inline-size: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.dusun-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.5rem 0.65rem;
+  border-radius: var(--radius-xs);
+  background-color: var(--simdes-bg);
+  border: 1px solid transparent;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.dusun-row:hover,
+.dusun-row.active-dusun {
+  background-color: var(--simdes-primary-soft);
+  border-color: rgba(23, 76, 58, 0.2);
+}
+
+/* Book Register Summary Lists (Adm. Umum & Adm. Penduduk) */
+.register-summary-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.register-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem;
+  padding: 0.68rem 0.85rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--simdes-border);
+  background-color: var(--simdes-surface);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.register-row:hover {
+  background-color: var(--simdes-bg);
+  border-color: rgba(71, 117, 104, 0.38);
+}
+
+.register-num {
+  inline-size: 28px;
+  block-size: 28px;
+  flex: 0 0 28px;
+  border-radius: 7px;
+  background-color: var(--simdes-primary-soft);
+  color: var(--simdes-primary);
+  font-size: 0.75rem;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.register-info {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+}
+
+.register-name {
+  font-size: 0.845rem;
+  font-weight: 600;
+  color: var(--simdes-text);
+  margin: 0;
+  white-space: nowrap;
+  overflow: clip;
+  text-overflow: ellipsis;
+}
+
+.register-updated {
+  font-size: 0.73rem;
+  color: var(--simdes-text-muted);
+}
+
+.register-count {
+  text-align: end;
+  flex-shrink: 0;
+}
+
+.register-count-val {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--simdes-deep-green);
+  font-variant-numeric: tabular-nums;
+}
+
+.register-count-unit {
+  font-size: 0.69rem;
+  color: var(--simdes-text-muted);
+}
+
+/* Demographic Mini Strip inside Adm. Penduduk Card */
+.mutasi-mini-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.6rem;
+  margin-block-end: 1rem;
+}
+
+.mutasi-mini-box {
+  background-color: var(--simdes-bg);
+  border: 1px solid var(--simdes-border);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 0.7rem;
+  text-align: center;
+}
+
+.mutasi-mini-val {
+  display: block;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--simdes-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.mutasi-mini-lbl {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--simdes-text-muted);
+}
+
+@media (max-width: 575.98px) {
+  .mutasi-mini-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Recent Activity Timeline */
+.activity-timeline {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.95rem;
+  padding-inline-start: 0.25rem;
+}
+
+.activity-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  position: relative;
+}
+
+.activity-item:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: 17px;
+  inset-block-start: 38px;
+  inset-block-end: -14px;
+  inline-size: 1.5px;
+  background-color: var(--simdes-border);
+}
+
+.activity-dot {
+  inline-size: 36px;
+  block-size: 36px;
+  flex: 0 0 36px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.82rem;
+  z-index: 1;
+}
+
+.activity-body {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  padding-block-end: 0.2rem;
+}
+
+.activity-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--simdes-text);
+  margin-block-end: 0.18rem;
+}
+
+.activity-meta {
+  font-size: 0.75rem;
+  color: var(--simdes-text-muted);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Village Governance Profile Card */
+.village-meta-table {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.village-meta-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block-end: 0.55rem;
+  border-block-end: 1px dashed var(--simdes-border);
+  font-size: 0.83rem;
+}
+
+.village-meta-row:last-child {
+  border-block-end: 0;
+  padding-block-end: 0;
+}
+
+.village-meta-key {
+  color: var(--simdes-text-muted);
+  font-weight: 500;
+}
+
+.village-meta-val {
+  color: var(--simdes-text);
+  font-weight: 700;
+  text-align: end;
+}
+
+.compliance-meter {
+  background-color: var(--simdes-bg);
+  border: 1px solid var(--simdes-border);
+  border-radius: var(--radius-sm);
+  padding: 0.9rem 1rem;
+  margin-block-start: 1rem;
+}
+
+.compliance-track {
+  block-size: 8px;
+  border-radius: 999px;
+  background-color: #DFE6E2;
+  overflow: clip;
+  margin-block: 0.5rem;
+}
+
+.compliance-fill {
+  block-size: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--simdes-primary) 0%, var(--simdes-accent) 100%);
+}
+

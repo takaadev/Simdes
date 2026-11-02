@@ -2,19 +2,48 @@
 
 namespace App\Http\Controllers\Public;
 
+use App\Enums\RegulationTypeList;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\VillageRegulation\StoreVillageRegulationRequest;
 use App\Http\Requests\VillageRegulation\UpdateVillageRegulationRequest;
 use App\Models\VillageRegulation;
+use App\Services\VillageRegulationService;
+use Yajra\DataTables\Facades\DataTables;
 
 class VillageRegulationController extends Controller
 {
+     public function __construct(
+        protected VillageRegulationService $service
+    ) {}
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         return view('pages.villageregulation.index');
+    }
+
+    public function data()
+    {
+        $query = $this->service->getData();
+
+        return DataTables::eloquent($query)
+            ->addIndexColumn()
+            ->editColumn('regulation_type', function ($row) {
+                return $row->regulation_type?->label() ?? '-';
+            })->editColumn('stipulation_date', function ($row) {
+                return $row->stipulation_date?->format('d-m-Y') ?? '-';
+            })
+            ->editColumn('promulgation_date', function ($row) {
+                return $row->promulgation_date?->locale('id')->translatedFormat('d F Y') ?? '-';
+            })
+            ->addColumn('action', function ($row) {
+                return view('pages.villageregulation.actions', [
+                    'row' => $row,
+                ])->render();
+            })
+            ->rawColumns(['action'])
+            ->toJson();
     }
 
     /**

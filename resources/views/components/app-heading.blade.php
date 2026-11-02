@@ -1,26 +1,39 @@
+
 <div class="page-header">
     <div>
-        <nav aria-label="Breadcrumb Halaman" class="mb-2">
+        {{-- Breadcrumb --}}
+        <nav aria-label="Breadcrumb Halaman" class="mb-0">
             <ol class="simdes-breadcrumb">
-                <li><a href="dashboard.html"><i class="fa-solid fa-house-chimney me-1" aria-hidden="true"></i>Beranda</a>
+                <li>
+                    <a href="{{ route('dashboard') }}">
+                        <i class="fa-solid fa-house-chimney me-1" aria-hidden="true"></i>
+                        {{ config('app.name') ?: 'SIMDES' }}
+                    </a>
                 </li>
-                <li class="active" aria-current="page">Dashboard</li>
+
+                @foreach ($breadcrumbs as $breadcrumb)
+                    <li @if ($loop->last) class="active" aria-current="page" @endif>
+                        {{ $breadcrumb['label'] }}
+                    </li>
+                @endforeach
             </ol>
         </nav>
-        <h1 class="page-header-title">Dashboard Pemerintahan Desa</h1>
-        <p class="page-header-desc">
-            Ringkasan eksekutif penyelenggaraan administrasi umum dan kependudukan Kantor Desa
-            Tiaro.
+
+        {{-- Judul Halaman --}}
+        <h4 class="mb-0 page-header-title">
+            {{ $title }}
+        </h4>
+
+        {{-- Deskripsi Halaman --}}
+        <p class="page-header-desc mt-0">
+            {{ $description }}
         </p>
     </div>
-    <div class="page-header-actions">
-        <button type="button" id="refreshDashboardBtn" class="btn-simdes-outline">
-            <i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i>
-            <span>Muat Ulang</span>
-        </button>
-        <button type="button" id="printDashboardSummaryBtn" class="btn-simdes-primary">
-            <i class="fa-solid fa-print" aria-hidden="true"></i>
-            <span>Cetak Ringkasan</span>
-        </button>
-    </div>
+
+    {{-- Tombol Aksi --}}
+    @if (isset($actions))
+        <div class="page-header-actions">
+            {{ $actions }}
+        </div>
+    @endif
 </div>

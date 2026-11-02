@@ -1,4 +1,4 @@
-<footer class="app-footer">
+<footer class="app-footer fixed-bottom">
     <div>
         <strong>SIMDES Desa Tiaro</strong> &mdash; Sistem Informasi Manajemen Desa
     </div>

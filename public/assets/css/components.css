@@ -16,7 +16,7 @@
   font-weight: 600;
   font-size: 0.875rem;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--simdes-primary);
+  border: 1px solid var(--simdes-primary); 
   background-color: var(--simdes-primary);
   color: #FFFFFF;
   box-shadow: 0 2px 6px rgba(23, 76, 58, 0.18);

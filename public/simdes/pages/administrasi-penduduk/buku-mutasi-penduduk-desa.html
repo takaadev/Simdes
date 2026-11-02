@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buku Mutasi Penduduk Desa — SIMDES Desa Tiaro</title>
+  <meta name="description" content="Buku Mutasi Penduduk Desa digunakan untuk mencatat perubahan jumlah penduduk dalam suatu periode, meliputi penambahan penduduk karena kedatangan serta pengurangan penduduk karena pindah atau meninggal dunia.">
+  <link rel="icon" type="image/png" href="../../assets/images/logo.png">
+
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap 5.3 CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+  <!-- Font Awesome 6 CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+  <!-- SIMDES Global & Component Stylesheets -->
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <link rel="stylesheet" href="../../assets/css/components.css">
+  <link rel="stylesheet" href="../../assets/css/pages.css">
+</head>
+<body data-root-prefix="../../" data-active-nav="buku-mutasi-penduduk-desa">
+  <a href="#mainContent" class="skip-link">Lewati ke konten utama</a>
+
+  <div class="app-shell">
+    <!-- =====================================================================
+         SIDEBAR NAVIGATION (Consistent Global Structure)
+         ===================================================================== -->
+    <aside class="app-sidebar" id="appSidebar" aria-label="Navigasi Utama SIMDES">
+      <div class="sidebar-brand">
+        <img src="../../assets/images/logo.png" alt="Lambang Desa Tiaro" class="sidebar-brand-logo" width="42" height="42">
+        <div class="sidebar-brand-text">
+          <span class="sidebar-brand-title">SIMDES TIARO</span>
+          <span class="sidebar-brand-subtitle">Pemerintah Desa Tiaro</span>
+        </div>
+        <button
+          type="button"
+          id="sidebarCloseMobileBtn"
+          class="sidebar-logout-btn d-lg-none ms-auto"
+          aria-label="Tutup menu navigasi"
+        >
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav-scroll" aria-label="Menu Buku Administrasi">
+        <div class="sidebar-section-label">DASHBOARD</div>
+        <ul class="sidebar-menu mb-2">
+          <li>
+            <a
+              href="../dashboard.html"
+              class="sidebar-link"
+              data-sidebar-tooltip="Dashboard"
+            >
+              <span class="sidebar-link-icon">
+                <i class="fa-solid fa-table-columns" aria-hidden="true"></i>
+              </span>
+              <span class="sidebar-link-text">Dashboard</span>
+            </a>
+          </li>
+        </ul>
+
+        <div class="sidebar-section-label">MODUL ADMINISTRASI</div>
+        <ul class="sidebar-menu">
+          <!-- Group A: Administrasi Umum -->
+          <li>
+            <button
+              type="button"
+              class="sidebar-link"
+              data-sidebar-group="umum"
+              data-sidebar-tooltip="Administrasi Umum (9 Buku)"
+              aria-expanded="false"
+              aria-controls="sidebarGroupUmumInfo"
+            >
+              <span class="sidebar-link-icon">
+                <i class="fa-solid fa-book-bookmark" aria-hidden="true"></i>
+              </span>
+              <span class="sidebar-link-text">Administrasi Umum</span>
+              <span class="sidebar-badge">9</span>
+              <i class="fa-solid fa-chevron-down sidebar-chevron" aria-hidden="true"></i>
+            </button>
+            <div id="sidebarGroupUmumInfo" class="sidebar-group-panel" hidden></div>
+          </li>
+
+          <!-- Group Arsip Surat -->
+          <li>
+            <button
+              type="button"
+              class="sidebar-link"
+              data-sidebar-group="arsip-surat"
+              data-sidebar-tooltip="Arsip Surat"
+              aria-expanded="false"
+              aria-controls="sidebarGroupArsipInfo"
+            >
+              <span class="sidebar-link-icon">
+                <i class="fa-solid fa-folder-open" aria-hidden="true"></i>
+              </span>
+              <span class="sidebar-link-text">Arsip Surat</span>
+              <span class="sidebar-badge">1</span>
+              <i class="fa-solid fa-chevron-down sidebar-chevron" aria-hidden="true"></i>
+            </button>
+            <div id="sidebarGroupArsipInfo" class="sidebar-group-panel" hidden></div>
+          </li>
+
+          <!-- Group B: Administrasi Penduduk -->
+          <li>
+            <button
+              type="button"
+              class="sidebar-link active"
+              data-sidebar-group="penduduk"
+              data-sidebar-tooltip="Administrasi Penduduk (5 Buku)"
+              aria-expanded="true"
+              aria-controls="sidebarGroupPendudukInfo"
+            >
+              <span class="sidebar-link-icon">
+                <i class="fa-solid fa-users" aria-hidden="true"></i>
+              </span>
+              <span class="sidebar-link-text">Administrasi Penduduk</span>
+              <span class="sidebar-badge">5</span>
+              <i class="fa-solid fa-chevron-down sidebar-chevron" aria-hidden="true"></i>
+            </button>
+            <div id="sidebarGroupPendudukInfo" class="sidebar-group-panel"></div>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user-card">
+          <button
+            type="button"
+            class="border-0 bg-transparent p-0 d-flex align-items-center gap-2 text-start flex-grow-1 min-w-0"
+            data-action="open-profile-modal"
+            data-sidebar-tooltip="Profil Pengguna"
+            aria-label="Lihat profil pengguna"
+          >
+            <span class="sidebar-user-avatar" data-user-initials>BS</span>
+            <span class="sidebar-user-meta">
+              <span class="sidebar-user-name" data-user-fullname>Budi Santoso, S.AP</span>
+              <span class="sidebar-user-role" data-user-role>Sekretaris Desa</span>
+            </span>
+          </button>
+          <button
+            type="button"
+            class="sidebar-logout-btn"
+            data-action="confirm-logout"
+            title="Keluar Sistem"
+            aria-label="Keluar dari SIMDES"
+          >
+            <i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Mobile Offcanvas Backdrop -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+
+    <!-- =====================================================================
+         MAIN WORKSPACE (Topbar + Main Content + Footer)
+         ===================================================================== -->
+    <div class="app-main" id="appMainWrapper">
+      <!-- TOPBAR -->
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button
+            type="button"
+            id="sidebarToggleBtn"
+            class="btn-icon-topbar"
+            aria-label="Ciutkan panel navigasi samping"
+            aria-controls="appSidebar"
+            aria-expanded="true"
+          >
+            <i class="fa-solid fa-bars-staggered" aria-hidden="true"></i>
+          </button>
+
+          <!-- Topbar Breadcrumb -->
+          <nav aria-label="Breadcrumb Topbar" class="d-none d-md-block">
+            <ol class="simdes-breadcrumb">
+              <li><a href="../dashboard.html">Dashboard</a></li>
+              <li><span>Administrasi Penduduk</span></li>
+              <li class="active" aria-current="page">Buku Mutasi Penduduk Desa</li>
+            </ol>
+          </nav>
+        </div>
+
+        <div class="topbar-right">
+          <!-- Global Quick Search -->
+          <div class="topbar-search d-none d-sm-block">
+            <i class="fa-solid fa-magnifying-glass topbar-search-icon" aria-hidden="true"></i>
+            <input
+              type="search"
+              id="globalSearchInput"
+              class="topbar-search-input"
+              placeholder="Cari ringkasan atau modul..."
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="off"
+              spellcheck="false"
+              aria-label="Pencarian cepat halaman"
+            >
+            <kbd class="topbar-search-kbd d-none d-lg-inline-block">Ctrl K</kbd>
+            <div id="globalSearchResults" class="topbar-search-results" role="listbox" aria-label="Hasil pencarian cepat"></div>
+          </div>
+
+          <span class="fiscal-badge d-none d-xl-inline-flex" title="Tahun Anggaran Pemerintahan Desa Aktif">
+            <i class="fa-regular fa-calendar-check" aria-hidden="true"></i>
+            TA 2026
+          </span>
+
+          <!-- Notifications Dropdown -->
+          <div class="dropdown">
+            <button
+              type="button"
+              class="btn-icon-topbar"
+              id="notifDropdownBtn"
+              data-bs-toggle="dropdown"
+              data-bs-auto-close="outside"
+              aria-expanded="false"
+              aria-label="Notifikasi administrasi desa (3 belum dibaca)"
+            >
+              <i class="fa-regular fa-bell" aria-hidden="true"></i>
+              <span class="notif-dot" id="topbarNotifDot" aria-hidden="true"></span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end simdes-dropdown-menu simdes-notif-menu" aria-labelledby="notifDropdownBtn">
+              <div class="notif-header">
+                <div>
+                  <span class="fw-bold" style="font-size:0.86rem; color:var(--simdes-text);">Pemberitahuan Sistem</span>
+                  <span id="notifCountBadge" class="badge-simdes badge-simdes-accent ms-1">3 Baru</span>
+                </div>
+                <button type="button" id="markAllNotifReadBtn" class="border-0 bg-transparent p-0 fw-semibold text-simdes-primary" style="font-size:0.76rem;">
+                  Tandai dibaca
+                </button>
+              </div>
+              <div class="notif-list">
+                <div class="notif-item unread">
+                  <div class="notif-icon stat-icon-primary">
+                    <i class="fa-solid fa-people-arrows" aria-hidden="true"></i>
+                  </div>
+                  <div class="min-w-0">
+                    <div class="fw-semibold" style="font-size:0.81rem; color:var(--simdes-text);">
+                      Buku Mutasi Penduduk Desa (Kode B.2) siap digunakan
+                    </div>
+                    <div class="text-simdes-muted" style="font-size:0.75rem;">
+                      Struktur tepat 13 kolom resmi Administrasi Penduduk &amp; filter periode bulanan aktif.
+                    </div>
+                    <small class="text-simdes-muted" style="font-size:0.7rem;">Baru saja</small>
+                  </div>
+                </div>
+                <div class="notif-item unread">
+                  <div class="notif-icon stat-icon-accent">
+                    <i class="fa-solid fa-calendar-check" aria-hidden="true"></i>
+                  </div>
+                  <div class="min-w-0">
+                    <div class="fw-semibold" style="font-size:0.81rem; color:var(--simdes-text);">
+                      Rekapitulasi Mutasi Bulanan Desa Tiaro
+                    </div>
+                    <div class="text-simdes-muted" style="font-size:0.75rem;">
+                      Pencatatan penduduk datang, pindah, dan meninggal dunia per bulan &amp; tahun.
+                    </div>
+                    <small class="text-simdes-muted" style="font-size:0.7rem;">Hari ini</small>
+                  </div>
+                </div>
+                <div class="notif-item unread">
+                  <div class="notif-icon stat-icon-secondary">
+                    <i class="fa-solid fa-address-book" aria-hidden="true"></i>
+                  </div>
+                  <div class="min-w-0">
+                    <div class="fw-semibold" style="font-size:0.81rem; color:var(--simdes-text);">
+                      Sinkronisasi Administrasi Kependudukan
+                    </div>
+                    <div class="text-simdes-muted" style="font-size:0.75rem;">
+                      Pastikan perubahan mutasi tercatat sesuai tanggal kejadian pada periode berjalan.
+                    </div>
+                    <small class="text-simdes-muted" style="font-size:0.7rem;">Hari ini, 08:30 WITA</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- User Profile Dropdown -->
+          <div class="dropdown">
+            <button
+              type="button"
+              class="topbar-profile-btn"
+              id="userDropdownBtn"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+              aria-label="Menu profil pengguna"
+            >
+              <span class="topbar-avatar" data-user-initials>BS</span>
+              <span class="topbar-profile-info d-none d-md-block">
+                <span class="topbar-profile-name" data-user-fullname>Budi Santoso, S.AP</span>
+                <span class="topbar-profile-role" data-user-role>Sekretaris Desa</span>
+              </span>
+              <i class="fa-solid fa-chevron-down text-simdes-muted d-none d-md-inline-block" style="font-size:0.7rem;" aria-hidden="true"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end simdes-dropdown-menu" aria-labelledby="userDropdownBtn">
+              <li class="px-3 py-2 border-bottom mb-1" style="border-color:var(--simdes-border) !important;">
+                <div class="fw-bold" style="font-size:0.84rem;" data-user-fullname>Budi Santoso, S.AP</div>
+                <div class="text-simdes-muted" style="font-size:0.74rem;" data-user-unit>Sekretariat Pemerintah Desa Tiaro</div>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#userProfileModal" data-action="open-profile-modal">
+                  <i class="fa-regular fa-id-badge text-simdes-secondary" aria-hidden="true"></i>
+                  Profil Aparatur
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="../dashboard.html">
+                  <i class="fa-solid fa-table-columns text-simdes-secondary" aria-hidden="true"></i>
+                  Kembali ke Dashboard
+                </a>
+              </li>
+              <li><hr class="dropdown-divider" style="border-color:var(--simdes-border);"></li>
+              <li>
+                <a class="dropdown-item text-danger" href="../../login.html" data-action="confirm-logout">
+                  <i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i>
+                  Keluar Sistem
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </header>
+
+      <!-- MAIN CONTENT -->
+      <main class="app-content" id="mainContent">
+        <div id="bukuMutasiPendudukPageRoot">
+          <!-- Page Heading & Breadcrumb -->
+          <div class="page-header">
+            <div>
+              <nav aria-label="Breadcrumb Halaman" class="mb-2">
+                <ol class="simdes-breadcrumb">
+                  <li>
+                    <a href="../dashboard.html">
+                      <i class="fa-solid fa-house-chimney me-1" aria-hidden="true"></i>Dashboard
+                    </a>
+                  </li>
+                  <li><span>Administrasi Penduduk</span></li>
+                  <li class="active" aria-current="page">Buku Mutasi Penduduk Desa</li>
+                </ol>
+              </nav>
+              <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+                <span class="badge-simdes badge-simdes-primary">Kode B.2 &bull; B. Administrasi Penduduk</span>
+              </div>
+              <h1 class="page-header-title">Buku Mutasi Penduduk Desa</h1>
+              <p class="page-header-desc">
+                Buku Mutasi Penduduk Desa digunakan untuk mencatat perubahan jumlah penduduk dalam suatu periode, meliputi penambahan penduduk karena kedatangan serta pengurangan penduduk karena pindah atau meninggal dunia.
+              </p>
+            </div>
+
+            <div class="page-header-actions">
+              <button type="button" id="btnCetakMutasi" class="btn-simdes-outline">
+                <i class="fa-solid fa-print" aria-hidden="true"></i>
+                <span>Cetak Buku</span>
+              </button>
+              <button type="button" id="btnTambahMutasi" class="btn-simdes-primary">
+                <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                <span>Tambah Mutasi</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Sample Simulation Data Notice -->
+          <div class="sample-data-banner" role="note" aria-label="Keterangan data contoh fiktif">
+            <div class="d-flex align-items-start align-items-md-center gap-2">
+              <i class="fa-solid fa-circle-info mt-1 mt-md-0" aria-hidden="true"></i>
+              <span>
+                <strong>Mode Simulasi Antarmuka:</strong> Seluruh identitas warga, asal kedatangan, tujuan pindah, dan riwayat mutasi merupakan <em>data contoh fiktif</em> (bukan data pribadi penduduk sungguhan) yang disimpan di <code>localStorage</code> peramban.
+              </span>
+            </div>
+            <button
+              type="button"
+              id="btnResetSampleMutasi"
+              class="btn-simdes-outline py-1 px-2"
+              style="min-block-size:32px; font-size:0.76rem;"
+              title="Pulihkan seluruh data mutasi penduduk fiktif awal"
+            >
+              <i class="fa-solid fa-arrow-rotate-left" aria-hidden="true"></i>
+              <span>Pulihkan Data Contoh</span>
+            </button>
+          </div>
+
+          <!-- Official Book Period Title & Month/Year Selector -->
+          <div class="mutasi-period-banner">
+            <div class="mutasi-period-heading-wrap">
+              <div class="stat-icon-box stat-icon-primary">
+                <i class="fa-solid fa-book-open" aria-hidden="true"></i>
+              </div>
+              <div class="min-w-0">
+                <span class="mutasi-period-label">Periode Pencatatan Buku Resmi &bull; Kode B.2</span>
+                <h2 id="bookPeriodTitle" class="mutasi-period-title" aria-live="polite">
+                  BUKU MUTASI PENDUDUK DESA BULAN OKTOBER TAHUN 2026
+                </h2>
+              </div>
+            </div>
+
+            <div class="mutasi-period-controls">
+              <div class="mutasi-period-select-group">
+                <label for="periodBulanSelect" class="mutasi-period-select-label">Bulan:</label>
+                <select id="periodBulanSelect" class="simdes-select" aria-label="Pilih bulan periode pencatatan">
+                  <option value="01">Januari</option>
+                  <option value="02">Februari</option>
+                  <option value="03">Maret</option>
+                  <option value="04">April</option>
+                  <option value="05">Mei</option>
+                  <option value="06">Juni</option>
+                  <option value="07">Juli</option>
+                  <option value="08">Agustus</option>
+                  <option value="09">September</option>
+                  <option value="10" selected>Oktober</option>
+                  <option value="11">November</option>
+                  <option value="12">Desember</option>
+                  <option value="ALL">Semua Bulan</option>
+                </select>
+              </div>
+
+              <div class="mutasi-period-select-group">
+                <label for="periodTahunSelect" class="mutasi-period-select-label">Tahun:</label>
+                <select id="periodTahunSelect" class="simdes-select" aria-label="Pilih tahun periode pencatatan">
+                  <option value="2026" selected>2026</option>
+                  <option value="2025">2025</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Summary Strip (4 Compact KPI Cards — Dynamic by Displayed/Active Period Data) -->
+          <section class="row g-3 mb-4 ledger-kpi-row" aria-label="Ringkasan Data Mutasi Penduduk Periode Terpilih">
+            <div class="col-12 col-sm-6 col-xl-3">
+              <article class="stat-card py-3">
+                <div class="d-flex align-items-center justify-content-between gap-2">
+                  <div>
+                    <div class="stat-label mb-1">Total Mutasi Periode Terpilih</div>
+                    <div class="stat-value fs-3" id="statTotalMutasi">0</div>
+                  </div>
+                  <div class="stat-icon-box stat-icon-primary">
+                    <i class="fa-solid fa-people-arrows" aria-hidden="true"></i>
+                  </div>
+                </div>
+              </article>
+            </div>
+
+            <div class="col-12 col-sm-6 col-xl-3">
+              <article class="stat-card py-3">
+                <div class="d-flex align-items-center justify-content-between gap-2">
+                  <div>
+                    <div class="stat-label mb-1">Jumlah Penduduk Datang</div>
+                    <div class="stat-value fs-3" id="statMutasiDatang">0</div>
+                  </div>
+                  <div class="stat-icon-box stat-icon-secondary">
+                    <i class="fa-solid fa-user-plus" aria-hidden="true"></i>
+                  </div>
+                </div>
+              </article>
+            </div>
+
+            <div class="col-12 col-sm-6 col-xl-3">
+              <article class="stat-card accent-gold py-3">
+                <div class="d-flex align-items-center justify-content-between gap-2">
+                  <div>
+                    <div class="stat-label mb-1">Jumlah Penduduk Pindah</div>
+                    <div class="stat-value fs-3" id="statMutasiPindah">0</div>
+                  </div>
+                  <div class="stat-icon-box stat-icon-accent">
+                    <i class="fa-solid fa-truck-arrow-right" aria-hidden="true"></i>
+                  </div>
+                </div>
+              </article>
+            </div>
+
+            <div class="col-12 col-sm-6 col-xl-3">
+              <article class="stat-card py-3">
+                <div class="d-flex align-items-center justify-content-between gap-2">
+                  <div>
+                    <div class="stat-label mb-1">Jumlah Penduduk Meninggal</div>
+                    <div class="stat-value fs-3" id="statMutasiMeninggal">0</div>
+                  </div>
+                  <div class="stat-icon-box stat-icon-danger">
+                    <i class="fa-solid fa-ribbon" aria-hidden="true"></i>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <!-- Main Multi-Header Ledger Card (Exact 13 Physical Columns, 2-Row Header) -->
+          <section class="simdes-card" aria-label="Tabel Buku Mutasi Penduduk Desa">
+            <!-- Print-Only Official Header -->
+            <div class="print-ledger-header">
+              <div id="printPeriodTitle" style="font-size:13pt; font-weight:800; text-transform:uppercase; letter-spacing:0.04em;">
+                BUKU MUTASI PENDUDUK DESA BULAN OKTOBER TAHUN 2026
+              </div>
+              <div style="font-size:10pt; font-weight:600; margin-top:2px;">
+                KODE B.2 &bull; PEMERINTAH DESA TIARO &mdash; CETAKAN SIMULASI FRONTEND (DATA CONTOH FIKTIF)
+              </div>
+              <div id="printMutasiMeta" style="font-size:8.5pt; color:#444; margin-top:4px;"></div>
+            </div>
+
+            <!-- Search, Filter & Reset Toolbar -->
+            <div class="ledger-toolbar">
+              <div class="ledger-search-wrap">
+                <i class="fa-solid fa-magnifying-glass ledger-search-icon" aria-hidden="true"></i>
+                <input
+                  type="search"
+                  id="tableSearchInput"
+                  class="ledger-search-input"
+                  placeholder="Cari nama penduduk..."
+                  autocomplete="off"
+                  autocorrect="off"
+                  autocapitalize="off"
+                  spellcheck="false"
+                  aria-label="Cari berdasarkan nama penduduk"
+                >
+                <button
+                  type="button"
+                  id="clearSearchInputBtn"
+                  class="ledger-search-clear"
+                  aria-label="Bersihkan teks pencarian"
+                  title="Bersihkan pencarian"
+                >
+                  <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+              </div>
+
+              <div class="ledger-filters-group">
+                <select id="filterJenisMutasiSelect" class="simdes-select" aria-label="Filter berdasarkan jenis mutasi">
+                  <option value="ALL">Semua Jenis Mutasi</option>
+                  <option value="Datang">Datang (Penambahan)</option>
+                  <option value="Pindah">Pindah (Pengurangan)</option>
+                  <option value="Meninggal">Meninggal (Pengurangan)</option>
+                </select>
+
+                <select id="filterGenderSelect" class="simdes-select" aria-label="Filter berdasarkan jenis kelamin">
+                  <option value="ALL">Semua Jenis Kelamin</option>
+                  <option value="Laki-laki">Laki-laki</option>
+                  <option value="Perempuan">Perempuan</option>
+                </select>
+
+                <select id="pageSizeSelect" class="simdes-select" aria-label="Jumlah baris per halaman">
+                  <option value="5">5 / halaman</option>
+                  <option value="10" selected>10 / halaman</option>
+                  <option value="25">25 / halaman</option>
+                  <option value="50">50 / halaman</option>
+                </select>
+
+                <button
+                  type="button"
+                  id="resetTableFilterBtn"
+                  class="btn-simdes-outline"
+                  disabled
+                  title="Reset pencarian, filter, dan periode"
+                >
+                  <i class="fa-solid fa-filter-circle-xmark" aria-hidden="true"></i>
+                  <span>Reset</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Horizontal & Sticky-Header Scrollable Container (Exact 13 Physical Columns) -->
+            <div
+              class="table-responsive simdes-table-wrapper wide-scroll-ledger"
+              tabindex="0"
+              role="region"
+              aria-labelledby="mutasiTableCaption"
+            >
+              <table class="simdes-ledger-table table-multi-header table-multi-header-2row table-multi-header-13col" id="mutasiTable">
+                <caption id="mutasiTableCaption" class="visually-hidden-accessible">
+                  Daftar Buku Mutasi Penduduk Desa Tiaro (Kode B.2) dengan tepat 13 kolom dan header dua tingkat sesuai urutan sumber
+                </caption>
+                <thead>
+                  <tr>
+                    <!-- 1. NOMOR URUT -->
+                    <th scope="col" rowspan="2" class="col-no-urut sticky-col-first group-divider-end" style="min-inline-size:84px;" aria-sort="ascending">
+                      <button type="button" class="th-sort-btn is-sorted justify-content-center" data-sort-key="urutan" aria-label="Urutkan NOMOR URUT">
+                        <span>NOMOR URUT</span>
+                        <i class="fa-solid fa-sort-up th-sort-icon no-print" aria-hidden="true"></i>
+                      </button>
+                    </th>
+                    <!-- 2. NAMA LENGKAP/PANGGILAN -->
+                    <th scope="col" rowspan="2" class="text-start" style="min-inline-size:228px;" aria-sort="none">
+                      <button type="button" class="th-sort-btn" data-sort-key="namaLengkap" aria-label="Urutkan NAMA LENGKAP/PANGGILAN">
+                        <span>NAMA LENGKAP/PANGGILAN</span>
+                        <i class="fa-solid fa-sort th-sort-icon no-print" aria-hidden="true"></i>
+                      </button>
+                    </th>
+                    <!-- 3 & 4. Group TEMPAT & TANGGAL LAHIR (colspan="2") -->
+                    <th scope="colgroup" colspan="2" class="th-group-top th-group-ttl group-divider-end">
+                      TEMPAT &amp; TANGGAL LAHIR
+                    </th>
+                    <!-- 5. JENIS KELAMIN -->
+                    <th scope="col" rowspan="2" style="min-inline-size:122px;" aria-sort="none">
+                      <button type="button" class="th-sort-btn justify-content-center" data-sort-key="jenisKelamin" aria-label="Urutkan JENIS KELAMIN">
+                        <span>JENIS KELAMIN</span>
+                        <i class="fa-solid fa-sort th-sort-icon no-print" aria-hidden="true"></i>
+                      </button>
+                    </th>
+                    <!-- 6. KEWARGANEGARAAN -->
+                    <th scope="col" rowspan="2" class="group-divider-end" style="min-inline-size:136px;">
+                      KEWARGANEGARAAN
+                    </th>
+                    <!-- 7 & 8. Group PENAMBAHAN (colspan="2") -->
+                    <th scope="colgroup" colspan="2" class="th-group-top th-group-penambahan group-divider-end">
+                      PENAMBAHAN
+                    </th>
+                    <!-- 9, 10, 11 & 12. Group PENGURANGAN (colspan="4") -->
+                    <th scope="colgroup" colspan="4" class="th-group-top th-group-pengurangan group-divider-end">
+                      PENGURANGAN
+                    </th>
+                    <!-- 13. KET -->
+                    <th scope="col" rowspan="2" class="text-start" style="min-inline-size:185px;">
+                      KET
+                    </th>
+                  </tr>
+                  <tr>
+                    <!-- 3. TEMPAT (di bawah Tempat & Tanggal Lahir) -->
+                    <th scope="col" class="th-sub-ttl text-start" style="min-inline-size:132px;">
+                      TEMPAT
+                    </th>
+                    <!-- 4. TANGGAL (di bawah Tempat & Tanggal Lahir) -->
+                    <th scope="col" class="th-sub-ttl group-divider-end" style="min-inline-size:132px;" aria-sort="none">
+                      <button type="button" class="th-sort-btn justify-content-center" data-sort-key="tanggalLahir" aria-label="Urutkan TANGGAL Lahir">
+                        <span>TANGGAL</span>
+                        <i class="fa-solid fa-sort th-sort-icon no-print" aria-hidden="true"></i>
+                      </button>
+                    </th>
+                    <!-- 7. DATANG DARI (di bawah Penambahan) -->
+                    <th scope="col" class="th-sub-penambahan text-start" style="min-inline-size:190px;">
+                      DATANG DARI
+                    </th>
+                    <!-- 8. TANGGAL (di bawah Penambahan) -->
+                    <th scope="col" class="th-sub-penambahan group-divider-end" style="min-inline-size:132px;" aria-sort="none">
+                      <button type="button" class="th-sort-btn justify-content-center" data-sort-key="tanggalDatang" aria-label="Urutkan TANGGAL Kedatangan">
+                        <span>TANGGAL</span>
+                        <i class="fa-solid fa-sort th-sort-icon no-print" aria-hidden="true"></i>
+                      </button>
+                    </th>
+                    <!-- 9. PINDAH KE (di bawah Pengurangan) -->
+                    <th scope="col" class="th-sub-pengurangan text-start" style="min-inline-size:190px;">
+                      PINDAH KE
+                    </th>
+                    <!-- 10. TANGGAL (di bawah Pengurangan) -->
+                    <th scope="col" class="th-sub-pengurangan group-divider-end" style="min-inline-size:132px;" aria-sort="none">
+                      <button type="button" class="th-sort-btn justify-content-center" data-sort-key="tanggalPindah" aria-label="Urutkan TANGGAL Pindah">
+                        <span>TANGGAL</span>
+                        <i class="fa-solid fa-sort th-sort-icon no-print" aria-hidden="true"></i>
+                      </button>
+                    </th>
+                    <!-- 11. MENINGGAL (di bawah Pengurangan) -->
+                    <th scope="col" class="th-sub-pengurangan text-start" style="min-inline-size:175px;">
+                      MENINGGAL
+                    </th>
+                    <!-- 12. TANGGAL (di bawah Pengurangan) -->
+                    <th scope="col" class="th-sub-pengurangan group-divider-end" style="min-inline-size:132px;" aria-sort="none">
+                      <button type="button" class="th-sort-btn justify-content-center" data-sort-key="tanggalMeninggal" aria-label="Urutkan TANGGAL Meninggal">
+                        <span>TANGGAL</span>
+                        <i class="fa-solid fa-sort th-sort-icon no-print" aria-hidden="true"></i>
+                      </button>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody id="mutasiTableBody"></tbody>
+              </table>
+            </div>
+
+            <!-- Pagination Footer -->
+            <div class="ledger-pagination-bar">
+              <div class="pagination-info" id="tablePaginationInfo" aria-live="polite">
+                Menampilkan 0 data mutasi penduduk
+              </div>
+              <nav aria-label="Navigasi halaman tabel buku mutasi penduduk desa">
+                <ul class="simdes-pagination" id="tablePaginationList"></ul>
+              </nav>
+            </div>
+          </section>
+        </div>
+      </main>
+
+      <!-- FOOTER -->
+      <footer class="app-footer">
+        <div>
+          <strong>SIMDES Desa Tiaro</strong> &mdash; Sistem Informasi Manajemen Desa
+        </div>
+        <div>
+          Administrasi Penduduk &bull; Buku Mutasi Penduduk Desa (B.2)
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       MODAL FORM TAMBAH & EDIT MUTASI PENDUDUK (MODAL XL, KELOMPOK A–D)
+       ======================================================================= -->
+  <div class="modal fade simdes-modal" id="mutasiFormModal" tabindex="-1" aria-labelledby="mutasiFormModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div>
+            <h2 class="modal-title" id="mutasiFormModalLabel">
+              <i class="fa-solid fa-plus-circle text-simdes-primary me-2" aria-hidden="true"></i>Tambah Data Mutasi Penduduk
+            </h2>
+            <p class="mb-0 text-simdes-muted" style="font-size:0.78rem;">
+              Pilih jenis mutasi untuk menampilkan kolom pencatatan yang sesuai. Kolom mutasi lain otomatis dikosongkan dan ditampilkan sebagai tanda <code>&mdash;</code> pada tabel.
+            </p>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup formulir"></button>
+        </div>
+
+        <form id="mutasiForm" action="#" method="POST" novalidate>
+          <div class="modal-body p-4">
+            <input type="hidden" id="mutasiRecordId" name="id" value="">
+
+            <div id="mutasiFormAlert" class="login-alert login-alert-error" role="alert" aria-live="assertive">
+              <i class="fa-solid fa-circle-exclamation mt-1" aria-hidden="true"></i>
+              <span id="mutasiFormAlertText"></span>
+            </div>
+
+            <!-- Pilihan Jenis Mutasi (1. Datang, 2. Pindah, 3. Meninggal) -->
+            <fieldset class="simdes-fieldset">
+              <legend class="simdes-legend">
+                <i class="fa-solid fa-sliders me-1" aria-hidden="true"></i>Pilihan Jenis Mutasi
+              </legend>
+              <div class="simdes-field mb-2" role="radiogroup" aria-labelledby="labelJenisMutasi" aria-describedby="jenisMutasiHint errJenisMutasi">
+                <span class="simdes-label" id="labelJenisMutasi">
+                  Pilih Jenis Mutasi Penduduk<span class="req-star" aria-hidden="true">*</span>
+                </span>
+                <span id="jenisMutasiHint" class="simdes-field-hint">
+                  Menentukan bagian penambahan atau pengurangan penduduk yang diaktifkan pada formulir
+                </span>
+                <div class="simdes-radio-group cols-3">
+                  <div class="simdes-radio-option">
+                    <input
+                      type="radio"
+                      id="jenisMutasiDatang"
+                      name="jenisMutasi"
+                      value="Datang"
+                      class="simdes-radio-input"
+                      data-field-label="Jenis Mutasi"
+                      checked
+                      required
+                    >
+                    <label for="jenisMutasiDatang" class="simdes-radio-pill">
+                      <i class="fa-solid fa-user-plus text-simdes-primary" aria-hidden="true"></i>
+                      <span>1. Datang</span>
+                    </label>
+                  </div>
+
+                  <div class="simdes-radio-option">
+                    <input
+                      type="radio"
+                      id="jenisMutasiPindah"
+                      name="jenisMutasi"
+                      value="Pindah"
+                      class="simdes-radio-input"
+                      data-field-label="Jenis Mutasi"
+                      required
+                    >
+                    <label for="jenisMutasiPindah" class="simdes-radio-pill">
+                      <i class="fa-solid fa-truck-arrow-right text-simdes-secondary" aria-hidden="true"></i>
+                      <span>2. Pindah</span>
+                    </label>
+                  </div>
+
+                  <div class="simdes-radio-option">
+                    <input
+                      type="radio"
+                      id="jenisMutasiMeninggal"
+                      name="jenisMutasi"
+                      value="Meninggal"
+                      class="simdes-radio-input"
+                      data-field-label="Jenis Mutasi"
+                      required
+                    >
+                    <label for="jenisMutasiMeninggal" class="simdes-radio-pill">
+                      <i class="fa-solid fa-ribbon text-danger" aria-hidden="true"></i>
+                      <span>3. Meninggal</span>
+                    </label>
+                  </div>
+                </div>
+                <div id="errJenisMutasi" class="field-error-msg" role="status">
+                  <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                  <span class="field-error-text">Jenis Mutasi wajib dipilih.</span>
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- A. Identitas Penduduk -->
+            <fieldset class="simdes-fieldset">
+              <legend class="simdes-legend">A. Identitas Penduduk</legend>
+              <div class="row g-3">
+                <div class="col-12 col-md-3">
+                  <div class="simdes-field mb-2">
+                    <label for="mutasiNomorUrutPreview" class="simdes-label">1. Nomor Urut</label>
+                    <span id="helpMutasiNomorUrut" class="simdes-field-hint">Dibuat otomatis sesuai periode buku</span>
+                    <input
+                      type="text"
+                      id="mutasiNomorUrutPreview"
+                      name="nomorUrutPreview"
+                      class="simdes-input simdes-input-readonly"
+                      value="Otomatis (#1)"
+                      readonly
+                      aria-readonly="true"
+                      aria-describedby="helpMutasiNomorUrut"
+                    >
+                  </div>
+                </div>
+
+                <div class="col-12 col-md-9">
+                  <div class="simdes-field mb-2">
+                    <label for="mutasiNama" class="simdes-label">
+                      2. Nama Lengkap/Panggilan<span class="req-star" aria-hidden="true">*</span>
+                    </label>
+                    <span id="namaMutasiHint" class="simdes-field-hint">Nama lengkap beserta panggilan sehari-hari (gunakan identitas fiktif untuk simulasi)</span>
+                    <input
+                      type="text"
+                      id="mutasiNama"
+                      name="namaLengkap"
+                      class="simdes-input"
+                      placeholder="Contoh: La Ode Syahrul Ramadhan / Syahrul"
+                      autocomplete="name"
+                      minlength="3"
+                      data-field-label="Nama Lengkap/Panggilan"
+                      aria-describedby="namaMutasiHint errMutasiNama"
+                      required
+                    >
+                    <div id="errMutasiNama" class="field-error-msg" role="status">
+                      <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                      <span class="field-error-text">Nama Lengkap/Panggilan wajib diisi.</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <div class="simdes-field mb-2">
+                    <label for="mutasiTempatLahir" class="simdes-label">
+                      3. Tempat Lahir<span class="req-star" aria-hidden="true">*</span>
+                    </label>
+                    <span id="tempatLahirMutasiHint" class="simdes-field-hint">Kabupaten/kota atau tempat kelahiran (Kolom 3: TEMPAT)</span>
+                    <input
+                      type="text"
+                      id="mutasiTempatLahir"
+                      name="tempatLahir"
+                      class="simdes-input"
+                      placeholder="Contoh: Bombana"
+                      minlength="2"
+                      data-field-label="Tempat Lahir"
+                      aria-describedby="tempatLahirMutasiHint errMutasiTempatLahir"
+                      required
+                    >
+                    <div id="errMutasiTempatLahir" class="field-error-msg" role="status">
+                      <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                      <span class="field-error-text">Tempat Lahir wajib diisi.</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <div class="simdes-field mb-2">
+                    <label for="mutasiTanggalLahir" class="simdes-label">
+                      4. Tanggal Lahir<span class="req-star" aria-hidden="true">*</span>
+                    </label>
+                    <span id="tglLahirMutasiHint" class="simdes-field-hint">Tanggal kelahiran sesuai dokumen kependudukan (Kolom 4: TANGGAL)</span>
+                    <input
+                      type="date"
+                      id="mutasiTanggalLahir"
+                      name="tanggalLahir"
+                      class="simdes-input tabular-nums"
+                      data-field-label="Tanggal Lahir"
+                      aria-describedby="tglLahirMutasiHint errMutasiTanggalLahir"
+                      required
+                    >
+                    <div id="errMutasiTanggalLahir" class="field-error-msg" role="status">
+                      <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                      <span class="field-error-text">Tanggal Lahir wajib dipilih.</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <div class="simdes-field mb-2" role="radiogroup" aria-labelledby="labelMutasiGender" aria-describedby="jkMutasiHint errMutasiGender">
+                    <span class="simdes-label" id="labelMutasiGender">
+                      5. Jenis Kelamin<span class="req-star" aria-hidden="true">*</span>
+                    </span>
+                    <span id="jkMutasiHint" class="simdes-field-hint">Pilih salah satu jenis kelamin penduduk</span>
+                    <div class="simdes-radio-group">
+                      <div class="simdes-radio-option">
+                        <input
+                          type="radio"
+                          id="mutasiJkLaki"
+                          name="jenisKelamin"
+                          value="Laki-laki"
+                          class="simdes-radio-input"
+                          data-field-label="Jenis Kelamin"
+                          required
+                        >
+                        <label for="mutasiJkLaki" class="simdes-radio-pill">
+                          <i class="fa-solid fa-mars text-simdes-primary" aria-hidden="true"></i>
+                          <span>Laki-laki</span>
+                        </label>
+                      </div>
+                      <div class="simdes-radio-option">
+                        <input
+                          type="radio"
+                          id="mutasiJkPerempuan"
+                          name="jenisKelamin"
+                          value="Perempuan"
+                          class="simdes-radio-input"
+                          data-field-label="Jenis Kelamin"
+                          required
+                        >
+                        <label for="mutasiJkPerempuan" class="simdes-radio-pill">
+                          <i class="fa-solid fa-venus text-simdes-secondary" aria-hidden="true"></i>
+                          <span>Perempuan</span>
+                        </label>
+                      </div>
+                    </div>
+                    <div id="errMutasiGender" class="field-error-msg" role="status">
+                      <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                      <span class="field-error-text">Jenis Kelamin wajib dipilih.</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <div class="simdes-field mb-2" role="radiogroup" aria-labelledby="labelMutasiWarga" aria-describedby="wnMutasiHint errMutasiWarga">
+                    <span class="simdes-label" id="labelMutasiWarga">
+                      6. Kewarganegaraan<span class="req-star" aria-hidden="true">*</span>
+                    </span>
+                    <span id="wnMutasiHint" class="simdes-field-hint">Status kewarganegaraan penduduk</span>
+                    <div class="simdes-radio-group">
+                      <div class="simdes-radio-option">
+                        <input
+                          type="radio"
+                          id="mutasiWnWni"
+                          name="kewarganegaraan"
+                          value="WNI"
+                          class="simdes-radio-input"
+                          data-field-label="Kewarganegaraan"
+                          checked
+                          required
+                        >
+                        <label for="mutasiWnWni" class="simdes-radio-pill">
+                          <i class="fa-solid fa-flag text-simdes-primary" aria-hidden="true"></i>
+                          <span>WNI</span>
+                        </label>
+                      </div>
+                      <div class="simdes-radio-option">
+                        <input
+                          type="radio"
+                          id="mutasiWnWna"
+                          name="kewarganegaraan"
+                          value="WNA"
+                          class="simdes-radio-input"
+                          data-field-label="Kewarganegaraan"
+                          required
+                        >
+                        <label for="mutasiWnWna" class="simdes-radio-pill">
+                          <i class="fa-solid fa-globe text-simdes-secondary" aria-hidden="true"></i>
+                          <span>WNA</span>
+                        </label>
+                      </div>
+                    </div>
+                    <div id="errMutasiWarga" class="field-error-msg" role="status">
+                      <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                      <span class="field-error-text">Kewarganegaraan wajib dipilih.</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- B. Penambahan Penduduk (Aktif saat Jenis Mutasi = Datang) -->
+            <fieldset class="simdes-fieldset" id="fieldsetPenambahan">
+              <legend class="simdes-legend">B. Penambahan Penduduk</legend>
+              <div class="row g-3">
+                <div class="col-12 col-md-7">
+                  <div class="simdes-field mb-2">
+                    <label for="mutasiDatangDari" class="simdes-label">
+                      7. Datang Dari<span class="req-star" aria-hidden="true">*</span>
+                    </label>
+                    <span id="datangDariHint" class="simdes-field-hint">Desa/kelurahan, kecamatan, atau kabupaten/kota asal kedatangan</span>
+                    <input
+                      type="text"
+                      id="mutasiDatangDari"
+                      name="datangDari"
+                      class="simdes-input"
+                      placeholder="Contoh: Kel. Kasipute, Kec. Rumbia, Kab. Bombana"
+                      minlength="3"
+                      data-field-label="Datang Dari"
+                      aria-describedby="datangDariHint errMutasiDatangDari"
+                      required
+                    >
+                    <div id="errMutasiDatangDari" class="field-error-msg" role="status">
+                      <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                      <span class="field-error-text">Daerah asal kedatangan wajib diisi.</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12 col-md-5">
+                  <div class="simdes-field mb-2">
+                    <label for="mutasiTanggalDatang" class="simdes-label">
+                      8. Tanggal Kedatangan<span class="req-star" aria-hidden="true">*</span>
+                    </label>
+                    <span id="tglDatangHint" class="simdes-field-hint">Tanggal tercatat datang di Desa Tiaro (menentukan bulan &amp; tahun buku)</span>
+                    <input
+                      type="date"
+                      id="mutasiTanggalDatang"
+                      name="tanggalDatang"
+                      class="simdes-input tabular-nums"
+                      data-field-label="Tanggal Kedatangan"
+                      aria-describedby="tglDatangHint errMutasiTanggalDatang"
+                      required
+                    >
+                    <div id="errMutasiTanggalDatang" class="field-error-msg" role="status">
+                      <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                      <span class="field-error-text">Tanggal Kedatangan wajib dipilih.</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- C. Pengurangan Penduduk (Aktif saat Jenis Mutasi = Pindah atau Meninggal) -->
+            <fieldset class="simdes-fieldset" id="fieldsetPengurangan" hidden disabled>
+              <legend class="simdes-legend">C. Pengurangan Penduduk</legend>
+
+              <!-- Sub-bagian Pindah -->
+              <div class="row g-3" id="subGroupPindah" hidden>
+                <div class="col-12 col-md-7">
+                  <div class="simdes-field mb-2">
+                    <label for="mutasiPindahKe" class="simdes-label">
+                      9. Pindah Ke<span class="req-star" aria-hidden="true">*</span>
+                    </label>
+                    <span id="pindahKeHint" class="simdes-field-hint">Desa/kelurahan, kecamatan, atau kabupaten/kota tujuan kepindahan</span>
+                    <input
+                      type="text"
+                      id="mutasiPindahKe"
+                      name="pindahKe"
+                      class="simdes-input"
+                      placeholder="Contoh: Kel. Mandonga, Kec. Mandonga, Kota Kendari"
+                      minlength="3"
+                      data-field-label="Pindah Ke"
+                      aria-describedby="pindahKeHint errMutasiPindahKe"
+                      disabled
+                    >
+                    <div id="errMutasiPindahKe" class="field-error-msg" role="status">
+                      <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                      <span class="field-error-text">Tujuan kepindahan wajib diisi.</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12 col-md-5">
+                  <div class="simdes-field mb-2">
+                    <label for="mutasiTanggalPindah" class="simdes-label">
+                      10. Tanggal Pindah<span class="req-star" aria-hidden="true">*</span>
+                    </label>
+                    <span id="tglPindahHint" class="simdes-field-hint">Tanggal surat pindah / kepindahan tercatat (menentukan bulan &amp; tahun buku)</span>
+                    <input
+                      type="date"
+                      id="mutasiTanggalPindah"
+                      name="tanggalPindah"
+                      class="simdes-input tabular-nums"
+                      data-field-label="Tanggal Pindah"
+                      aria-describedby="tglPindahHint errMutasiTanggalPindah"
+                      disabled
+                    >
+                    <div id="errMutasiTanggalPindah" class="field-error-msg" role="status">
+                      <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                      <span class="field-error-text">Tanggal Pindah wajib dipilih.</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Sub-bagian Meninggal -->
+              <div class="row g-3" id="subGroupMeninggal" hidden>
+                <div class="col-12 col-md-7">
+                  <div class="simdes-field mb-2">
+                    <label for="mutasiMeninggal" class="simdes-label">
+                      11. Meninggal<span class="req-star" aria-hidden="true">*</span>
+                    </label>
+                    <span id="meninggalHint" class="simdes-field-hint">Tempat atau informasi pencatatan meninggal dunia pada kolom 11 (contoh: Desa Tiaro / RSUD Kab. Bombana)</span>
+                    <input
+                      type="text"
+                      id="mutasiMeninggal"
+                      name="meninggal"
+                      class="simdes-input"
+                      placeholder="Contoh: Desa Tiaro (Rumah Kediaman)"
+                      minlength="3"
+                      data-field-label="Informasi Meninggal"
+                      aria-describedby="meninggalHint errMutasiMeninggal"
+                      disabled
+                    >
+                    <div id="errMutasiMeninggal" class="field-error-msg" role="status">
+                      <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                      <span class="field-error-text">Informasi pada kolom Meninggal wajib diisi.</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12 col-md-5">
+                  <div class="simdes-field mb-2">
+                    <label for="mutasiTanggalMeninggal" class="simdes-label">
+                      12. Tanggal Meninggal<span class="req-star" aria-hidden="true">*</span>
+                    </label>
+                    <span id="tglMeninggalHint" class="simdes-field-hint">Tanggal meninggal dunia sesuai surat keterangan (menentukan bulan &amp; tahun buku)</span>
+                    <input
+                      type="date"
+                      id="mutasiTanggalMeninggal"
+                      name="tanggalMeninggal"
+                      class="simdes-input tabular-nums"
+                      data-field-label="Tanggal Meninggal"
+                      aria-describedby="tglMeninggalHint errMutasiTanggalMeninggal"
+                      disabled
+                    >
+                    <div id="errMutasiTanggalMeninggal" class="field-error-msg" role="status">
+                      <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                      <span class="field-error-text">Tanggal Meninggal wajib dipilih.</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- D. Keterangan -->
+            <fieldset class="simdes-fieldset">
+              <legend class="simdes-legend">D. Keterangan</legend>
+              <div class="simdes-field mb-2">
+                <label for="mutasiKeterangan" class="simdes-label">13. Keterangan (Opsional)</label>
+                <span id="ketMutasiHint" class="simdes-field-hint">Nomor surat pengantar pindah/datang, surat keterangan kematian, atau catatan tambahan</span>
+                <textarea
+                  id="mutasiKeterangan"
+                  name="keterangan"
+                  class="simdes-textarea"
+                  rows="2"
+                  placeholder="Contoh: SKPWNI Nomor 471.2/118/X/2026 — Ikut kepala keluarga..."
+                  aria-describedby="ketMutasiHint"
+                ></textarea>
+              </div>
+            </fieldset>
+          </div>
+
+          <div class="modal-footer bg-light border-top px-4 py-3" style="border-color:var(--simdes-border) !important;">
+            <button type="button" class="btn-simdes-outline" data-bs-dismiss="modal">Batal</button>
+            <button type="submit" id="mutasiFormSubmitBtn" class="btn-simdes-primary">
+              <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i>
+              <span>Simpan Mutasi</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       MODAL DETAIL MUTASI PENDUDUK (MODAL LG — Konsisten dengan Buku Lain)
+       ======================================================================= -->
+  <div class="modal fade simdes-modal" id="mutasiDetailModal" tabindex="-1" aria-labelledby="mutasiDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title" id="mutasiDetailModalLabel">
+            <i class="fa-solid fa-people-arrows text-simdes-primary me-2" aria-hidden="true"></i>Detail Mutasi Penduduk Desa
+          </h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup detail"></button>
+        </div>
+
+        <div class="modal-body p-4">
+          <!-- Header Identitas & Kategori Mutasi -->
+          <div class="detail-sheet-box mb-3">
+            <div class="d-flex flex-wrap align-items-start justify-content-between gap-2">
+              <div>
+                <div class="detail-item-label">
+                  A. Identitas Penduduk &bull; Nomor Urut <span class="tabular-nums" id="detMutasiNomorUrut">#1</span>
+                  &bull; <span id="detMutasiPeriodeLabel">Oktober 2026</span>
+                </div>
+                <div class="detail-item-value fs-5 fw-bold" style="color:var(--simdes-deep-green);" id="detMutasiNama">-</div>
+              </div>
+              <span class="badge-simdes badge-simdes-primary" id="detMutasiJenisBadge">Datang</span>
+            </div>
+
+            <div class="row g-3 mt-1 pt-2 border-top" style="border-color:var(--simdes-border) !important;">
+              <div class="col-6 col-sm-3">
+                <small class="text-simdes-muted d-block">Tempat Lahir (Kol. 3)</small>
+                <strong id="detMutasiTempatLahir">-</strong>
+              </div>
+              <div class="col-6 col-sm-3">
+                <small class="text-simdes-muted d-block">Tanggal Lahir (Kol. 4)</small>
+                <strong class="tabular-nums" id="detMutasiTanggalLahir">-</strong>
+              </div>
+              <div class="col-6 col-sm-3">
+                <small class="text-simdes-muted d-block">Jenis Kelamin (Kol. 5)</small>
+                <strong id="detMutasiGender">-</strong>
+              </div>
+              <div class="col-6 col-sm-3">
+                <small class="text-simdes-muted d-block">Kewarganegaraan (Kol. 6)</small>
+                <strong id="detMutasiKewarganegaraan">-</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- B & C: Rincian Kolom Penambahan & Pengurangan (Kolom 7–12) -->
+          <div class="row g-3 mb-3">
+            <div class="col-12 col-md-4">
+              <div class="detail-sheet-box h-100">
+                <div class="detail-item-label">B. Penambahan (Kedatangan)</div>
+                <div class="mt-2">
+                  <small class="text-simdes-muted d-block">7. Datang Dari</small>
+                  <strong id="detMutasiDatangDari">&mdash;</strong>
+                </div>
+                <div class="mt-2">
+                  <small class="text-simdes-muted d-block">8. Tanggal Kedatangan</small>
+                  <strong class="tabular-nums" id="detMutasiTanggalDatang">&mdash;</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+              <div class="detail-sheet-box h-100">
+                <div class="detail-item-label">C.1 Pengurangan (Pindah)</div>
+                <div class="mt-2">
+                  <small class="text-simdes-muted d-block">9. Pindah Ke</small>
+                  <strong id="detMutasiPindahKe">&mdash;</strong>
+                </div>
+                <div class="mt-2">
+                  <small class="text-simdes-muted d-block">10. Tanggal Pindah</small>
+                  <strong class="tabular-nums" id="detMutasiTanggalPindah">&mdash;</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+              <div class="detail-sheet-box h-100">
+                <div class="detail-item-label">C.2 Pengurangan (Meninggal)</div>
+                <div class="mt-2">
+                  <small class="text-simdes-muted d-block">11. Meninggal</small>
+                  <strong id="detMutasiMeninggal">&mdash;</strong>
+                </div>
+                <div class="mt-2">
+                  <small class="text-simdes-muted d-block">12. Tanggal Meninggal</small>
+                  <strong class="tabular-nums" id="detMutasiTanggalMeninggal">&mdash;</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- D. Keterangan -->
+          <div class="detail-sheet-box">
+            <div class="detail-item-label">D. Keterangan (Kolom 13: KET)</div>
+            <div class="detail-item-value fw-normal" id="detMutasiKeterangan">&mdash;</div>
+          </div>
+        </div>
+
+        <div class="modal-footer bg-light border-top px-4 py-3" style="border-color:var(--simdes-border) !important;">
+          <button type="button" class="btn-simdes-outline" data-bs-dismiss="modal">Tutup</button>
+          <button type="button" id="btnEditMutasiFromDetail" class="btn-simdes-primary">
+            <i class="fa-regular fa-pen-to-square" aria-hidden="true"></i>
+            <span>Edit Data Ini</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       MODAL KONFIRMASI HAPUS MUTASI PENDUDUK
+       ======================================================================= -->
+  <div class="modal fade simdes-modal" id="mutasiDeleteModal" tabindex="-1" aria-labelledby="mutasiDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title" id="mutasiDeleteModalLabel" style="color:var(--simdes-danger);">
+            <i class="fa-solid fa-triangle-exclamation me-2" aria-hidden="true"></i>Konfirmasi Hapus Data Mutasi
+          </h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup konfirmasi"></button>
+        </div>
+        <div class="modal-body p-4" style="font-size:0.88rem;">
+          <p class="mb-2 text-simdes-muted">
+            Apakah Anda yakin ingin menghapus catatan mutasi penduduk berikut dari <strong>Buku Mutasi Penduduk Desa</strong>?
+          </p>
+          <div class="p-3 rounded-3" style="background-color:var(--simdes-danger-bg); border:1px solid rgba(184, 58, 50, 0.22);">
+            <div class="fw-bold" style="color:var(--simdes-danger);" id="deleteMutasiTargetName">-</div>
+            <div class="mt-1 fw-semibold" style="color:var(--simdes-text);" id="deleteMutasiTargetJenis">-</div>
+            <div class="small tabular-nums text-simdes-muted mt-1" id="deleteMutasiTargetMeta">-</div>
+          </div>
+        </div>
+        <div class="modal-footer border-0 pt-0 px-4 pb-4">
+          <button type="button" class="btn-simdes-outline" data-bs-dismiss="modal">Batal</button>
+          <button
+            type="button"
+            id="confirmDeleteMutasiBtn"
+            class="btn-simdes-primary"
+            style="background-color:var(--simdes-danger); border-color:var(--simdes-danger);"
+          >
+            <i class="fa-regular fa-trash-can" aria-hidden="true"></i>
+            <span>Ya, Hapus Data</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       MODAL PROFIL PENGGUNA & KELUAR SISTEM (Konsisten Global)
+       ======================================================================= -->
+  <div class="modal fade simdes-modal" id="userProfileModal" tabindex="-1" aria-labelledby="userProfileModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="userProfileModalLabel">
+            <i class="fa-regular fa-id-card text-simdes-primary me-2" aria-hidden="true"></i>Profil Aparatur Pengguna
+          </h3>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+        </div>
+        <div class="modal-body">
+          <div class="d-flex align-items-center gap-3 pb-3 mb-3 border-bottom" style="border-color:var(--simdes-border) !important;">
+            <div class="sidebar-user-avatar" style="width:54px; height:54px; flex-basis:54px; font-size:1.1rem;" data-user-initials>BS</div>
+            <div>
+              <div class="fw-bolder fs-6" style="color:var(--simdes-deep-green);" data-user-fullname>Budi Santoso, S.AP</div>
+              <div class="badge-simdes badge-simdes-primary mt-1" data-user-role>Sekretaris Desa</div>
+            </div>
+          </div>
+          <div class="village-meta-table">
+            <div class="village-meta-row">
+              <span class="village-meta-key">Nama Pengguna</span>
+              <span class="village-meta-val" data-user-username>sekdes.tiaro</span>
+            </div>
+            <div class="village-meta-row">
+              <span class="village-meta-key">NIPD (Dummy)</span>
+              <span class="village-meta-val tabular-nums" data-user-nipd>19880412 201503 1 002</span>
+            </div>
+            <div class="village-meta-row">
+              <span class="village-meta-key">Unit Kerja</span>
+              <span class="village-meta-val" data-user-unit>Sekretariat Pemerintah Desa Tiaro</span>
+            </div>
+            <div class="village-meta-row">
+              <span class="village-meta-key">Hak Akses</span>
+              <span class="village-meta-val">Koordinator Administrasi Desa</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn-simdes-outline" data-bs-dismiss="modal">Tutup</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade simdes-modal" id="logoutConfirmModal" tabindex="-1" aria-labelledby="logoutConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="logoutConfirmModalLabel">Konfirmasi Keluar</h3>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+        </div>
+        <div class="modal-body" style="font-size:0.875rem; color:var(--simdes-text-muted);">
+          Apakah Anda yakin ingin mengakhiri sesi kerja pada <strong>SIMDES Desa Tiaro</strong> dan kembali ke halaman masuk?
+        </div>
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn-simdes-outline" data-bs-dismiss="modal">Batal</button>
+          <button type="button" id="confirmLogoutBtn" class="btn-simdes-primary" style="background-color:var(--simdes-danger); border-color:var(--simdes-danger);">
+            <i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i>
+            <span>Ya, Keluar</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap 5.3 JS Bundle CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+  <!-- SIMDES Vanilla JS Modules -->
+  <script src="../../assets/js/app.js"></script>
+  <script src="../../assets/js/sidebar.js"></script>
+  <script src="../../assets/js/forms.js"></script>
+  <script src="../../assets/js/table.js"></script>
+  <script src="../../assets/js/buku-mutasi-penduduk-desa.js"></script>
+</body>
+</html>
+

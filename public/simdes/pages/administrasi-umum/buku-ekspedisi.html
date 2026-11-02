@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buku Ekspedisi — SIMDES Desa Tiaro</title>
+  <meta name="description" content="Pencatatan pengiriman surat kepada instansi, lembaga, maupun pihak yang dituju oleh Pemerintah Desa.">
+  <link rel="icon" type="image/png" href="../../assets/images/logo.png">
+
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap 5.3 CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+  <!-- Font Awesome 6 CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+  <!-- SIMDES Global & Component Stylesheets -->
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <link rel="stylesheet" href="../../assets/css/components.css">
+  <link rel="stylesheet" href="../../assets/css/pages.css">
+</head>
+<body data-root-prefix="../../" data-active-nav="buku-ekspedisi">
+  <a href="#mainContent" class="skip-link">Lewati ke konten utama</a>
+
+  <div class="app-shell">
+    <!-- =====================================================================
+         SIDEBAR NAVIGATION (Consistent Global Structure)
+         ===================================================================== -->
+    <aside class="app-sidebar" id="appSidebar" aria-label="Navigasi Utama SIMDES">
+      <div class="sidebar-brand">
+        <img src="../../assets/images/logo.png" alt="Lambang Desa Tiaro" class="sidebar-brand-logo" width="42" height="42">
+        <div class="sidebar-brand-text">
+          <span class="sidebar-brand-title">SIMDES TIARO</span>
+          <span class="sidebar-brand-subtitle">Pemerintah Desa Tiaro</span>
+        </div>
+        <button
+          type="button"
+          id="sidebarCloseMobileBtn"
+          class="sidebar-logout-btn d-lg-none ms-auto"
+          aria-label="Tutup menu navigasi"
+        >
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav-scroll" aria-label="Menu Buku Administrasi">
+        <div class="sidebar-section-label">DASHBOARD</div>
+        <ul class="sidebar-menu mb-2">
+          <li>
+            <a
+              href="../dashboard.html"
+              class="sidebar-link"
+              data-sidebar-tooltip="Dashboard"
+            >
+              <span class="sidebar-link-icon">
+                <i class="fa-solid fa-table-columns" aria-hidden="true"></i>
+              </span>
+              <span class="sidebar-link-text">Dashboard</span>
+            </a>
+          </li>
+        </ul>
+
+        <div class="sidebar-section-label">MODUL ADMINISTRASI</div>
+        <ul class="sidebar-menu">
+          <!-- Group A: Administrasi Umum -->
+          <li>
+            <button
+              type="button"
+              class="sidebar-link active"
+              data-sidebar-group="umum"
+              data-sidebar-tooltip="Administrasi Umum (9 Buku)"
+              aria-expanded="true"
+              aria-controls="sidebarGroupUmumInfo"
+            >
+              <span class="sidebar-link-icon">
+                <i class="fa-solid fa-book-bookmark" aria-hidden="true"></i>
+              </span>
+              <span class="sidebar-link-text">Administrasi Umum</span>
+              <span class="sidebar-badge">9</span>
+              <i class="fa-solid fa-chevron-down sidebar-chevron" aria-hidden="true"></i>
+            </button>
+            <div id="sidebarGroupUmumInfo" class="sidebar-group-panel"></div>
+          </li>
+
+          <!-- Group B: Administrasi Penduduk -->
+          <li>
+            <button
+              type="button"
+              class="sidebar-link"
+              data-sidebar-group="penduduk"
+              data-sidebar-tooltip="Administrasi Penduduk (5 Buku)"
+              aria-expanded="false"
+              aria-controls="sidebarGroupPendudukInfo"
+            >
+              <span class="sidebar-link-icon">
+                <i class="fa-solid fa-users" aria-hidden="true"></i>
+              </span>
+              <span class="sidebar-link-text">Administrasi Penduduk</span>
+              <span class="sidebar-badge">5</span>
+              <i class="fa-solid fa-chevron-down sidebar-chevron" aria-hidden="true"></i>
+            </button>
+            <div id="sidebarGroupPendudukInfo" class="sidebar-group-panel" hidden></div>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user-card">
+          <button
+            type="button"
+            class="border-0 bg-transparent p-0 d-flex align-items-center gap-2 text-start flex-grow-1 min-w-0"
+            data-action="open-profile-modal"
+            data-sidebar-tooltip="Profil Pengguna"
+            aria-label="Lihat profil pengguna"
+          >
+            <span class="sidebar-user-avatar" data-user-initials>BS</span>
+            <span class="sidebar-user-meta">
+              <span class="sidebar-user-name" data-user-fullname>Budi Santoso, S.AP</span>
+              <span class="sidebar-user-role" data-user-role>Sekretaris Desa</span>
+            </span>
+          </button>
+          <button
+            type="button"
+            class="sidebar-logout-btn"
+            data-action="confirm-logout"
+            title="Keluar Sistem"
+            aria-label="Keluar dari SIMDES"
+          >
+            <i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Mobile Offcanvas Backdrop -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+
+    <!-- =====================================================================
+         MAIN WORKSPACE (Topbar + Main Content + Footer)
+         ===================================================================== -->
+    <div class="app-main" id="appMainWrapper">
+      <!-- TOPBAR -->
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button
+            type="button"
+            id="sidebarToggleBtn"
+            class="btn-icon-topbar"
+            aria-label="Ciutkan panel navigasi samping"
+            aria-controls="appSidebar"
+            aria-expanded="true"
+          >
+            <i class="fa-solid fa-bars-staggered" aria-hidden="true"></i>
+          </button>
+
+          <!-- Topbar Breadcrumb -->
+          <nav aria-label="Breadcrumb Topbar" class="d-none d-md-block">
+            <ol class="simdes-breadcrumb">
+              <li><a href="../dashboard.html">Dashboard</a></li>
+              <li><span>Administrasi Umum</span></li>
+              <li class="active" aria-current="page">Buku Ekspedisi</li>
+            </ol>
+          </nav>
+        </div>
+
+        <div class="topbar-right">
+          <!-- Global Quick Search -->
+          <div class="topbar-search d-none d-sm-block">
+            <i class="fa-solid fa-magnifying-glass topbar-search-icon" aria-hidden="true"></i>
+            <input
+              type="search"
+              id="globalSearchInput"
+              class="topbar-search-input"
+              placeholder="Cari ringkasan atau modul..."
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="off"
+              spellcheck="false"
+              aria-label="Pencarian cepat halaman"
+            >
+            <kbd class="topbar-search-kbd d-none d-lg-inline-block">Ctrl K</kbd>
+            <div id="globalSearchResults" class="topbar-search-results" role="listbox" aria-label="Hasil pencarian cepat"></div>
+          </div>
+
+          <span class="fiscal-badge d-none d-xl-inline-flex" title="Tahun Anggaran Pemerintahan Desa Aktif">
+            <i class="fa-regular fa-calendar-check" aria-hidden="true"></i>
+            TA 2026
+          </span>
+
+          <!-- Notifications Dropdown -->
+          <div class="dropdown">
+            <button
+              type="button"
+              class="btn-icon-topbar"
+              id="notifDropdownBtn"
+              data-bs-toggle="dropdown"
+              data-bs-auto-close="outside"
+              aria-expanded="false"
+              aria-label="Notifikasi administrasi desa (3 belum dibaca)"
+            >
+              <i class="fa-regular fa-bell" aria-hidden="true"></i>
+              <span class="notif-dot" id="topbarNotifDot" aria-hidden="true"></span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end simdes-dropdown-menu simdes-notif-menu" aria-labelledby="notifDropdownBtn">
+              <div class="notif-header">
+                <div>
+                  <span class="fw-bold" style="font-size:0.86rem; color:var(--simdes-text);">Pemberitahuan Sistem</span>
+                  <span id="notifCountBadge" class="badge-simdes badge-simdes-accent ms-1">3 Baru</span>
+                </div>
+                <button type="button" id="markAllNotifReadBtn" class="border-0 bg-transparent p-0 fw-semibold text-simdes-primary" style="font-size:0.76rem;">
+                  Tandai dibaca
+                </button>
+              </div>
+              <div class="notif-list">
+                <div class="notif-item unread">
+                  <div class="notif-icon stat-icon-primary">
+                    <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+                  </div>
+                  <div class="min-w-0">
+                    <div class="fw-semibold" style="font-size:0.81rem; color:var(--simdes-text);">
+                      Buku Ekspedisi (Kode A.8) aktif
+                    </div>
+                    <div class="text-simdes-muted" style="font-size:0.75rem;">
+                      Mendukung filter rentang tanggal pengiriman dan pengurutan otomatis.
+                    </div>
+                    <small class="text-simdes-muted" style="font-size:0.7rem;">Baru saja</small>
+                  </div>
+                </div>
+                <div class="notif-item unread">
+                  <div class="notif-icon stat-icon-accent">
+                    <i class="fa-solid fa-newspaper" aria-hidden="true"></i>
+                  </div>
+                  <div class="min-w-0">
+                    <div class="fw-semibold" style="font-size:0.81rem; color:var(--simdes-text);">
+                      Buku Lembaran &amp; Berita Desa tersedia
+                    </div>
+                    <div class="text-simdes-muted" style="font-size:0.75rem;">
+                      Data simulasi tersimpan lokal pada peramban.
+                    </div>
+                    <small class="text-simdes-muted" style="font-size:0.7rem;">Hari ini</small>
+                  </div>
+                </div>
+                <div class="notif-item unread">
+                  <div class="notif-icon stat-icon-secondary">
+                    <i class="fa-solid fa-calendar-day" aria-hidden="true"></i>
+                  </div>
+                  <div class="min-w-0">
+                    <div class="fw-semibold" style="font-size:0.81rem; color:var(--simdes-text);">
+                      Rekapitulasi Surat Keluar Bulanan
+                    </div>
+                    <div class="text-simdes-muted" style="font-size:0.75rem;">
+                      Pengingat pengecekan tanda terima ekspedisi.
+                    </div>
+                    <small class="text-simdes-muted" style="font-size:0.7rem;">Hari ini, 08:00 WITA</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- User Profile Dropdown -->
+          <div class="dropdown">
+            <button
+              type="button"
+              class="topbar-profile-btn"
+              id="userDropdownBtn"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+              aria-label="Menu profil pengguna"
+            >
+              <span class="topbar-avatar" data-user-initials>BS</span>
+              <span class="topbar-profile-info d-none d-md-block">
+                <span class="topbar-profile-name" data-user-fullname>Budi Santoso, S.AP</span>
+                <span class="topbar-profile-role" data-user-role>Sekretaris Desa</span>
+              </span>
+              <i class="fa-solid fa-chevron-down text-simdes-muted d-none d-md-inline-block" style="font-size:0.7rem;" aria-hidden="true"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end simdes-dropdown-menu" aria-labelledby="userDropdownBtn">
+              <li class="px-3 py-2 border-bottom mb-1" style="border-color:var(--simdes-border) !important;">
+                <div class="fw-bold" style="font-size:0.84rem;" data-user-fullname>Budi Santoso, S.AP</div>
+                <div class="text-simdes-muted" style="font-size:0.74rem;" data-user-unit>Sekretariat Pemerintah Desa Tiaro</div>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#userProfileModal" data-action="open-profile-modal">
+                  <i class="fa-regular fa-id-badge text-simdes-secondary" aria-hidden="true"></i>
+                  Profil Aparatur
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="../dashboard.html">
+                  <i class="fa-solid fa-table-columns text-simdes-secondary" aria-hidden="true"></i>
+                  Kembali ke Dashboard
+                </a>
+              </li>
+              <li><hr class="dropdown-divider" style="border-color:var(--simdes-border);"></li>
+              <li>
+                <a class="dropdown-item text-danger" href="../../login.html" data-action="confirm-logout">
+                  <i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i>
+                  Keluar Sistem
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </header>
+
+      <!-- MAIN CONTENT -->
+      <main class="app-content" id="mainContent">
+        <div id="bukuEkspedisiPageRoot">
+          <!-- Page Heading & Breadcrumb -->
+          <div class="page-header">
+            <div>
+              <nav aria-label="Breadcrumb Halaman" class="mb-2">
+                <ol class="simdes-breadcrumb">
+                  <li>
+                    <a href="../dashboard.html">
+                      <i class="fa-solid fa-house-chimney me-1" aria-hidden="true"></i>Dashboard
+                    </a>
+                  </li>
+                  <li><span>Administrasi Umum</span></li>
+                  <li class="active" aria-current="page">Buku Ekspedisi</li>
+                </ol>
+              </nav>
+              <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+                <span class="badge-simdes badge-simdes-primary">Kode A.8 &bull; Administrasi Umum</span>
+              </div>
+              <h1 class="page-header-title">Buku Ekspedisi</h1>
+              <p class="page-header-desc">
+                Pencatatan pengiriman surat kepada instansi, lembaga, maupun pihak yang dituju oleh Pemerintah Desa.
+              </p>
+            </div>
+
+            <div class="page-header-actions">
+              <button type="button" id="btnCetakEkspedisi" class="btn-simdes-outline">
+                <i class="fa-solid fa-print" aria-hidden="true"></i>
+                <span>Cetak Tabel</span>
+              </button>
+              <button type="button" id="btnTambahEkspedisi" class="btn-simdes-primary">
+                <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                <span>Tambah Ekspedisi</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Sample Data Notice -->
+          <div class="sample-data-banner" role="note" aria-label="Keterangan data contoh">
+            <div class="d-flex align-items-start align-items-md-center gap-2">
+              <i class="fa-solid fa-circle-info mt-1 mt-md-0" aria-hidden="true"></i>
+              <span>
+                <strong>Mode Simulasi Antarmuka:</strong> Data awal merupakan <em>data contoh fiktif</em> pada <code>localStorage</code>. Anda dapat menambah, mengedit, menghapus, memfilter rentang tanggal pengiriman, atau mencetak tabel.
+              </span>
+            </div>
+            <button
+              type="button"
+              id="btnResetSampleEkspedisi"
+              class="btn-simdes-outline py-1 px-2"
+              style="min-block-size:32px; font-size:0.76rem;"
+            >
+              <i class="fa-solid fa-arrow-rotate-left" aria-hidden="true"></i>
+              <span>Pulihkan Data Contoh</span>
+            </button>
+          </div>
+
+          <!-- Summary KPI Strip (3 Cards) -->
+          <section class="row g-3 mb-4 ledger-kpi-row" aria-label="Ringkasan Buku Ekspedisi">
+            <div class="col-12 col-sm-4">
+              <article class="stat-card py-3">
+                <div class="d-flex align-items-center justify-content-between gap-2">
+                  <div>
+                    <div class="stat-label mb-1">Total Surat Dikirim</div>
+                    <div class="stat-value fs-3" id="statTotalEkspedisi">0</div>
+                  </div>
+                  <div class="stat-icon-box stat-icon-primary">
+                    <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+                  </div>
+                </div>
+              </article>
+            </div>
+
+            <div class="col-12 col-sm-4">
+              <article class="stat-card accent-gold py-3">
+                <div class="d-flex align-items-center justify-content-between gap-2">
+                  <div>
+                    <div class="stat-label mb-1">Pengiriman Periode Terakhir</div>
+                    <div class="stat-value fs-3" id="statEkspedisiBulanIni">0</div>
+                  </div>
+                  <div class="stat-icon-box stat-icon-accent">
+                    <i class="fa-solid fa-calendar-check" aria-hidden="true"></i>
+                  </div>
+                </div>
+              </article>
+            </div>
+
+            <div class="col-12 col-sm-4">
+              <article class="stat-card py-3">
+                <div class="d-flex align-items-center justify-content-between gap-2">
+                  <div>
+                    <div class="stat-label mb-1">Instansi / Tujuan Tercatat</div>
+                    <div class="stat-value fs-3" id="statTujuanUnik">0</div>
+                  </div>
+                  <div class="stat-icon-box stat-icon-secondary">
+                    <i class="fa-solid fa-building-flag" aria-hidden="true"></i>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <!-- Main 6-Column Official Ledger Card -->
+          <section class="simdes-card" aria-label="Tabel Buku Ekspedisi">
+            <!-- Print-Only Header -->
+            <div class="print-ledger-header">
+              <div style="font-size:13pt; font-weight:800; text-transform:uppercase; letter-spacing:0.04em;">
+                BUKU EKSPEDISI (KODE A.8)
+              </div>
+              <div style="font-size:10pt; font-weight:600; margin-top:2px;">
+                SIMDES TIARO &mdash; CETAKAN SIMULASI FRONTEND (DATA CONTOH)
+              </div>
+              <div id="printEkspedisiMeta" style="font-size:8.5pt; color:#444; margin-top:4px;"></div>
+            </div>
+
+            <!-- Search & Date Range Filter Toolbar -->
+            <div class="ledger-toolbar">
+              <div class="ledger-search-wrap">
+                <i class="fa-solid fa-magnifying-glass ledger-search-icon" aria-hidden="true"></i>
+                <input
+                  type="search"
+                  id="tableSearchInput"
+                  class="ledger-search-input"
+                  placeholder="Cari nomor surat, tujuan, atau isi singkat surat..."
+                  autocomplete="off"
+                  autocorrect="off"
+                  autocapitalize="off"
+                  spellcheck="false"
+                  aria-label="Cari berdasarkan nomor surat, tujuan pengiriman, atau isi singkat surat"
+                >
+                <button
+                  type="button"
+                  id="clearSearchInputBtn"
+                  class="ledger-search-clear"
+                  aria-label="Bersihkan teks pencarian"
+                  title="Bersihkan pencarian"
+                >
+                  <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+              </div>
+
+              <div class="ledger-filters-group">
+                <div class="ledger-date-range-group" role="group" aria-label="Filter rentang tanggal pengiriman">
+                  <div class="ledger-date-filter-item">
+                    <label for="filterTanggalMulai" class="ledger-date-filter-label">Dari:</label>
+                    <input
+                      type="date"
+                      id="filterTanggalMulai"
+                      class="simdes-date-filter-input"
+                      aria-label="Filter dari tanggal pengiriman"
+                    >
+                  </div>
+                  <div class="ledger-date-filter-item">
+                    <label for="filterTanggalSelesai" class="ledger-date-filter-label">Sampai:</label>
+                    <input
+                      type="date"
+                      id="filterTanggalSelesai"
+                      class="simdes-date-filter-input"
+                      aria-label="Filter sampai tanggal pengiriman"
+                    >
+                  </div>
+                </div>
+
+                <select id="pageSizeSelect" class="simdes-select" aria-label="Jumlah baris per halaman">
+                  <option value="5" selected>5 / halaman</option>
+                  <option value="10">10 / halaman</option>
+                  <option value="25">25 / halaman</option>
+                </select>
+
+                <button
+                  type="button"
+                  id="resetTableFilterBtn"
+                  class="btn-simdes-outline"
+                  disabled
+                  title="Reset pencarian dan filter tanggal"
+                >
+                  <i class="fa-solid fa-filter-circle-xmark" aria-hidden="true"></i>
+                  <span>Reset</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- STRICT 6-COLUMN OFFICIAL TABLE -->
+            <div
+              class="simdes-table-wrapper"
+              tabindex="0"
+              role="region"
+              aria-labelledby="ekspedisiTableCaption"
+            >
+              <table class="simdes-ledger-table" id="ekspedisiTable">
+                <caption id="ekspedisiTableCaption" class="visually-hidden-accessible">
+                  Tabel Buku Ekspedisi (Kode A.8) dengan 6 kolom resmi pencatatan pengiriman surat
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col" class="col-no-urut">NO. URUT</th>
+                    <th scope="col" style="width:15%;" aria-sort="descending">
+                      <button type="button" class="th-sort-btn is-sorted" data-sort-key="tanggalPengiriman">
+                        <span>TANGGAL PENGIRIMAN</span>
+                        <i class="fa-solid fa-sort-down th-sort-icon no-print" aria-hidden="true"></i>
+                      </button>
+                    </th>
+                    <th scope="col" style="width:20%;" aria-sort="none">
+                      <button type="button" class="th-sort-btn" data-sort-key="surat">
+                        <span>TANGGAL DAN NOMOR SURAT</span>
+                        <i class="fa-solid fa-sort th-sort-icon no-print" aria-hidden="true"></i>
+                      </button>
+                    </th>
+                    <th scope="col" style="width:28%;">ISI SINGKAT SURAT YANG DIKIRIM</th>
+                    <th scope="col" style="width:18%;" aria-sort="none">
+                      <button type="button" class="th-sort-btn" data-sort-key="ditujukanKepada">
+                        <span>DITUJUKAN KEPADA</span>
+                        <i class="fa-solid fa-sort th-sort-icon no-print" aria-hidden="true"></i>
+                      </button>
+                    </th>
+                    <th scope="col" style="width:15%;">KETERANGAN</th>
+                  </tr>
+                </thead>
+                <tbody id="ekspedisiTableBody"></tbody>
+              </table>
+            </div>
+
+            <!-- Pagination Footer -->
+            <div class="ledger-pagination-bar">
+              <div class="pagination-info" id="tablePaginationInfo" aria-live="polite">
+                Menampilkan 0 data ekspedisi
+              </div>
+              <nav aria-label="Navigasi halaman tabel ekspedisi">
+                <ul class="simdes-pagination" id="tablePaginationList"></ul>
+              </nav>
+            </div>
+          </section>
+        </div>
+      </main>
+
+      <!-- FOOTER -->
+      <footer class="app-footer">
+        <div>
+          <strong>SIMDES Desa Tiaro</strong> &mdash; Sistem Informasi Manajemen Desa
+        </div>
+        <div>
+          Administrasi Umum &bull; Buku Ekspedisi (A.8)
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       MODAL FORM TAMBAH & EDIT EKSPEDISI SURAT (MODAL LG)
+       ======================================================================= -->
+  <div class="modal fade simdes-modal" id="ekspedisiFormModal" tabindex="-1" aria-labelledby="ekspedisiFormModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title" id="ekspedisiFormModalLabel">
+            <i class="fa-solid fa-plus-circle text-simdes-primary me-2" aria-hidden="true"></i>Tambah Catatan Ekspedisi Surat
+          </h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup formulir"></button>
+        </div>
+
+        <form id="ekspedisiForm" novalidate>
+          <div class="modal-body p-4">
+            <input type="hidden" id="eksRecordId" name="recordId">
+
+            <div id="ekspedisiFormAlert" class="login-alert login-alert-error" role="alert" aria-live="assertive">
+              <i class="fa-solid fa-circle-exclamation mt-1" aria-hidden="true"></i>
+              <span id="ekspedisiFormAlertText"></span>
+            </div>
+
+            <!-- 1. Informasi Pengiriman -->
+            <fieldset class="simdes-fieldset">
+              <legend class="simdes-legend">Informasi Pengiriman</legend>
+              <div class="row g-3">
+                <div class="col-12 col-sm-6">
+                  <div class="simdes-field mb-2">
+                    <label for="eksTanggalPengiriman" class="simdes-label">
+                      1. Tanggal Pengiriman<span class="req-star" aria-hidden="true">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      id="eksTanggalPengiriman"
+                      name="tanggalPengiriman"
+                      class="simdes-input"
+                      required
+                      data-field-label="Tanggal Pengiriman"
+                      aria-describedby="eksTanggalPengirimanError"
+                    >
+                    <div id="eksTanggalPengirimanError" class="field-error-msg" role="status">
+                      <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                      <span class="field-error-text">Tanggal pengiriman wajib diisi.</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- 2. Informasi Surat -->
+            <fieldset class="simdes-fieldset">
+              <legend class="simdes-legend">Informasi Surat</legend>
+              <div class="row g-3">
+                <div class="col-12 col-sm-7">
+                  <div class="simdes-field mb-2">
+                    <label for="eksNomorSurat" class="simdes-label">
+                      2. Nomor Surat<span class="req-star" aria-hidden="true">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="eksNomorSurat"
+                      name="nomorSurat"
+                      class="simdes-input"
+                      placeholder="Contoh: SIM-005/048/PEM-TR/X/2026"
+                      required
+                      minlength="3"
+                      spellcheck="false"
+                      data-field-label="Nomor Surat"
+                      aria-describedby="eksNomorSuratError"
+                    >
+                    <div id="eksNomorSuratError" class="field-error-msg" role="status">
+                      <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                      <span class="field-error-text">Nomor surat wajib diisi.</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12 col-sm-5">
+                  <div class="simdes-field mb-2">
+                    <label for="eksTanggalSurat" class="simdes-label">
+                      3. Tanggal Surat<span class="req-star" aria-hidden="true">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      id="eksTanggalSurat"
+                      name="tanggalSurat"
+                      class="simdes-input"
+                      required
+                      data-field-label="Tanggal Surat"
+                      aria-describedby="eksTanggalSuratError"
+                    >
+                    <div id="eksTanggalSuratError" class="field-error-msg" role="status">
+                      <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                      <span class="field-error-text">Tanggal surat wajib diisi.</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <div class="simdes-field mb-2">
+                    <label for="eksIsiSingkat" class="simdes-label">
+                      4. Isi Singkat Surat yang Dikirim<span class="req-star" aria-hidden="true">*</span>
+                    </label>
+                    <textarea
+                      id="eksIsiSingkat"
+                      name="isiSingkat"
+                      class="simdes-textarea"
+                      rows="3"
+                      placeholder="Tuliskan ringkasan pokok isi surat yang dikirimkan..."
+                      required
+                      minlength="5"
+                      data-field-label="Isi Singkat Surat yang Dikirim"
+                      aria-describedby="eksIsiSingkatError"
+                    ></textarea>
+                    <div id="eksIsiSingkatError" class="field-error-msg" role="status">
+                      <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                      <span class="field-error-text">Isi singkat surat yang dikirim wajib diisi.</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- 3. Tujuan Pengiriman -->
+            <fieldset class="simdes-fieldset">
+              <legend class="simdes-legend">Tujuan Pengiriman</legend>
+              <div class="simdes-field mb-2">
+                <label for="eksDitujukanKepada" class="simdes-label">
+                  5. Ditujukan Kepada<span class="req-star" aria-hidden="true">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="eksDitujukanKepada"
+                  name="ditujukanKepada"
+                  class="simdes-input"
+                  placeholder="Contoh: Camat Wilayah Kecamatan / Ketua BPD"
+                  required
+                  minlength="3"
+                  data-field-label="Ditujukan Kepada"
+                  aria-describedby="eksDitujukanKepadaError"
+                >
+                <div id="eksDitujukanKepadaError" class="field-error-msg" role="status">
+                  <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                  <span class="field-error-text">Tujuan pengiriman surat wajib diisi.</span>
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- 4. Keterangan -->
+            <fieldset class="simdes-fieldset">
+              <legend class="simdes-legend">Keterangan</legend>
+              <div class="simdes-field mb-2">
+                <label for="eksKeterangan" class="simdes-label">6. Keterangan</label>
+                <textarea
+                  id="eksKeterangan"
+                  name="keterangan"
+                  class="simdes-textarea"
+                  rows="2"
+                  style="min-block-size:74px;"
+                  placeholder="Catatan tanda terima, nama penerima, atau lampiran berkas (opsional)..."
+                  data-field-label="Keterangan"
+                ></textarea>
+              </div>
+            </fieldset>
+          </div>
+
+          <div class="modal-footer bg-light border-top px-4 py-3" style="border-color:var(--simdes-border) !important;">
+            <button type="button" class="btn-simdes-outline" data-bs-dismiss="modal">Batal</button>
+            <button type="submit" id="ekspedisiFormSubmitBtn" class="btn-simdes-primary">
+              <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i>
+              <span>Simpan Ekspedisi</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       MODAL DETAIL EKSPEDISI SURAT
+       ======================================================================= -->
+  <div class="modal fade simdes-modal" id="ekspedisiDetailModal" tabindex="-1" aria-labelledby="ekspedisiDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title" id="ekspedisiDetailModalLabel">
+            <i class="fa-solid fa-paper-plane text-simdes-primary me-2" aria-hidden="true"></i>Detail Pengiriman Surat (Ekspedisi)
+          </h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup detail"></button>
+        </div>
+
+        <div class="modal-body p-4">
+          <div class="row g-3 mb-3">
+            <div class="col-12 col-sm-4">
+              <div class="detail-sheet-box h-100">
+                <div class="detail-item-label">Tanggal Pengiriman</div>
+                <div class="detail-item-value text-simdes-primary tabular-nums" id="detEksTanggalPengiriman">-</div>
+              </div>
+            </div>
+            <div class="col-12 col-sm-4">
+              <div class="detail-sheet-box h-100">
+                <div class="detail-item-label">Nomor Surat</div>
+                <div class="detail-item-value tabular-nums" id="detEksNomorSurat">-</div>
+              </div>
+            </div>
+            <div class="col-12 col-sm-4">
+              <div class="detail-sheet-box h-100">
+                <div class="detail-item-label">Tanggal Surat</div>
+                <div class="detail-item-value tabular-nums" id="detEksTanggalSurat">-</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-sheet-box mb-3">
+            <div class="detail-item-label">Isi Singkat Surat yang Dikirim</div>
+            <div class="detail-item-value fw-medium" id="detEksIsiSingkat">-</div>
+          </div>
+
+          <div class="detail-sheet-box mb-3">
+            <div class="detail-item-label">Tujuan Pengiriman (Ditujukan Kepada)</div>
+            <div class="detail-item-value" id="detEksDitujukanKepada">-</div>
+          </div>
+
+          <div class="detail-sheet-box">
+            <div class="detail-item-label">Keterangan</div>
+            <div class="detail-item-value fw-normal" id="detEksKeterangan">-</div>
+          </div>
+        </div>
+
+        <div class="modal-footer bg-light border-top px-4 py-3" style="border-color:var(--simdes-border) !important;">
+          <button type="button" class="btn-simdes-outline" data-bs-dismiss="modal">Tutup</button>
+          <button type="button" id="btnEditEkspedisiFromDetail" class="btn-simdes-primary">
+            <i class="fa-regular fa-pen-to-square" aria-hidden="true"></i>
+            <span>Edit Data Ini</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       MODAL KONFIRMASI HAPUS EKSPEDISI
+       ======================================================================= -->
+  <div class="modal fade simdes-modal" id="ekspedisiDeleteModal" tabindex="-1" aria-labelledby="ekspedisiDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title" id="ekspedisiDeleteModalLabel" style="color:var(--simdes-danger);">
+            <i class="fa-solid fa-triangle-exclamation me-2" aria-hidden="true"></i>Konfirmasi Hapus Ekspedisi
+          </h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup konfirmasi"></button>
+        </div>
+        <div class="modal-body p-4" style="font-size:0.88rem;">
+          <p class="mb-2 text-simdes-muted">
+            Apakah Anda yakin ingin menghapus catatan pengiriman surat berikut dari <strong>Buku Ekspedisi</strong>?
+          </p>
+          <div class="p-3 rounded-3" style="background-color:var(--simdes-danger-bg); border:1px solid rgba(184, 58, 50, 0.22);">
+            <div class="fw-bold" style="color:var(--simdes-danger);" id="deleteEkspedisiTargetName">-</div>
+            <div class="mt-1 fw-medium" style="color:var(--simdes-text); font-size:0.81rem;" id="deleteEkspedisiTargetMeta">-</div>
+          </div>
+        </div>
+        <div class="modal-footer border-0 pt-0 px-4 pb-4">
+          <button type="button" class="btn-simdes-outline" data-bs-dismiss="modal">Batal</button>
+          <button
+            type="button"
+            id="confirmDeleteEkspedisiBtn"
+            class="btn-simdes-primary"
+            style="background-color:var(--simdes-danger); border-color:var(--simdes-danger);"
+          >
+            <i class="fa-regular fa-trash-can" aria-hidden="true"></i>
+            <span>Ya, Hapus Data</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       MODAL PROFIL PENGGUNA & KELUAR SISTEM (Konsisten Global)
+       ======================================================================= -->
+  <div class="modal fade simdes-modal" id="userProfileModal" tabindex="-1" aria-labelledby="userProfileModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="userProfileModalLabel">
+            <i class="fa-regular fa-id-card text-simdes-primary me-2" aria-hidden="true"></i>Profil Aparatur Pengguna
+          </h3>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+        </div>
+        <div class="modal-body">
+          <div class="d-flex align-items-center gap-3 pb-3 mb-3 border-bottom" style="border-color:var(--simdes-border) !important;">
+            <div class="sidebar-user-avatar" style="width:54px; height:54px; flex-basis:54px; font-size:1.1rem;" data-user-initials>BS</div>
+            <div>
+              <div class="fw-bolder fs-6" style="color:var(--simdes-deep-green);" data-user-fullname>Budi Santoso, S.AP</div>
+              <div class="badge-simdes badge-simdes-primary mt-1" data-user-role>Sekretaris Desa</div>
+            </div>
+          </div>
+          <div class="village-meta-table">
+            <div class="village-meta-row">
+              <span class="village-meta-key">Nama Pengguna</span>
+              <span class="village-meta-val" data-user-username>sekdes.tiaro</span>
+            </div>
+            <div class="village-meta-row">
+              <span class="village-meta-key">NIPD (Dummy)</span>
+              <span class="village-meta-val tabular-nums" data-user-nipd>19880412 201503 1 002</span>
+            </div>
+            <div class="village-meta-row">
+              <span class="village-meta-key">Unit Kerja</span>
+              <span class="village-meta-val" data-user-unit>Sekretariat Pemerintah Desa Tiaro</span>
+            </div>
+            <div class="village-meta-row">
+              <span class="village-meta-key">Hak Akses</span>
+              <span class="village-meta-val">Koordinator Administrasi Desa</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn-simdes-outline" data-bs-dismiss="modal">Tutup</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade simdes-modal" id="logoutConfirmModal" tabindex="-1" aria-labelledby="logoutConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="logoutConfirmModalLabel">Konfirmasi Keluar</h3>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+        </div>
+        <div class="modal-body" style="font-size:0.875rem; color:var(--simdes-text-muted);">
+          Apakah Anda yakin ingin mengakhiri sesi kerja pada <strong>SIMDES Desa Tiaro</strong> dan kembali ke halaman masuk?
+        </div>
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn-simdes-outline" data-bs-dismiss="modal">Batal</button>
+          <button type="button" id="confirmLogoutBtn" class="btn-simdes-primary" style="background-color:var(--simdes-danger); border-color:var(--simdes-danger);">
+            <i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i>
+            <span>Ya, Keluar</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap 5.3 JS Bundle CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+  <!-- SIMDES Vanilla JS Modules -->
+  <script src="../../assets/js/app.js"></script>
+  <script src="../../assets/js/sidebar.js"></script>
+  <script src="../../assets/js/forms.js"></script>
+  <script src="../../assets/js/table.js"></script>
+  <script src="../../assets/js/buku-ekspedisi.js"></script>
+</body>
+</html>
+

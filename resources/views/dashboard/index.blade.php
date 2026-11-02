@@ -1,4 +1,5 @@
 <x-appcontent>
+    <x-app-heading />
     <div id="dashboardPageRoot">
         <section class="dashboard-welcome" aria-label="Sapaan Pengguna">
             <div class="welcome-content">

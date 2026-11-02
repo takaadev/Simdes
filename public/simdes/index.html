@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIMDES Desa Tiaro — Sistem Informasi Manajemen Desa</title>
+  <meta name="description" content="Sistem Informasi Manajemen Desa (SIMDES) Pemerintah Desa Tiaro.">
+  <link rel="icon" type="image/png" href="assets/images/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <script>
+    (function () {
+      try {
+        var hasSession = sessionStorage.getItem('simdes_tiaro_user_session') || localStorage.getItem('simdes_tiaro_user_session');
+        window.location.replace(hasSession ? 'pages/dashboard.html' : 'login.html');
+      } catch (e) {
+        window.location.replace('login.html');
+      }
+    })();
+  </script>
+</head>
+<body class="d-flex align-items-center justify-content-center" style="display:grid; place-content:center; min-block-size:100dvh; text-align:center; padding:1.5rem;">
+  <div>
+    <img src="assets/images/logo.png" alt="Lambang Desa Tiaro" width="64" height="64" style="margin-inline:auto; margin-block-end:1rem;">
+    <h1 style="font-size:1.2rem; margin-block-end:0.5rem;">SIMDES DESA TIARO</h1>
+    <p style="color:var(--simdes-text-muted); margin-block-end:1rem;">Mengalihkan ke halaman layanan...</p>
+    <a href="login.html" class="btn-simdes-primary">Buka Halaman Masuk</a>
+  </div>
+</body>
+</html>
+

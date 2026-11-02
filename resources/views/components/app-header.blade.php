@@ -9,7 +9,7 @@
         <nav aria-label="Breadcrumb Topbar" class="d-none d-md-block">
             <ol class="simdes-breadcrumb">
                 <li><a href="dashboard.html">SIMDES Tiaro</a></li>
-                <li class="active" aria-current="page">Dashboard</li>
+                {{-- <li class="active" aria-current="page">Dashboard</li> --}}
             </ol>
         </nav>
     </div>
