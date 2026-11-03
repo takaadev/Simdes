@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/components.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/pages.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/datatable/datatables.min.css') }}">
     @stack('header')
 </head>
 
@@ -106,6 +107,10 @@
         </div>
     </div>
     <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery.js') }}"></script>
+    <script src="{{ asset('assets/datatable/datatables.min.js') }}"></script>
+    <script src="{{ asset('assets/js/tooltip.js') }}"></script>
+    <script src="{{ asset('assets/js/datatables-global.js') }}"></script>
     <script src="{{ asset('assets/js/script.js') }}"></script>
     <script src="{{ asset('assets/js/sidebar.js') }}"></script>
     <script src="{{ asset('assets/js/dashboard.js') }}"></script>

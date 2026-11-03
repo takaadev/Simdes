@@ -13,22 +13,27 @@ return new class extends Migration
     {
         Schema::create('village_regulations', function (Blueprint $table) {
             $table->id();
-            $table->string('register_number', 30)->unique();
-            $table->string('regulation_number', 100);
-            $table->string('regulation_type', 100);
-            $table->string('regulation_title', 255);
-            $table->date('stipulation_date');
-            $table->date('promulgation_date')->nullable();
-            $table->text('subject')->nullable();
-            $table->string('document_file')->nullable();
-            $table->string('status', 30)->default('draft');
-            $table->text('notes')->nullable();
+            $table->string('jenis_peraturan', 100);
+            $table->string('nomor_peraturan', 100);
+            $table->date('tgl_ditetapkan');
+            $table->string('nama_peraturan', 255);
+            $table->longText('uraian')->nullable();
+            $table->date('tgl_kesepakatan')->nullable();
+            $table->string('nomor_dilaporkan', 100)->nullable();
+            $table->date('tgl_dilaporkan')->nullable();
+            $table->string('nomor_diundang', 100)->nullable();
+            $table->date('tgl_diundang')->nullable();
+            $table->string('nomor_berita', 100)->nullable();
+            $table->date('tgl_berita')->nullable();
+            $table->text('catatan')->nullable();
+            $table->string('dokumen')->nullable();
+            $table->string('status', 15)->default('draft');
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
             $table->softDeletes();
-            $table->index('regulation_type');
+            $table->index('jenis_peraturan');
             $table->index('status');
-            $table->index('stipulation_date');
+            $table->index('tgl_ditetapkan');
         });
     }
 

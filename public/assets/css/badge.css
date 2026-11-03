@@ -1,0 +1,132 @@
+/* ========================================
+   GLASS BADGE
+======================================== */
+
+.badge-glass {
+    --badge-color: 59, 130, 246;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: fit-content;
+    max-width: 100%;
+    padding: 5px 11px;
+    border: 1px solid rgba(var(--badge-color), 0.18);
+    border-radius: 7px;
+    background: rgba(var(--badge-color), 0.10);
+    color: rgb(var(--badge-color));
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+    white-space: nowrap;
+    vertical-align: middle;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+/* ========================================
+   COLORS
+======================================== */
+
+.badge-glass-blue {
+    --badge-color: 59, 130, 246;
+}
+
+.badge-glass-red {
+    --badge-color: 239, 68, 68;
+}
+
+.badge-glass-green {
+    --badge-color: 34, 197, 94;
+}
+
+.badge-glass-yellow {
+    --badge-color: 234, 179, 8;
+}
+
+.badge-glass-orange {
+    --badge-color: 249, 115, 22;
+}
+
+.badge-glass-purple {
+    --badge-color: 168, 85, 247;
+}
+
+.badge-glass-pink {
+    --badge-color: 236, 72, 153;
+}
+
+.badge-glass-cyan {
+    --badge-color: 6, 182, 212;
+}
+
+.badge-glass-gray {
+    --badge-color: 107, 114, 128;
+}
+
+.badge-glass-dark {
+    --badge-color: 55, 65, 81;
+}
+
+/* ========================================
+   SIZES
+======================================== */
+
+.badge-sm {
+    padding: 3px 8px;
+    font-size: 10px;
+    gap: 4px;
+}
+
+.badge-md {
+    padding: 5px 11px;
+    font-size: 12px;
+}
+
+.badge-lg {
+    padding: 7px 14px;
+    font-size: 13px;
+}
+
+/* ========================================
+   ICON
+======================================== */
+
+.badge-glass-icon i {
+    font-size: 1em;
+    line-height: 1;
+}
+
+/* ========================================
+   CIRCLE
+======================================== */
+
+.badge-circle {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    padding: 0;
+    border-radius: 50%;
+}
+
+.badge-circle.badge-sm {
+    width: 25px;
+    height: 25px;
+    min-width: 25px;
+}
+
+.badge-circle.badge-lg {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+}
+
+/* ========================================
+   DARK MODE
+======================================== */
+
+[data-bs-theme="dark"] .badge-glass {
+    background: rgba(var(--badge-color), 0.16);
+    border-color: rgba(var(--badge-color), 0.25);
+}

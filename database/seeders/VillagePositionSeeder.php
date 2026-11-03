@@ -37,7 +37,8 @@ class VillagePositionSeeder extends Seeder
             VillagePosition::withTrashed()->updateOrCreate(
                 ['code' => $position['code']],
                 [
-                    ...$position,
+                    'name' => $position['name'],
+                    'category' => $position['category'],
                     'is_active' => true,
                     'deleted_at' => null,
                 ]

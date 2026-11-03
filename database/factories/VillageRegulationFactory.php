@@ -8,44 +8,68 @@ use App\Models\User;
 use App\Models\VillageRegulation;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends Factory<VillageRegulation>
- */
 class VillageRegulationFactory extends Factory
 {
     protected $model = VillageRegulation::class;
 
     public function definition(): array
     {
-        $stipulationDate = fake()->dateTimeBetween('-5 years', 'now');
+        $tglDitetapkan = fake()->dateTimeBetween('-5 years', 'now');
+
+        $tglKesepakatan = fake()->optional(0.7)
+            ->dateTimeBetween('-5 years', $tglDitetapkan);
+
+        $tglDilaporkan = fake()->optional(0.8)
+            ->dateTimeBetween($tglDitetapkan, 'now');
+
+        $tglDiundang = fake()->optional(0.8)
+            ->dateTimeBetween($tglDitetapkan, 'now');
+
+        $tglBerita = fake()->optional(0.8)
+            ->dateTimeBetween($tglDitetapkan, 'now');
 
         return [
-            'register_number' => fake()->unique()->numerify('####/REG/####'),
-
-            'regulation_number' => fake()->numerify('## Tahun ####'),
-
-            'regulation_type' => fake()->randomElement(
+            // Identitas Peraturan
+            'jenis_peraturan' => fake()->randomElement(
                 RegulationTypeList::cases()
             ),
+            'nomor_peraturan' => fake()->numerify('## Tahun ####'),
+            'tgl_ditetapkan' => $tglDitetapkan->format('Y-m-d'),
+            'nama_peraturan' => 'Peraturan tentang ' . fake()->sentence(4),
 
-            'regulation_title' => 'Peraturan tentang ' . fake()->sentence(4),
+            // Uraian Peraturan
+            'uraian' => fake()->optional()->paragraphs(3, true),
 
-            'stipulation_date' => $stipulationDate->format('Y-m-d'),
+            // Kesepakatan
+            'tgl_kesepakatan' => $tglKesepakatan?->format('Y-m-d'),
 
-            'promulgation_date' => fake()->optional(0.8)
-                ->dateTimeBetween($stipulationDate, 'now')
-                ?->format('Y-m-d'),
+            // Pelaporan
+            'nomor_dilaporkan' => fake()->optional(0.8)
+                ->numerify('##/LAP/####'),
+            'tgl_dilaporkan' => $tglDilaporkan?->format('Y-m-d'),
 
-            'subject' => fake()->optional()->sentence(),
+            // Pengundangan
+            'nomor_diundang' => fake()->optional(0.8)
+                ->numerify('##/UND/####'),
+            'tgl_diundang' => $tglDiundang?->format('Y-m-d'),
 
-            'document_file' => null,
+            // Berita Desa
+            'nomor_berita' => fake()->optional(0.8)
+                ->numerify('##/####'),
+            'tgl_berita' => $tglBerita?->format('Y-m-d'),
 
+            // Keterangan
+            'catatan' => fake()->optional()->sentence(),
+
+            // Dokumen
+            'dokumen' => null,
+
+            // Status
             'status' => fake()->randomElement(
                 RegulationStatusList::cases()
             ),
 
-            'notes' => fake()->optional()->sentence(),
-
+            // Relasi Pengguna
             'created_by' => User::factory(),
         ];
     }
