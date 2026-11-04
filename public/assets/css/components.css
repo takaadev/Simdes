@@ -11,9 +11,9 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.625rem 1.15rem;
+  padding: 0.50rem 0.50rem;
   min-block-size: 42px;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 0.875rem;
   border-radius: var(--radius-sm);
   border: 1px solid var(--simdes-primary); 
@@ -784,6 +784,9 @@
   color: var(--simdes-deep-green);
 }
 
+.simdes-modal .modal-body{
+  max-height: 85vh;
+}
 .simdes-toast-container {
   position: fixed;
   inset-block-end: 1.25rem;
@@ -874,7 +877,7 @@
 }
 
 /* Ledger Filter & Search Toolbar */
-.ledger-toolbar {
+/* .ledger-toolbar {
   padding: 1.05rem 1.35rem;
   border-block-end: 1px solid var(--simdes-border);
   background-color: #FAFBF9;
@@ -888,7 +891,7 @@
 .ledger-search-wrap {
   position: relative;
   flex: 1 1 280px;
-  max-inline-size: 440px;
+  max-inline-size: 500px;
 }
 
 .ledger-search-input {
@@ -950,7 +953,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 0.6rem;
-}
+} */
 
 .simdes-select {
   min-block-size: 42px;
@@ -1174,10 +1177,9 @@
 }
 
 .row-action-group {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 0.35rem;
-  flex-wrap: wrap;
+  gap: 0.10rem;
 }
 
 .btn-row-action {
@@ -1494,10 +1496,10 @@
 
 .simdes-ledger-table.table-multi-header thead th {
   text-align: center;
-  vertical-align: middle;
-  padding: 0.62rem 0.68rem;
-  font-size: 0.72rem;
-  line-height: 1.35;
+  /* vertical-align: middle; */
+  /* padding: 0.62rem 0.68rem; */
+  /* font-size: 0.72rem; */
+  /* line-height: 1.35; */
   border-block-end: 1px solid #CFD9D2;
   border-inline-end: 1px solid #D7E0DA;
   background-color: #EFF3EE;
@@ -1569,7 +1571,7 @@
   border-inline-end: 1px dashed rgba(217, 174, 82, 0.5) !important;
   text-transform: none !important;
   font-weight: 600;
-  min-inline-size: 92px;
+  /* min-inline-size: 92px; */
 }
 
 .simdes-ledger-table thead th.th-placeholder-col.last-placeholder-col {
@@ -1650,7 +1652,7 @@
   font-weight: 700;
   letter-spacing: 0.01em;
   line-height: 1.4;
-  padding: 0.85rem 0.95rem;
+  /* padding: 0.85rem 0.95rem; */
 }
 
 .simdes-ledger-table.table-wide-13col thead th {
@@ -1663,7 +1665,7 @@
 
 .simdes-ledger-table.table-wide-10col tbody td,
 .simdes-ledger-table.table-wide-13col tbody td {
-  padding: 0.92rem 0.92rem;
+  padding: 0.10rem 0.10rem;
 }
 
 /* Accessible Radio Card Group (Zero-Click Scanning for <=5 Exclusive Options) */

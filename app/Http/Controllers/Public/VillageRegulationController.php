@@ -8,8 +8,6 @@ use App\Http\Requests\VillageRegulation\UpdateVillageRegulationRequest;
 use App\Models\VillageRegulation;
 use App\Services\VillageRegulationService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Blade;
-use Yajra\DataTables\Facades\DataTables;
 
 class VillageRegulationController extends Controller
 {
@@ -20,142 +18,14 @@ class VillageRegulationController extends Controller
      * Display a listing of the resource.
      */
 
-  public function index(Request $request)
-{
-    if (! $request->ajax()) {
-        return view('pages.villageregulation.index');
+    public function index(Request $request)
+    {
+        if (! $request->expectsJson() && ! $request->ajax()) {
+            return view('pages.villageregulation.index');
+        }
+        return $this->service->getDataTable();
     }
 
-    $query = $this->service->getData();
-
-        return DataTables::eloquent($query)
-            ->addIndexColumn()
-
-            // Jenis Peraturan
-            ->editColumn('jenis_peraturan', function ($row) {
-                return $row->jenis_peraturan?->label() ?? '-';
-            })
-
-            // Nomor Peraturan
-            ->editColumn('nomor_peraturan', function ($row) {
-                return $row->nomor_peraturan ?: '-';
-            })
-
-            // Tanggal Ditetapkan
-            ->editColumn('tgl_ditetapkan', function ($row) {
-                return $row->tgl_ditetapkan
-                    ?->locale('id')
-                    ->translatedFormat('d F Y') ?? '-';
-            })
-
-            // Nama Peraturan
-            ->editColumn('nama_peraturan', function ($row) {
-                return view('components.tooltip', [
-                    'value' => $row->nama_peraturan,
-                ])->render();
-            })
-
-            // Uraian
-            ->editColumn('uraian', function ($row) {
-                return view('components.tooltip', [
-                    'value' => $row->uraian,
-                ])->render();
-            })
-
-            // Tanggal Kesepakatan
-            ->editColumn('tgl_kesepakatan', function ($row) {
-                return $row->tgl_kesepakatan
-                    ?->locale('id')
-                    ->translatedFormat('d F Y') ?? '-';
-            })
-
-            // Nomor Dilaporkan
-            ->editColumn('nomor_dilaporkan', function ($row) {
-                return $row->nomor_dilaporkan ?: '-';
-            })
-
-            // Tanggal Dilaporkan
-            ->editColumn('tgl_dilaporkan', function ($row) {
-                return $row->tgl_dilaporkan
-                    ?->locale('id')
-                    ->translatedFormat('d F Y') ?? '-';
-            })
-
-            // Nomor Diundang
-            ->editColumn('nomor_diundang', function ($row) {
-                return $row->nomor_diundang ?: '-';
-            })
-
-            // Tanggal Diundang
-            ->editColumn('tgl_diundang', function ($row) {
-                return $row->tgl_diundang
-                    ?->locale('id')
-                    ->translatedFormat('d F Y') ?? '-';
-            })
-
-            // Nomor Berita Desa
-            ->editColumn('nomor_berita', function ($row) {
-                return $row->nomor_berita ?: '-';
-            })
-
-            // Tanggal Berita Desa
-            ->editColumn('tgl_berita', function ($row) {
-                return $row->tgl_berita
-                    ?->locale('id')
-                    ->translatedFormat('d F Y') ?? '-';
-            })
-
-            // Dokumen
-            ->editColumn('dokumen', function ($row) {
-                return $row->dokumen ?: '-';
-            })
-
-            // Keterangan
-            ->editColumn('catatan', function ($row) {
-                return view('components.tooltip', [
-                    'value' => $row->catatan,
-                ])->render();
-            })
-
-            // Status
-            ->editColumn('status', function ($row) {
-                $status = $row->status;
-
-                $color = match ($status?->value) {
-                    'draft'   => 'gray',
-                    'active'  => 'green',
-                    'revoked' => 'red',
-                    'amended' => 'orange',
-                    default   => 'blue',
-                };
-
-                return Blade::render(
-                    '<x-badge :color="$color">{{ $label }}</x-badge>',
-                    [
-                        'color' => $color,
-                        'label' => $status?->label() ?? '-',
-                    ]
-                );
-            })
-
-            // Aksi
-            ->addColumn('action', function ($row) {
-                return view('pages.villageregulation.actions', [
-                    'row' => $row,
-                ])->render();
-            })
-
-            // Kolom HTML
-            ->rawColumns([
-                'nama_peraturan',
-                'uraian',
-                'catatan',
-                'status',
-                'action',
-            ])
-
-            ->toJson();
-    }
 
 
     /**
@@ -171,7 +41,21 @@ class VillageRegulationController extends Controller
      */
     public function store(StoreVillageRegulationRequest $request)
     {
-        //
+        try {
+            $this->service->getStore($request->validated());
+            return response()->json([
+                'success' => true,
+                'message' => 'Peraturan desa berhasil ditambahkan.',
+            ], 201);
+
+        } catch (\Throwable $e) {
+            report($e);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan peraturan desa.',
+            ], 500);
+        }
     }
 
     /**

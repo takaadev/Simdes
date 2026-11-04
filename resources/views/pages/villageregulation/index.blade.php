@@ -68,67 +68,157 @@
             </article>
         </div>
     </section>
-    <section class="simdes-table-container">
-        <table class="simdes-ledger-table table table-bordered table-hover align-middle mb-0" id="myTable">
-            <thead>
-                <tr class="text-center">
-                    <th style="width: 20px;">
-                        No.
-                    </th>
-                    <th style="min-width: 200px;">
-                        Jenis Peraturan
-                    </th>
-                    <th style="min-width: 180px;">
-                        Nomor Peraturan
-                    </th>
-                    <th style="min-width: 180px;">
-                        Tanggal Ditetapkan
-                    </th>
-                    <th style="min-width: 250px;">
-                        Tentang
-                    </th>
-                    <th style="min-width: 220px;">
-                        Uraian
-                    </th>
-                    <th style="min-width: 220px;">
-                        Tanggal Kesepakatan
-                    </th>
-                    <th style="min-width: 220px;">
-                        Nomor Dilaporkan
-                    </th>
-                    <th style="min-width: 220px;">
-                        Tanggal Dilaporkan
-                    </th>
-                    <th style="min-width: 220px;">
-                        Nomor Diundang
-                    </th>
-                    <th style="min-width: 220px;">
-                        Tanggal Diundang
-                    </th>
-                    <th style="min-width: 220px;">
-                        Nomor Berita Desa
-                    </th>
-                    <th style="min-width: 220px;">
-                        Tanggal Berita Desa
-                    </th>
-                    <th style="min-width: 160px;">
-                        Dokumen
-                    </th>
-                    <th style="min-width: 220px;">
-                        Keterangan
-                    </th>
-                    <th style="min-width: 180px;">
-                        Status
-                    </th>
-                    <th >
-                        <small>Aksi</small>
-                    </th>
-                </tr>
-            </thead>
-        </table>
-    </section>
+    <x-filters>
+        <x-slot:filter>
+            <div class="ledger-filter-item">
+                <label for="filterJenisSelect">Jenis Peraturan</label>
+                <select id="filterJenisSelect" class="simdes-select">
+                    <option value="ALL">Semua Jenis Peraturan</option>
+                    <option value="Peraturan Desa">Peraturan Desa</option>
+                    <option value="Peraturan Kepala Desa">Peraturan Kepala Desa</option>
+                    <option value="Peraturan Bersama Kepala Desa">
+                        Peraturan Bersama Kepala Desa
+                    </option>
+                </select>
+            </div>
+        </x-slot:filter>
+        <x-slot:actions>
+            <button type="button" id="btnCetakPeraturan" class="btn-simdes-outline">
+                <i class="fa-solid fa-print" aria-hidden="true"></i>
+                <span>Cetak</span>
+            </button>
+            @include('pages.villageregulation.create')
+            {{-- <button type="button" id="btnTambahPeraturan" class="btn-simdes-primary">
+                <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                <span>Tambah</span>
+            </button> --}}
+        </x-slot:actions>
+    </x-filters>
+    {{-- <div class="ledger-toolbar">
 
+        <div class="ledger-filters-group">
+            <div class="ledger-filter-dropdown">
+                <button type="button" id="toggleLedgerFilter" class="btn-simdes-outline">
+                    <i class="fa-solid fa-filter" aria-hidden="true"></i>
+                    <span>Filter</span>
+                    <span id="activeFilterCount" class="filter-count" hidden>0</span>
+                    <i class="fa-solid fa-chevron-down filter-chevron" aria-hidden="true"></i>
+                </button>
 
+                <div id="ledgerFilterMenu" class="ledger-filter-menu">
+                    <div class="ledger-filter-header">
+                        <div>
+                            <strong>Filter Data</strong>
+                            <small>Sesuaikan data yang ingin ditampilkan.</small>
+                        </div>
+
+                        <button type="button" id="resetTableFilterBtn" class="filter-reset-btn">
+                            Reset
+                        </button>
+                    </div>
+
+                    <div class="ledger-filter-body">
+                        <div class="ledger-filter-item">
+                            <label for="filterJenisSelect">Jenis Peraturan</label>
+                            <select id="filterJenisSelect" class="simdes-select">
+                                <option value="ALL">Semua Jenis Peraturan</option>
+                                <option value="Peraturan Desa">Peraturan Desa</option>
+                                <option value="Peraturan Kepala Desa">Peraturan Kepala Desa</option>
+                                <option value="Peraturan Bersama Kepala Desa">
+                                    Peraturan Bersama Kepala Desa
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="ledger-filter-item">
+                            <label for="filterTahunSelect">Tahun Ditetapkan</label>
+                            <select id="filterTahunSelect" class="simdes-select">
+                                <option value="ALL">Semua Tahun</option>
+                            </select>
+                        </div>
+
+                        <div class="ledger-filter-item">
+                            <label for="filterStatusSelect">Status Peraturan</label>
+                            <select id="filterStatusSelect" class="simdes-select">
+                                <option value="ALL">Semua Status</option>
+                                <option value="draft">Draft</option>
+                                <option value="active">Berlaku</option>
+                                <option value="revoked">Dicabut</option>
+                                <option value="amended">Diubah</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ledger-actions-group">
+            <button type="button" id="btnCetakPeraturan" class="btn-simdes-outline">
+                <i class="fa-solid fa-print" aria-hidden="true"></i>
+                <span>Cetak</span>
+            </button>
+
+            <button type="button" id="btnTambahPeraturan" class="btn-simdes-primary">
+                <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                <span>Tambah Peraturan</span>
+            </button>
+        </div>
+    </div> --}}
+    <x-table>
+        <tr class="text-center">
+            <th style="width: 20px;">
+                No.
+            </th>
+            <th style="min-width: 200px;">
+                Jenis Peraturan
+            </th>
+            <th style="min-width: 180px;">
+                Nomor Peraturan
+            </th>
+            <th style="min-width: 200px;">
+                Tanggal Ditetapkan
+            </th>
+            <th style="min-width: 250px;">
+                Tentang
+            </th>
+            <th style="min-width: 220px;">
+                Uraian
+            </th>
+            <th style="min-width: 220px;">
+                Tanggal Kesepakatan
+            </th>
+            <th style="min-width: 220px;">
+                Nomor Dilaporkan
+            </th>
+            <th style="min-width: 220px;">
+                Tanggal Dilaporkan
+            </th>
+            <th style="min-width: 220px;">
+                Nomor Diundang
+            </th>
+            <th style="min-width: 220px;">
+                Tanggal Diundang
+            </th>
+            <th style="min-width: 220px;">
+                Nomor Berita Desa
+            </th>
+            <th style="min-width: 220px;">
+                Tanggal Berita Desa
+            </th>
+            <th style="min-width: 160px;">
+                Dokumen
+            </th>
+            <th style="min-width: 220px;">
+                Keterangan
+            </th>
+            <th style="min-width: 180px;" class="text-center">
+                Status
+            </th>
+            <th>
+                <small>Aksi</small>
+            </th>
+        </tr>
+    </x-table>
 
     @push('footer')
         <script>

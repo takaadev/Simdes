@@ -1,8 +1,8 @@
 @push('header')
     <style>
         /* ============================================
-                               TOMBOL AKSI
-                            ============================================ */
+               TOMBOL AKSI
+            ============================================ */
         .btn-row-action {
             display: inline-flex;
             align-items: center;
@@ -28,17 +28,29 @@
         }
 
         /* ============================================
-                               MENU DROPDOWN
-                            ============================================ */
+               CUSTOM DROPDOWN
+            ============================================ */
         .row-action-menu {
-            position: relative;
+            display: none !important;
+            position: fixed !important;
+            inset: auto !important;
+            margin: 0 !important;
+            padding: 6px !important;
+
             min-width: 175px;
-            padding: 6px;
+            max-width: calc(100vw - 16px);
+
             border: 1px solid var(--bs-border-color);
             border-radius: 10px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, .12);
-            z-index: 1080 !important;
-            right: 100px;
+            background: var(--bs-body-bg);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .16);
+
+            z-index: 99999 !important;
+            transform: none !important;
+        }
+
+        .row-action-menu.show {
+            display: block !important;
         }
 
         .row-action-menu .dropdown-item {
@@ -49,6 +61,7 @@
             border-radius: 6px;
             font-size: 13px;
             font-weight: 500;
+            white-space: nowrap;
         }
 
         .row-action-menu .dropdown-item i {
@@ -68,35 +81,205 @@
 @once
     @push('scripts')
         <script>
-            // 1) Pakai strategy "fixed" agar menu tidak terpotong overflow
-            //    wadah tabel. Capture phase -> jalan sebelum data-api Bootstrap,
-            //    jadi juga bekerja untuk baris hasil redraw DataTables.
-            document.addEventListener('click', function(e) {
-                const btn = e.target.closest('.btn-row-action');
-                if (!btn) return;
+            (() => {
+                let activeDropdown = null;
 
-                bootstrap.Dropdown.getOrCreateInstance(btn, {
-                    popperConfig: (defaultConfig) => ({
-                        ...defaultConfig,
-                        strategy: 'fixed',
-                    }),
+                /**
+                 * Tutup dropdown dan kembalikan
+                 * menu ke posisi DOM semula.
+                 */
+                function closeDropdown() {
+                    if (!activeDropdown) return;
+
+                    const {
+                        button,
+                        menu,
+                        placeholder
+                    } = activeDropdown;
+
+                    menu.classList.remove('show');
+                    button.setAttribute('aria-expanded', 'false');
+
+                    // Kembalikan menu ke parent semula
+                    if (placeholder.parentNode) {
+                        placeholder.parentNode.insertBefore(
+                            menu,
+                            placeholder
+                        );
+
+                        placeholder.remove();
+                    }
+
+                    menu.removeAttribute('style');
+
+                    activeDropdown = null;
+                }
+
+                /**
+                 * Hitung posisi dropdown berdasarkan tombol.
+                 */
+                function positionDropdown(button, menu) {
+                    const rect = button.getBoundingClientRect();
+
+                    const menuWidth = menu.offsetWidth;
+                    const menuHeight = menu.offsetHeight;
+
+                    const viewportWidth = window.innerWidth;
+                    const viewportHeight = window.innerHeight;
+
+                    const spacing = 8;
+
+                    // Posisi horizontal: rata kanan tombol
+                    let left = rect.right - menuWidth;
+
+                    // Cegah dropdown keluar viewport
+                    left = Math.max(
+                        spacing,
+                        Math.min(left, viewportWidth - menuWidth - spacing)
+                    );
+
+                    // Posisi vertikal
+                    let top = rect.bottom + 6;
+
+                    // Jika ruang bawah tidak cukup,
+                    // tampilkan dropdown di atas tombol.
+                    if (
+                        top + menuHeight > viewportHeight - spacing &&
+                        rect.top - menuHeight - 6 >= spacing
+                    ) {
+                        top = rect.top - menuHeight - 6;
+                    }
+
+                    // Batasi posisi agar tetap dalam viewport
+                    top = Math.max(
+                        spacing,
+                        Math.min(top, viewportHeight - menuHeight - spacing)
+                    );
+
+                    menu.style.setProperty('left', `${left}px`, 'important');
+                    menu.style.setProperty('top', `${top}px`, 'important');
+                }
+
+                /**
+                 * Buka dropdown.
+                 */
+                function openDropdown(button) {
+                    const wrapper = button.closest('.dropdown');
+
+                    if (!wrapper) return;
+
+                    const menu = wrapper.querySelector('.row-action-menu');
+
+                    if (!menu) return;
+
+                    // Tutup dropdown sebelumnya
+                    closeDropdown();
+
+                    // Simpan posisi asli menu
+                    const placeholder = document.createComment(
+                        'row-action-menu'
+                    );
+
+                    menu.parentNode.insertBefore(placeholder, menu);
+
+                    activeDropdown = {
+                        button,
+                        menu,
+                        placeholder
+                    };
+
+                    // Pindahkan menu ke BODY
+                    document.body.appendChild(menu);
+
+                    button.setAttribute('aria-expanded', 'true');
+
+                    menu.classList.add('show');
+
+                    // Hitung posisi setelah menu dirender
+                    positionDropdown(button, menu);
+                }
+
+                /**
+                 * Event klik tombol dan area luar.
+                 */
+                document.addEventListener('click', function(e) {
+                    const button = e.target.closest('.btn-row-action');
+
+                    // Klik tombol dropdown
+                    if (button) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        if (
+                            activeDropdown?.button === button
+                        ) {
+                            closeDropdown();
+                        } else {
+                            openDropdown(button);
+                        }
+
+                        return;
+                    }
+
+                    // Klik di dalam dropdown
+                    if (
+                        activeDropdown?.menu.contains(e.target)
+                    ) {
+                        const item = e.target.closest('.dropdown-item');
+
+                        if (item) {
+                            closeDropdown();
+                        }
+
+                        return;
+                    }
+
+                    // Klik di luar dropdown
+                    closeDropdown();
+
+                }, true);
+
+                /**
+                 * Tutup menggunakan tombol Escape.
+                 */
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') {
+                        closeDropdown();
+                    }
                 });
-            }, true);
 
-            // 2) Naikkan z-index sel yang dropdown-nya terbuka
-            //    (cadangan untuk browser tanpa dukungan :has()).
-            document.addEventListener('show.bs.dropdown', function(e) {
-                e.target.closest('td')?.classList.add('has-open-dropdown');
-            });
-            document.addEventListener('hidden.bs.dropdown', function(e) {
-                e.target.closest('td')?.classList.remove('has-open-dropdown');
-            });
+                /**
+                 * Tutup saat halaman digulir atau di-resize.
+                 */
+                window.addEventListener('scroll', closeDropdown, true);
+                window.addEventListener('resize', closeDropdown);
+
+                /**
+                 * Tutup jika tombol dihapus oleh DataTables
+                 * ketika melakukan redraw.
+                 */
+                const observer = new MutationObserver(() => {
+                    if (
+                        activeDropdown &&
+                        !activeDropdown.button.isConnected
+                    ) {
+                        closeDropdown();
+                    }
+                });
+
+                observer.observe(document.body, {
+                    childList: true,
+                    subtree: true
+                });
+
+            })
+            ();
         </script>
     @endpush
 @endonce
 
 <div class="dropdown">
-    <button class="btn-row-action" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Menu aksi">
+    <button class="btn-row-action" type="button" aria-expanded="false" aria-label="Menu aksi">
         <i class="fa-solid fa-ellipsis-vertical"></i>
     </button>
 
