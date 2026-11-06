@@ -1,23 +1,69 @@
-<div class="ledger-toolbar">
+
+@props([
+    'url' => '',
+    'table' => '#dataTable',
+])
+
+@php
+    $toolbarId = 'ledger-toolbar-' . \Illuminate\Support\Str::uuid();
+    $filterId = $toolbarId . '-filter';
+    $toggleId = $toolbarId . '-toggle';
+    $countId = $toolbarId . '-count';
+    $resetId = $toolbarId . '-reset';
+    $applyId = $toolbarId . '-apply';
+@endphp
+
+<div
+    id="{{ $toolbarId }}"
+    class="ledger-toolbar"
+    data-ledger-toolbar
+    data-url="{{ $url }}"
+    data-table="{{ $table }}"
+>
     {{-- KIRI: FILTER --}}
     @if (isset($filter))
         <div class="ledger-filters-group">
             <div class="ledger-filter-dropdown">
-                <button type="button" id="toggleLedgerFilter" class="btn-simdes-outline">
+
+                <button
+                    type="button"
+                    id="{{ $toggleId }}"
+                    class="btn-simdes-outline"
+                    data-ledger-filter-toggle
+                    aria-expanded="false"
+                    aria-controls="{{ $filterId }}"
+                >
                     <i class="fa-solid fa-filter" aria-hidden="true"></i>
                     <span>Filter</span>
-                    <span id="activeFilterCount" class="filter-count" hidden>0</span>
-                    <i class="fa-solid fa-chevron-down filter-chevron" aria-hidden="true"></i>
+
+                    <span
+                        id="{{ $countId }}"
+                        class="filter-count"
+                        data-ledger-filter-count
+                        hidden
+                    >0</span>
+
+                    <i class="fa-solid fa-chevron-down filter-chevron"
+                        aria-hidden="true"></i>
                 </button>
 
-                <div id="ledgerFilterMenu" class="ledger-filter-menu">
+                <div
+                    id="{{ $filterId }}"
+                    class="ledger-filter-menu"
+                    data-ledger-filter-menu
+                >
                     <div class="ledger-filter-header">
                         <div>
                             <strong>Filter Data</strong>
                             <small>Sesuaikan data yang ingin ditampilkan.</small>
                         </div>
 
-                        <button type="button" id="resetTableFilterBtn" class="filter-reset-btn">
+                        <button
+                            type="button"
+                            id="{{ $resetId }}"
+                            class="filter-reset-btn"
+                            data-ledger-filter-reset
+                        >
                             Reset
                         </button>
                     </div>
@@ -25,10 +71,24 @@
                     <div class="ledger-filter-body">
                         {{ $filter }}
                     </div>
+
+                    <div class="ledger-filter-footer">
+                        <button
+                            type="button"
+                            id="{{ $applyId }}"
+                            class="btn-simdes-primary"
+                            data-ledger-filter-apply
+                        >
+                            <i class="fa-solid fa-filter me-1"></i>
+                            Terapkan Filter
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     @endif
+
+    {{-- KANAN: ACTIONS --}}
     @if (isset($actions))
         <div class="ledger-actions-group">
             {{ $actions }}
@@ -63,7 +123,7 @@
             position: relative;
         }
 
-        .ledger-filter-dropdown>button {
+        .ledger-filter-dropdown > button {
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -112,7 +172,9 @@
             opacity: 0;
             visibility: hidden;
             transform: translateY(-6px);
-            transition: opacity 0.2s ease, transform 0.2s ease,
+            transition:
+                opacity 0.2s ease,
+                transform 0.2s ease,
                 visibility 0.2s ease;
         }
 
@@ -130,7 +192,7 @@
             border-block-end: 1px solid var(--simdes-border);
         }
 
-        .ledger-filter-header>div {
+        .ledger-filter-header > div {
             display: flex;
             flex-direction: column;
             gap: 3px;
@@ -184,6 +246,18 @@
             min-height: 40px;
         }
 
+        .ledger-filter-footer {
+            padding: 0.85rem 1rem;
+            border-block-start: 1px solid var(--simdes-border);
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .ledger-filter-footer button {
+            min-height: 38px;
+            font-size: 0.8rem;
+        }
+
         /* Responsive */
         @media (max-width: 576px) {
             .ledger-toolbar {
@@ -195,7 +269,7 @@
                 width: 100%;
             }
 
-            .ledger-actions-group>button {
+            .ledger-actions-group > button {
                 flex: 1;
             }
 
@@ -205,20 +279,138 @@
         }
     </style>
 @endpush
-@push('footer')
+
+@pushOnce('footer', 'ledger-toolbar-script')
     <script>
-        const filterDropdown = document.querySelector('.ledger-filter-dropdown');
-        const toggleFilter = document.getElementById('toggleLedgerFilter');
+        (function ($, document) {
+            'use strict';
 
-        toggleFilter.addEventListener('click', function(event) {
-            event.stopPropagation();
-            filterDropdown.classList.toggle('open');
-        });
-
-        document.addEventListener('click', function(event) {
-            if (!filterDropdown.contains(event.target)) {
-                filterDropdown.classList.remove('open');
+            if (!$) {
+                console.error('[SIMDES Toolbar] jQuery tidak ditemukan.');
+                return;
             }
-        });
+
+            const toolbarSelector = '[data-ledger-toolbar]';
+
+            function closeDropdown($toolbar) {
+                $toolbar.find('.ledger-filter-dropdown').removeClass('open');
+                $toolbar.find('[data-ledger-filter-toggle]')
+                    .attr('aria-expanded', 'false');
+            }
+
+            function getFilters($toolbar) {
+                const filters = {};
+                $toolbar.find('[data-simdes-filter]').each(function () {
+                    const $select = $(this);
+                    const name = $select.attr('name');
+                    const value = $select.val();
+
+                    if (name && value !== 'all') {
+                        filters[name] = value;
+                    }
+                });
+                return filters;
+            }
+
+            function updateFilterCount($toolbar) {
+                let count = 0;
+
+                $toolbar.find('[data-simdes-filter]').each(function () {
+                    const $select = $(this);
+                    const value = String($select.val() ?? '');
+                    const defaultValue = String(
+                        $select.attr('data-default-value') ?? 'all'
+                    );
+
+                    if (value !== defaultValue && value !== '') {
+                        count++;
+                    }
+                });
+
+                const $badge = $toolbar.find('[data-ledger-filter-count]');
+
+                $badge.text(count);
+                $badge.prop('hidden', count === 0);
+            }
+
+            function applyFilters($toolbar) {
+                const url = $toolbar.attr('data-url');
+                const tableSelector = $toolbar.attr('data-table');
+
+                if (!url) {
+                    console.error('[SIMDES Toolbar] URL DataTables belum ditentukan.');
+                    return;
+                }
+
+                const $table = $(tableSelector);
+
+                if (!$table.length || !$.fn.DataTable.isDataTable($table[0])) {
+                    console.error('[SIMDES Toolbar] DataTables tidak ditemukan:', tableSelector);
+                    return;
+                }
+
+                const filters = getFilters($toolbar);
+                const query = $.param(filters);
+                const requestUrl = query ? `${url}?${query}` : url;
+
+                $table.DataTable().ajax.url(requestUrl).load();
+
+                updateFilterCount($toolbar);
+                closeDropdown($toolbar);
+            }
+
+            // Buka / tutup dropdown.
+            $(document).on('click', '[data-ledger-filter-toggle]', function (event) {
+                event.stopPropagation();
+
+                const $toolbar = $(this).closest(toolbarSelector);
+                const $dropdown = $toolbar.find('.ledger-filter-dropdown');
+                const isOpen = $dropdown.hasClass('open');
+
+                closeDropdown($toolbar);
+
+                if (!isOpen) {
+                    $dropdown.addClass('open');
+                    $(this).attr('aria-expanded', 'true');
+                }
+            });
+
+            // Klik di luar dropdown.
+            $(document).on('click', function (event) {
+                $(toolbarSelector).each(function () {
+                    const $toolbar = $(this);
+
+                    if (!$(event.target).closest($toolbar.find('.ledger-filter-dropdown')).length) {
+                        closeDropdown($toolbar);
+                    }
+                });
+            });
+
+            // Terapkan filter.
+            $(document).on('click', '[data-ledger-filter-apply]', function () {
+                const $toolbar = $(this).closest(toolbarSelector);
+
+                applyFilters($toolbar);
+            });
+
+            // Reset filter.
+            $(document).on('click', '[data-ledger-filter-reset]', function () {
+                const $toolbar = $(this).closest(toolbarSelector);
+
+                $toolbar.find('[data-simdes-filter]').each(function () {
+                    $(this).val('all');
+                });
+
+                applyFilters($toolbar);
+            });
+
+            // Hitung filter awal.
+            $(function () {
+                $(toolbarSelector).each(function () {
+                    updateFilterCount($(this));
+                });
+            });
+
+        })(window.jQuery, document);
     </script>
-@endpush
+@endPushOnce

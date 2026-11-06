@@ -18,8 +18,9 @@ class VillageDecree extends Model
     protected function casts(): array
     {
         return [
+            'tgl_keputusan' => 'date',
+            'tgl_dilaporkan' => 'date',
             'status' => DecreeStatusList::class,
-            'stipulation_date' => 'date',
         ];
     }
 

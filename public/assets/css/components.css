@@ -1088,14 +1088,14 @@
 
 .simdes-ledger-table tbody td {
   padding: 0.9rem 0.9rem;
-  vertical-align: top;
+  vertical-align:middle;
   font-size: 0.85rem;
-  line-height: 1.55;
+  /* line-height: 1.55; */
   color: var(--simdes-text);
   border-block-end: 1px solid var(--simdes-border);
   border-inline-end: 1px solid rgba(228, 233, 227, 0.65);
   background-color: var(--simdes-surface);
-  overflow-wrap: break-word;
+  /* overflow-wrap: break-word; */
 }
 
 .simdes-ledger-table tbody td:last-child {

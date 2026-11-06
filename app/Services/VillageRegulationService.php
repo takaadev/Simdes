@@ -2,18 +2,19 @@
 
 namespace App\Services;
 
+use App\Enums\RegulationStatusList;
 use App\Models\VillageRegulation;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class VillageRegulationService
 {
     /**
-     * Get village regulation query.
+     * Get village regulation DataTables with filtering.
      */
-    public function getData(): Builder
+    public function getData(Request $request)
     {
-        return VillageRegulation::query()
+        $query = VillageRegulation::query()
             ->select([
                 'id',
                 'jenis_peraturan',
@@ -34,16 +35,76 @@ class VillageRegulationService
                 'created_by',
                 'created_at',
                 'updated_at',
-            ])
-            ->latest('tgl_ditetapkan');
-    }
+            ]);
 
-    /**
-     * Get village regulation DataTables.
-     */
-    public function getDataTable()
-    {
-        return DataTables::eloquent($this->getData())
+        // Filter jenis peraturan.
+        $query->when(
+            $request->filled('jenis_peraturan')
+                && $request->input('jenis_peraturan') !== 'all',
+            fn($query) => $query->where(
+                'jenis_peraturan',
+                $request->input('jenis_peraturan')
+            )
+        );
+
+        // Filter status hanya untuk tabel.
+        $query->when(
+            $request->filled('status')
+                && $request->input('status') !== 'all',
+            fn($query) => $query->where(
+                'status',
+                $request->input('status')
+            )
+        );
+
+        // Filter tahun.
+        $query->when(
+            $request->filled('tahun')
+                && $request->input('tahun') !== 'all',
+            fn($query) => $query->whereYear(
+                'tgl_ditetapkan',
+                $request->input('tahun')
+            )
+        );
+
+        $query->latest('created_at');
+
+        // Query statistik: tanpa filter status.
+        $summaryQuery = VillageRegulation::query()
+            ->when(
+                $request->filled('jenis_peraturan')
+                    && $request->input('jenis_peraturan') !== 'all',
+                fn($query) => $query->where(
+                    'jenis_peraturan',
+                    $request->input('jenis_peraturan')
+                )
+            )
+            ->when(
+                $request->filled('tahun')
+                    && $request->input('tahun') !== 'all',
+                fn($query) => $query->whereYear(
+                    'tgl_ditetapkan',
+                    $request->input('tahun')
+                )
+            )
+            ->selectRaw('COUNT(*) as total');
+
+        foreach (RegulationStatusList::cases() as $status) {
+            $summaryQuery->selectRaw(
+                'SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) as ' . $status->value,
+                [$status->value]
+            );
+        }
+        $summary = $summaryQuery->first();
+        return DataTables::eloquent($query)
+            ->with('summary', [
+                'total' => (int) $summary->total,
+                ...collect(RegulationStatusList::cases())
+                    ->mapWithKeys(fn($status) => [
+                        $status->value => (int) $summary->{$status->value},
+                    ])
+                    ->all(),
+            ])
             ->addIndexColumn()
 
             ->editColumn(
@@ -141,7 +202,7 @@ class VillageRegulationService
 
             ->addColumn(
                 'action',
-                fn($row) => view('pages.villageregulation.actions', [
+                fn($row) => view('pages.villageregulation.comp.actions', [
                     'row' => $row,
                 ])->render()
             )
@@ -152,7 +213,7 @@ class VillageRegulationService
                 'catatan',
                 'status',
                 'action',
-                'dokumen'
+                'dokumen',
             ])
             ->toJson();
     }
@@ -202,6 +263,83 @@ class VillageRegulationService
                 \Storage::disk('public')->delete($documentPath);
             }
 
+            report($e);
+
+            throw $e;
+        }
+    }
+
+    public function getUpdate(VillageRegulation $regulation, array $data): VillageRegulation
+    {
+        $documentPath = null;
+        $oldDocumentPath = $regulation->dokumen;
+
+        try {
+            $updatedRegulation = \DB::transaction(function () use (
+                $regulation,
+                $data,
+                &$documentPath
+            ) {
+                if (
+                    isset($data['dokumen']) &&
+                    $data['dokumen'] instanceof \Illuminate\Http\UploadedFile
+                ) {
+                    $documentPath = $data['dokumen']->store(
+                        'village-regulations',
+                        'public'
+                    );
+
+                    $data['dokumen'] = $documentPath;
+                } else {
+                    unset($data['dokumen']);
+                }
+
+                $regulation->update($data);
+
+                return $regulation->refresh();
+            });
+
+            // Hapus dokumen lama setelah transaksi berhasil.
+            if ($documentPath && $oldDocumentPath) {
+                \Storage::disk('public')->delete($oldDocumentPath);
+            }
+
+            return $updatedRegulation;
+        } catch (\Throwable $e) {
+            // Bersihkan dokumen baru jika proses update gagal.
+            if ($documentPath) {
+                \Storage::disk('public')->delete($documentPath);
+            }
+
+            report($e);
+
+            throw $e;
+        }
+    }
+
+    public function getDestroy(VillageRegulation $regulation, bool $forceDelete = false): bool
+    {
+        $documentPath = $regulation->dokumen;
+
+        try {
+            $deleted = \DB::transaction(function () use (
+                $regulation,
+                $forceDelete
+            ) {
+                if ($forceDelete) {
+                    return $regulation->forceDelete();
+                }
+
+                return $regulation->delete();
+            });
+
+            // Hapus dokumen hanya jika force delete berhasil.
+            if ($deleted && $forceDelete && $documentPath) {
+                \Storage::disk('public')->delete($documentPath);
+            }
+
+            return (bool) $deleted;
+        } catch (\Throwable $e) {
             report($e);
 
             throw $e;

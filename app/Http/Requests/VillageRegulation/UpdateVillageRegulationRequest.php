@@ -10,7 +10,7 @@ use Illuminate\Validation\Rule;
 class UpdateVillageRegulationRequest extends FormRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
+     * Determine if the user is authorized to make the request.
      */
     public function authorize(): bool
     {
@@ -19,12 +19,16 @@ class UpdateVillageRegulationRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
-        $regulation = $this->route('village_regulation');
+        // Ambil data peraturan dari route resource.
+        $regulation = $this->route('villageRegulation');
+
+        // Ambil ID data yang sedang diedit.
+        $regulationId = $regulation instanceof \Illuminate\Database\Eloquent\Model
+            ? $regulation->getKey()
+            : $regulation;
 
         return [
             // Informasi Peraturan
@@ -38,7 +42,7 @@ class UpdateVillageRegulationRequest extends FormRequest
                 'string',
                 'max:100',
                 Rule::unique('village_regulations', 'nomor_peraturan')
-                    ->ignore($regulation?->id),
+                    ->ignore($regulationId),
             ],
 
             'nama_peraturan' => [
@@ -46,7 +50,7 @@ class UpdateVillageRegulationRequest extends FormRequest
                 'string',
                 'max:255',
                 Rule::unique('village_regulations', 'nama_peraturan')
-                    ->ignore($regulation?->id),
+                    ->ignore($regulationId),
             ],
 
             'uraian' => [
@@ -71,7 +75,7 @@ class UpdateVillageRegulationRequest extends FormRequest
                 'string',
                 'max:100',
                 Rule::unique('village_regulations', 'nomor_dilaporkan')
-                    ->ignore($regulation?->id),
+                    ->ignore($regulationId),
             ],
 
             'tgl_dilaporkan' => [
@@ -85,7 +89,7 @@ class UpdateVillageRegulationRequest extends FormRequest
                 'string',
                 'max:100',
                 Rule::unique('village_regulations', 'nomor_diundang')
-                    ->ignore($regulation?->id),
+                    ->ignore($regulationId),
             ],
 
             'tgl_diundang' => [
@@ -99,7 +103,7 @@ class UpdateVillageRegulationRequest extends FormRequest
                 'string',
                 'max:100',
                 Rule::unique('village_regulations', 'nomor_berita')
-                    ->ignore($regulation?->id),
+                    ->ignore($regulationId),
             ],
 
             'tgl_berita' => [

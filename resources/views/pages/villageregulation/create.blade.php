@@ -1,4 +1,4 @@
-<x-action-create href="{{ route('village-regulations.store') }}" size="xl">
+<x-action-create href="{{ route('village-regulations.store') }}" size="lg">
 
     {{-- A. Informasi Peraturan --}}
     <x-fieldset label="A. Informasi Peraturan">
@@ -6,11 +6,11 @@
             <div class="col-12 col-md-6">
                 <x-input-select name="jenis_peraturan" label="Jenis Peraturan di Desa"
                     :options="\App\Enums\RegulationTypeList::options()" placeholder="-- Pilih Jenis Peraturan --"
-                    required />
+                    />
             </div>
             <div class="col-12 col-md-6">
                 <x-input-text name="nomor_peraturan" label="Nomor Peraturan" placeholder="Contoh: 01 Tahun 2026"
-                    required />
+                     />
             </div>
             <div class="col-12">
                 <x-input-text name="nama_peraturan" label="Judul atau Tentang Peraturan"

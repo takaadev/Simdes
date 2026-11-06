@@ -807,6 +807,7 @@ a:hover {
     text-align: center !important;
     top: 0;
     z-index: 2;
+    padding: 5px 3px;
     background-color: var(--bs-tertiary-bg, #f8f9fa) !important;
     box-shadow: inset 0 -1px 0 var(--bs-border-color, #dee2e6);
 }
@@ -880,7 +881,7 @@ a:hover {
 .wide-scroll-ledger table.table-hover tbody tr:hover > td.fixed-end,
 .wide-scroll-ledger table.table-hover tbody tr:hover > td.sticky-col-first,
 .wide-scroll-ledger table.table-hover tbody tr:hover > td.sticky-col-last {
-    background-color: var(--bs-table-hover-bg, #f1f3f5) !important;
+    background-color: #f1f3f5 !important;
 }
 
 /* ============================================
@@ -890,6 +891,12 @@ a:hover {
 .wide-scroll-ledger table th.text-center,
 .wide-scroll-ledger table td.text-center {
     text-align: center !important;
+    
+}
+
+.wide-scroll-ledger table td{
+  padding-top: 6px  !important;
+  padding-bottom: 1px  !important;
 }
 
 .wide-scroll-ledger table th.text-start,

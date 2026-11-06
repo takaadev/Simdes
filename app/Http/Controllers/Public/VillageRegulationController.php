@@ -23,7 +23,7 @@ class VillageRegulationController extends Controller
         if (! $request->expectsJson() && ! $request->ajax()) {
             return view('pages.villageregulation.index');
         }
-        return $this->service->getDataTable();
+        return $this->service->getData($request);
     }
 
 
@@ -47,7 +47,6 @@ class VillageRegulationController extends Controller
                 'success' => true,
                 'message' => 'Peraturan desa berhasil ditambahkan.',
             ], 201);
-
         } catch (\Throwable $e) {
             report($e);
 
@@ -61,10 +60,7 @@ class VillageRegulationController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(UpdateVillageRegulationRequest $villageRegulation)
-    {
-        //
-    }
+    public function show(UpdateVillageRegulationRequest $villageRegulation) {}
 
     /**
      * Show the form for editing the specified resource.
@@ -77,16 +73,46 @@ class VillageRegulationController extends Controller
     /**
      * Update the specified resource in storage.
      */
+
     public function update(UpdateVillageRegulationRequest $request, VillageRegulation $villageRegulation)
     {
-        //
+        try {
+            $this->service->getUpdate($villageRegulation, $request->validated());
+            return response()->json([
+                'success' => true,
+                'message' => 'Peraturan desa berhasil diperbarui.',
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat memperbarui peraturan desa.',
+            ], 500);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(VillageRegulation $villageRegulation)
+    public function destroy(Request $request, VillageRegulation $villageRegulation)
     {
-        //
+        try {
+            $forceDelete = $request->boolean('confirm_delete');
+
+            $this->service->getDestroy($villageRegulation, $forceDelete);
+
+            return response()->json([
+                'success' => true,
+                'message' => $forceDelete
+                    ? 'Peraturan desa dan dokumennya berhasil dihapus permanen.'
+                    : 'Peraturan desa berhasil dipindahkan ke sampah.',
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menghapus peraturan desa.',
+            ], 500);
+        }
     }
 }

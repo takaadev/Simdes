@@ -16,28 +16,33 @@ class VillageDecreeFactory extends Factory
 
     public function definition(): array
     {
-        $stipulationDate = fake()->dateTimeBetween('-5 years', 'now');
+        $decreeDate = fake()->dateTimeBetween('-5 years', 'now');
 
         return [
-            'register_number' => fake()->unique()->numerify('####/SK/####'),
+            'nomor_keputusan' => fake()->unique()->numerify('###/SK/####'),
 
-            'decree_number' => fake()->numerify('## Tahun ####'),
+            'tgl_keputusan' => $decreeDate->format('Y-m-d'),
 
-            'decree_title' => 'Keputusan Kepala Desa tentang ' . fake()->sentence(4),
+            'nama_keputusan' => 'Keputusan Kepala Desa tentang ' . fake()->sentence(4),
 
-            'stipulation_date' => $stipulationDate->format('Y-m-d'),
+            'uraian' => fake()->optional()->paragraph(),
 
-            'subject' => fake()->optional()->sentence(),
+            'nomor_dilaporkan' => fake()->optional(0.7)->passthrough(
+                fake()->unique()->numerify('####/LAP/####')
+            ),
 
-            'related_person' => fake()->optional()->name(),
+            'tgl_dilaporkan' => fake()->optional()->dateTimeBetween(
+                $decreeDate,
+                'now'
+            )?->format('Y-m-d'),
 
-            'document_file' => null,
+            'dokumen' => null,
 
             'status' => fake()->randomElement(
                 DecreeStatusList::cases()
             ),
 
-            'notes' => fake()->optional()->sentence(),
+            'catatan' => fake()->optional()->sentence(),
 
             'created_by' => User::factory(),
         ];
@@ -64,10 +69,10 @@ class VillageDecreeFactory extends Factory
         ]);
     }
 
-    public function expired(): static
+    public function amended(): static
     {
         return $this->state(fn() => [
-            'status' => DecreeStatusList::EXPIRED,
+            'status' => DecreeStatusList::AMENDED,
         ]);
     }
 }

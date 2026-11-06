@@ -34,7 +34,7 @@ class Menu extends Component
                 'label' => 'MODUL ADMINISTRASI',
             ],
 
-           // Administrasi Umum
+            // Administrasi Umum
             [
                 'type' => 'group',
                 'group' => 'umum',
@@ -43,15 +43,14 @@ class Menu extends Component
                 'tooltip' => 'Administrasi Umum (9 Buku)',
                 'expanded' => request()->is('admumum', 'admumum/*'),
                 'items' => [
-                    ['no' => '1', 'slug' => 'buku-peraturan-di-desa', 'route' => route('village-regulations.index'), 'label' => 'Buku Peraturan Desa', 'ready' => true],
-                    ['no' => '2', 'slug' => 'buku-keputusan-kepala-desa', 'route' => '#', 'label' => 'Buku KKDesa', 'ready' => true],
-                    ['no' => '3', 'slug' => 'buku-inventaris-dan-kekayaan-desa', 'route' => '#', 'label' => 'Buku IKDesa', 'ready' => true],
-                    ['no' => '4', 'slug' => 'buku-aparat-pemerintah-desa', 'route' => '#', 'label' => 'Buku APDesa', 'ready' => true],
-                    ['no' => '5', 'slug' => 'buku-tanah-kas-desa', 'route' => '#', 'label' => 'Buku TKDesa', 'ready' => true],
-                    ['no' => '6', 'slug' => 'buku-tanah-di-desa', 'route' => '#', 'label' => 'Buku Tanah Desa', 'ready' => true],
-                    ['no' => '7', 'slug' => 'buku-agenda', 'route' => '#', 'label' => 'Buku Agenda', 'ready' => false],
-                    ['no' => '8', 'slug' => 'buku-ekspedisi', 'route' => '#', 'label' => 'Buku Ekspedisi', 'ready' => true],
-                    ['no' => '9', 'slug' => 'buku-lembaran-desa-dan-berita-desa', 'route' => '#', 'label' => 'Buku LDBDesa', 'ready' => true],
+                    ['no' => '1', 'slug' => 'buku-peraturan-di-desa', 'route' => route('village-regulations.index'), 'label' => 'Peraturan di Desa', 'ready' => true],
+                    ['no' => '2', 'slug' => 'buku-keputusan-kepala-desa', 'route' => route('village-decrees.index'), 'label' => 'Keputusan Kepala Desa', 'ready' => true],
+                    ['no' => '3', 'slug' => 'buku-inventaris-dan-kekayaan-desa', 'route' => '#', 'label' => 'Inventaris dan Kekayaan Desa', 'ready' => true],
+                    ['no' => '4', 'slug' => 'buku-aparat-pemerintah-desa', 'route' => '#', 'label' => 'Aparat Pemerintah Desa', 'ready' => true],
+                    ['no' => '5', 'slug' => 'buku-tanah-kas-desa', 'route' => '#', 'label' => 'Tanah Kas Desa', 'ready' => true],
+                    ['no' => '6', 'slug' => 'buku-tanah-di-desa', 'route' => '#', 'label' => 'Tanah Desa', 'ready' => true],
+                    ['no' => '8', 'slug' => 'buku-ekspedisi', 'route' => '#', 'label' => 'Ekspedisi', 'ready' => true],
+                    ['no' => '9', 'slug' => 'buku-lembaran-desa-dan-berita-desa', 'route' => '#', 'label' => 'Lembaran Desa dan Berita Desa', 'ready' => true],
                 ],
             ],
 

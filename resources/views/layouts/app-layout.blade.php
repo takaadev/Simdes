@@ -83,8 +83,8 @@
         </div>
     </div>
 
-    <div class="modal fade simdes-modal" id="logoutConfirmModal" tabindex="-1"
-        aria-labelledby="logoutConfirmModalLabel" aria-hidden="true">
+    <div class="modal fade simdes-modal" id="logoutConfirmModal" tabindex="-1" aria-labelledby="logoutConfirmModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-sm">
             <div class="modal-content">
                 <div class="modal-header">
@@ -112,6 +112,8 @@
     <script src="{{ asset('assets/js/tooltip.js') }}"></script>
     <script src="{{ asset('assets/js/datatables-global.js') }}"></script>
     <script src="{{ asset('assets/js/script.js') }}"></script>
+    <script src="{{ asset('assets/js/modal.js') }}"></script>
+    <script src="{{ asset('assets/js/form.js') }}"></script>
     <script src="{{ asset('assets/js/sidebar.js') }}"></script>
     <script src="{{ asset('assets/js/dashboard.js') }}"></script>
     <script src="{{ asset('assets/js/toast.js') }}"></script>

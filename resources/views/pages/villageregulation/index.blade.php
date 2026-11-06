@@ -1,169 +1,7 @@
 <x-appcontent>
-    <x-app-heading>
-        <x-slot:actions>
-            <button type="button" id="btnCetakPeraturan" class="btn-simdes-outline">
-                <i class="fa-solid fa-print" aria-hidden="true"></i>
-                <span>Cetak</span>
-            </button>
-            <button type="button" id="btnTambahPeraturan" class="btn-simdes-primary">
-                <i class="fa-solid fa-plus" aria-hidden="true"></i>
-                <span>Tambah Peraturan</span>
-            </button>
-        </x-slot:actions>
-    </x-app-heading>
-    <section class="row g-3 mb-4 ledger-kpi-row" aria-label="Ringkasan Jumlah Peraturan di Desa">
-        <div class="col-12 col-sm-6 col-xl-3">
-            <article class="stat-card py-3">
-                <div class="d-flex align-items-center justify-content-between gap-2">
-                    <div>
-                        <div class="stat-label mb-1">Total Peraturan Tercatat</div>
-                        <div class="stat-value fs-3" id="statTotalPeraturan">0</div>
-                    </div>
-                    <div class="stat-icon-box stat-icon-primary">
-                        <i class="fa-solid fa-scale-balanced" aria-hidden="true"></i>
-                    </div>
-                </div>
-            </article>
-        </div>
-
-        <div class="col-12 col-sm-6 col-xl-3">
-            <article class="stat-card py-3">
-                <div class="d-flex align-items-center justify-content-between gap-2">
-                    <div>
-                        <div class="stat-label mb-1">Peraturan Desa</div>
-                        <div class="stat-value fs-3" id="statTotalPerdes">0</div>
-                    </div>
-                    <div class="stat-icon-box stat-icon-secondary">
-                        <i class="fa-solid fa-gavel" aria-hidden="true"></i>
-                    </div>
-                </div>
-            </article>
-        </div>
-
-        <div class="col-12 col-sm-6 col-xl-3">
-            <article class="stat-card accent-gold py-3">
-                <div class="d-flex align-items-center justify-content-between gap-2">
-                    <div>
-                        <div class="stat-label mb-1">Peraturan Kepala Desa</div>
-                        <div class="stat-value fs-3" id="statTotalPerkades">0</div>
-                    </div>
-                    <div class="stat-icon-box stat-icon-accent">
-                        <i class="fa-solid fa-file-shield" aria-hidden="true"></i>
-                    </div>
-                </div>
-            </article>
-        </div>
-
-        <div class="col-12 col-sm-6 col-xl-3">
-            <article class="stat-card py-3">
-                <div class="d-flex align-items-center justify-content-between gap-2">
-                    <div>
-                        <div class="stat-label mb-1">Peraturan Bersama Kades</div>
-                        <div class="stat-value fs-3" id="statTotalPermaKades">0</div>
-                    </div>
-                    <div class="stat-icon-box stat-icon-info">
-                        <i class="fa-solid fa-handshake-simple" aria-hidden="true"></i>
-                    </div>
-                </div>
-            </article>
-        </div>
-    </section>
-    <x-filters>
-        <x-slot:filter>
-            <div class="ledger-filter-item">
-                <label for="filterJenisSelect">Jenis Peraturan</label>
-                <select id="filterJenisSelect" class="simdes-select">
-                    <option value="ALL">Semua Jenis Peraturan</option>
-                    <option value="Peraturan Desa">Peraturan Desa</option>
-                    <option value="Peraturan Kepala Desa">Peraturan Kepala Desa</option>
-                    <option value="Peraturan Bersama Kepala Desa">
-                        Peraturan Bersama Kepala Desa
-                    </option>
-                </select>
-            </div>
-        </x-slot:filter>
-        <x-slot:actions>
-            <button type="button" id="btnCetakPeraturan" class="btn-simdes-outline">
-                <i class="fa-solid fa-print" aria-hidden="true"></i>
-                <span>Cetak</span>
-            </button>
-            @include('pages.villageregulation.create')
-            {{-- <button type="button" id="btnTambahPeraturan" class="btn-simdes-primary">
-                <i class="fa-solid fa-plus" aria-hidden="true"></i>
-                <span>Tambah</span>
-            </button> --}}
-        </x-slot:actions>
-    </x-filters>
-    {{-- <div class="ledger-toolbar">
-
-        <div class="ledger-filters-group">
-            <div class="ledger-filter-dropdown">
-                <button type="button" id="toggleLedgerFilter" class="btn-simdes-outline">
-                    <i class="fa-solid fa-filter" aria-hidden="true"></i>
-                    <span>Filter</span>
-                    <span id="activeFilterCount" class="filter-count" hidden>0</span>
-                    <i class="fa-solid fa-chevron-down filter-chevron" aria-hidden="true"></i>
-                </button>
-
-                <div id="ledgerFilterMenu" class="ledger-filter-menu">
-                    <div class="ledger-filter-header">
-                        <div>
-                            <strong>Filter Data</strong>
-                            <small>Sesuaikan data yang ingin ditampilkan.</small>
-                        </div>
-
-                        <button type="button" id="resetTableFilterBtn" class="filter-reset-btn">
-                            Reset
-                        </button>
-                    </div>
-
-                    <div class="ledger-filter-body">
-                        <div class="ledger-filter-item">
-                            <label for="filterJenisSelect">Jenis Peraturan</label>
-                            <select id="filterJenisSelect" class="simdes-select">
-                                <option value="ALL">Semua Jenis Peraturan</option>
-                                <option value="Peraturan Desa">Peraturan Desa</option>
-                                <option value="Peraturan Kepala Desa">Peraturan Kepala Desa</option>
-                                <option value="Peraturan Bersama Kepala Desa">
-                                    Peraturan Bersama Kepala Desa
-                                </option>
-                            </select>
-                        </div>
-
-                        <div class="ledger-filter-item">
-                            <label for="filterTahunSelect">Tahun Ditetapkan</label>
-                            <select id="filterTahunSelect" class="simdes-select">
-                                <option value="ALL">Semua Tahun</option>
-                            </select>
-                        </div>
-
-                        <div class="ledger-filter-item">
-                            <label for="filterStatusSelect">Status Peraturan</label>
-                            <select id="filterStatusSelect" class="simdes-select">
-                                <option value="ALL">Semua Status</option>
-                                <option value="draft">Draft</option>
-                                <option value="active">Berlaku</option>
-                                <option value="revoked">Dicabut</option>
-                                <option value="amended">Diubah</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="ledger-actions-group">
-            <button type="button" id="btnCetakPeraturan" class="btn-simdes-outline">
-                <i class="fa-solid fa-print" aria-hidden="true"></i>
-                <span>Cetak</span>
-            </button>
-
-            <button type="button" id="btnTambahPeraturan" class="btn-simdes-primary">
-                <i class="fa-solid fa-plus" aria-hidden="true"></i>
-                <span>Tambah Peraturan</span>
-            </button>
-        </div>
-    </div> --}}
+    <x-app-heading />
+    @include('pages.villageregulation.comp.widgets')
+    @include('pages.villageregulation.comp.filter')
     <x-table>
         <tr class="text-center">
             <th style="width: 20px;">
@@ -178,10 +16,10 @@
             <th style="min-width: 200px;">
                 Tanggal Ditetapkan
             </th>
-            <th style="min-width: 250px;">
+            <th style="min-width: 200px;">
                 Tentang
             </th>
-            <th style="min-width: 220px;">
+            <th style="min-width: 250px;">
                 Uraian
             </th>
             <th style="min-width: 220px;">
@@ -223,7 +61,7 @@
     @push('footer')
         <script>
             $(document).ready(function() {
-                const tableElement = $('#myTable');
+                const tableElement = $('#simdesDataTable');
 
                 if (!tableElement.length) return;
 
