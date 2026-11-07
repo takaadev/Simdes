@@ -2,16 +2,18 @@
 
 namespace App\Models;
 
+use App\Contracts\Restorable;
 use App\Enums\DecreeStatusList;
+use App\Models\Concerns\RestoresSoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class VillageDecree extends Model
+class VillageDecree extends Model implements Restorable
 {
     /** @use HasFactory<\Database\Factories\VillageDecreeFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, RestoresSoftDeletes;
 
     protected $guarded = ['id'];
 

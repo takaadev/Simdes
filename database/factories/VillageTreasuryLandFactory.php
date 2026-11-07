@@ -2,8 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Enums\LandAcquisitionList;
-use App\Enums\LandTypeList;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -14,55 +12,90 @@ class VillageTreasuryLandFactory extends Factory
 {
     public function definition(): array
     {
+        $luasTanah = fake()->randomFloat(2, 100, 50000);
+
+        // Asal perolehan tanah
+        $acquisitionColumns = [
+            'lt_asli_desa',
+            'lt_pemerintah',
+            'lt_provinsi',
+            'lt_kabupaten',
+            'lt_lainnya'
+        ];
+
+        $acquisition = array_fill_keys($acquisitionColumns, 0);
+
+        $acquisition[fake()->randomElement($acquisitionColumns)] = $luasTanah;
+
+        // Jenis tanah
+        $typeColumns = [
+            'lt_tipe_sawah',
+            'lt_tipe_tegal',
+            'lt_tipe_kebun',
+            'lt_tipe_tambak',
+            'lt_tipe_kering',
+        ];
+
+        $landTypes = array_fill_keys($typeColumns, 0);
+
+        $landTypes[fake()->randomElement($typeColumns)] = $luasTanah;
+
         return [
-            'land_origin' => fake()->randomElement([
-                'Dusun I',
-                'Dusun II',
-                'Dusun III',
-                'Dusun IV',
+            'asal_tanah' => fake()->randomElement([
+                'Tanah Bengkok',
+                'Tanah Kas Desa',
+                'Tanah Pengganti',
+                'Tanah Hibah',
             ]),
 
-            'certificate_number' => fake()->optional(0.7)->numerify('###/####/####'),
+            'nomor_sertifikat' => fake()->unique()->numerify('####/####/####'),
 
-            'land_area' => fake()->randomFloat(2, 100, 50000),
-
-            'land_class' => fake()->optional()->randomElement([
-                'I',
-                'II',
-                'III',
-                'IV',
-                'V',
+            'kelas_tanah' => fake()->randomElement([
+                'SI',
+                'DI',
+                'Kelas I',
+                'Kelas II',
+                'Kelas III',
             ]),
 
-            'acquisition' => fake()->randomElement(LandAcquisitionList::cases()),
+            'luas_tanah' => $luasTanah,
 
-            'acquisition_date' => fake()->optional(0.8)->dateTimeBetween('-20 years', 'now'),
+            ...$acquisition,
 
-            'land_type' => fake()->randomElement(LandTypeList::cases()),
+            'tgl_perolehan' => fake()->optional(0.8)->dateTimeBetween(
+                '-20 years',
+                'now'
+            )?->format('Y-m-d'),
 
-            'has_marker' => fake()->boolean(70),
+            ...$landTypes,
 
-            'has_plate' => fake()->boolean(60),
+            'patok_tanah' => fake()->boolean(70),
 
-            'land_location' => fake()->randomElement([
+            'papan_nama' => fake()->boolean(60),
+
+            'lokasi' => fake()->randomElement([
                 'Dusun I, dekat kantor desa',
                 'Dusun II, pinggir jalan utama',
                 'Dusun III, area perkebunan',
                 'Dusun IV, dekat permukiman warga',
             ]),
 
-            'land_use' => fake()->optional(0.8)->randomElement([
-                'Kantor Desa',
+            'peruntukan' => fake()->optional(0.8)->randomElement([
                 'Tanah Pertanian',
                 'Perkebunan Desa',
                 'Lapangan Desa',
                 'Fasilitas Umum',
-                'Disewakan',
+                'Tanah Kas Desa',
             ]),
 
-            'mutation' => fake()->optional(0.3)->sentence(),
+            'mutasi' => fake()->optional(0.3)->randomElement([
+                'Pengukuran ulang luas tanah.',
+                'Pemasangan patok tanda batas tanah.',
+                'Perubahan peruntukan tanah.',
+                'Pembaruan dokumen kepemilikan.',
+            ]),
 
-            'notes' => fake()->optional(0.3)->sentence(),
+            'catatan' => fake()->optional(0.3)->sentence(),
 
             'created_by' => User::factory(),
         ];
@@ -71,14 +104,14 @@ class VillageTreasuryLandFactory extends Factory
     public function withMarker(): static
     {
         return $this->state(fn() => [
-            'has_marker' => true,
+            'patok_tanah' => true,
         ]);
     }
 
     public function withPlate(): static
     {
         return $this->state(fn() => [
-            'has_plate' => true,
+            'papan_nama' => true,
         ]);
     }
 }

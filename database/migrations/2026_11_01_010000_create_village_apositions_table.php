@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('village_positions', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 150);
-            $table->string('code', 50)->nullable()->unique();
-            $table->string('category', 50);
+            $table->string('nama', 150);
+            $table->string('kode', 50)->nullable()->unique();
+            $table->string('kategori', 50);
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();
-            $table->index(['category', 'is_active']);
+            $table->index(['kategori', 'is_active']);
         });
     }
 

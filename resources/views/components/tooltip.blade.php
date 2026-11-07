@@ -1,6 +1,6 @@
 @props([
     'value' => '',
-    'limit' => 20,
+    'limit' => 50,
 ])
 
 @pushOnce('header')

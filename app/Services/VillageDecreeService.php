@@ -2,16 +2,14 @@
 
 namespace App\Services;
 
-use App\Enums\DecreeStatusList;
+
 use App\Models\VillageDecree;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class VillageDecreeService
 {
-    /**
-     * Get village regulation DataTables with filtering.
-     */
+
     public function getData(Request $request)
     {
         $query = VillageDecree::query()
@@ -29,6 +27,7 @@ class VillageDecreeService
                 'created_by',
                 'created_at',
                 'updated_at',
+                'deleted_at',
             ]);
 
         // Filter status hanya untuk tabel.
@@ -43,17 +42,23 @@ class VillageDecreeService
 
         // Filter tahun keputusan.
         $query->when(
-            $request->filled('tahun')
-                && $request->input('tahun') !== 'all',
+            $request->filled('year')
+                && $request->input('year') !== 'all',
             fn($query) => $query->whereYear(
                 'tgl_keputusan',
-                $request->input('tahun')
+                $request->input('year')
             )
+        );
+
+        // Filter status data berdasarkan SoftDeletes.
+        $query->when(
+            $request->input('deleted') === 'trashed',
+            fn($query) => $query->onlyTrashed()
         );
 
         $query->latest('created_at');
 
-        // Query statistik: tanpa filter status.
+        // Query statistik keputusan.
         $summaryQuery = VillageDecree::query()
             ->when(
                 $request->filled('tahun')
@@ -62,59 +67,67 @@ class VillageDecreeService
                     'tgl_keputusan',
                     $request->input('tahun')
                 )
-            )
-            ->selectRaw('COUNT(*) as total');
-
-        foreach (DecreeStatusList::cases() as $status) {
-            $summaryQuery->selectRaw(
-                'SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) as ' . $status->value,
-                [$status->value]
             );
-        }
 
-        $summary = $summaryQuery->first();
+        // Filter status data untuk statistik.
+        $summaryQuery->when(
+            $request->input('deleted') === 'trashed',
+            fn($query) => $query->onlyTrashed()
+        );
+
+        $summary = $summaryQuery
+            ->selectRaw('
+            COUNT(*) as total,
+            SUM(
+                CASE
+                    WHEN nomor_dilaporkan IS NOT NULL
+                    AND nomor_dilaporkan != ""
+                    THEN 1 ELSE 0
+                END
+            ) as reported,
+            SUM(
+                CASE
+                    WHEN nomor_dilaporkan IS NULL
+                    OR nomor_dilaporkan = ""
+                    THEN 1 ELSE 0
+                END
+            ) as unreported
+        ')
+            ->first();
 
         return DataTables::eloquent($query)
             ->with('summary', [
                 'total' => (int) $summary->total,
-                ...collect(DecreeStatusList::cases())
-                    ->mapWithKeys(fn($status) => [
-                        $status->value => (int) $summary->{$status->value},
-                    ])
-                    ->all(),
+                'reported' => (int) $summary->reported,
+                'unreported' => (int) $summary->unreported,
             ])
+
             ->addIndexColumn()
 
             ->editColumn(
                 'nomor_keputusan',
                 fn($row) => $row->nomor_keputusan ?: '-'
             )
-
             ->editColumn(
                 'tgl_keputusan',
                 fn($row) => $this->formatDate($row->tgl_keputusan)
             )
-
             ->editColumn(
                 'nama_keputusan',
                 fn($row) => $this->tooltip($row->nama_keputusan)
             )
-
             ->editColumn(
                 'uraian',
                 fn($row) => $this->tooltip($row->uraian)
             )
-
             ->editColumn(
                 'nomor_dilaporkan',
                 fn($row) => $row->nomor_dilaporkan ?: '-'
             )
-
             ->editColumn(
                 'tgl_dilaporkan',
                 fn($row) => $this->formatDate($row->tgl_dilaporkan)
             )
-
             ->editColumn('dokumen', function ($row) {
                 if (! $row->dokumen) {
                     return '-';
@@ -125,12 +138,10 @@ class VillageDecreeService
                     'title' => 'Dokumen Keputusan Kepala Desa',
                 ])->render();
             })
-
             ->editColumn(
                 'catatan',
                 fn($row) => $this->tooltip($row->catatan)
             )
-
             ->editColumn('status', function ($row) {
                 $status = $row->status;
 
@@ -166,9 +177,6 @@ class VillageDecreeService
             ->toJson();
     }
 
-    /**
-     * Format date to Indonesian.
-     */
     private function formatDate($date): string
     {
         return $date
@@ -176,9 +184,6 @@ class VillageDecreeService
             ->translatedFormat('d F Y') ?? '-';
     }
 
-    /**
-     * Render tooltip component.
-     */
     private function tooltip(?string $value): string
     {
         return view('components.tooltip', [
@@ -186,50 +191,12 @@ class VillageDecreeService
         ])->render();
     }
 
-    /**
-     * Store village regulation.
-     */
-    public function getStore(array $data): VillageDecree
+    public function getStore(array $data)
     {
         $documentPath = null;
-
         try {
-            return \DB::transaction(function () use ($data, &$documentPath) {
-                if (isset($data['dokumen']) && $data['dokumen']) {
-                    $documentPath = $data['dokumen']->store(
-                        'village-decrees',
-                        'public'
-                    );
-
-                    $data['dokumen'] = $documentPath;
-                }
-
-                $data['created_by'] = \Auth::id() ?? 1;
-
-                return VillageDecree::create($data);
-            });
-        } catch (\Throwable $e) {
-            if ($documentPath) {
-                \Storage::disk('public')->delete($documentPath);
-            }
-
-            report($e);
-
-            throw $e;
-        }
-    }
-
-    public function getUpdate(VillageDecree $decree, array $data): VillageDecree
-    {
-        $documentPath = null;
-        $oldDocumentPath = $decree->dokumen;
-
-        try {
-            $updatedDecree = \DB::transaction(function () use (
-                $decree,
-                $data,
-                &$documentPath
-            ) {
+            \DB::transaction(function () use ($data, &$documentPath) {
+                // Upload dokumen.
                 if (
                     isset($data['dokumen']) &&
                     $data['dokumen'] instanceof \Illuminate\Http\UploadedFile
@@ -240,21 +207,49 @@ class VillageDecreeService
                     );
 
                     $data['dokumen'] = $documentPath;
+                }
+                $data['created_by'] = \Auth::id() ?? 1;
+                VillageDecree::create($data);
+            });
+            return response()->json([
+                'success' => true,
+                'message' => 'Keputusan kepala desa berhasil ditambahkan.',
+            ], 201);
+        } catch (\Throwable $e) {
+            // Hapus dokumen jika proses insert gagal.
+            if ($documentPath) {
+                \Storage::disk('public')->delete($documentPath);
+            }
+            report($e);
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan keputusan kepala desa.',
+            ], 500);
+        }
+    }
+
+    public function getUpdate(VillageDecree $decree, array $data): \Illuminate\Http\JsonResponse
+    {
+        $documentPath = null;
+        $oldDocumentPath = $decree->dokumen;
+        try {
+            \DB::transaction(function () use ($decree, $data, &$documentPath) {
+                if (isset($data['dokumen']) && $data['dokumen'] instanceof \Illuminate\Http\UploadedFile) {
+                    $documentPath = $data['dokumen']->store('village-decrees', 'public');
+                    $data['dokumen'] = $documentPath;
                 } else {
                     unset($data['dokumen']);
                 }
-
                 $decree->update($data);
-
-                return $decree->refresh();
             });
-
-            // Hapus dokumen lama setelah transaksi berhasil.
             if ($documentPath && $oldDocumentPath) {
                 \Storage::disk('public')->delete($oldDocumentPath);
             }
 
-            return $updatedDecree;
+            return response()->json([
+                'success' => true,
+                'message' => 'Keputusan kepala desa berhasil diperbarui.',
+            ]);
         } catch (\Throwable $e) {
             // Bersihkan dokumen baru jika proses update gagal.
             if ($documentPath) {
@@ -263,36 +258,55 @@ class VillageDecreeService
 
             report($e);
 
-            throw $e;
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat memperbarui keputusan kepala desa.',
+            ], 500);
         }
     }
 
-    public function getDestroy(VillageDecree $decree, bool $forceDelete = false): bool
+    public function getDestroy(Request $request, VillageDecree $decree)
     {
-        $documentPath = $decree->dokumen;
-
         try {
-            $deleted = \DB::transaction(function () use (
-                $decree,
-                $forceDelete
-            ) {
-                if ($forceDelete) {
-                    return $decree->forceDelete();
-                }
+            $forceDelete = $request->boolean('confirm_delete');
+            if ($decree->trashed() && !$forceDelete) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data sudah berada di sampah. Centang konfirmasi untuk menghapus permanen.',
+                    'errors' => [
+                        'confirm_delete' => [
+                            'Data sudah berada di sampah. Centang konfirmasi untuk menghapus permanen.',
+                        ],
+                    ],
+                ], 422);
+            }
 
-                return $decree->delete();
+            $documentPath = $decree->dokumen;
+
+            $deleted = \DB::transaction(function () use ($decree, $forceDelete) {
+                return $forceDelete ? $decree->forceDelete() : $decree->delete();
             });
 
-            // Hapus dokumen hanya jika force delete berhasil.
-            if ($deleted && $forceDelete && $documentPath) {
+            if (!$deleted) {
+                throw new \RuntimeException('Keputusan kepala desa gagal dihapus.');
+            }
+            if ($forceDelete && filled($documentPath)) {
                 \Storage::disk('public')->delete($documentPath);
             }
 
-            return (bool) $deleted;
+            return response()->json([
+                'success' => true,
+                'message' => $forceDelete
+                    ? 'Keputusan kepala desa dan dokumennya berhasil dihapus permanen.'
+                    : 'Keputusan kepala desa berhasil dipindahkan ke sampah.',
+            ]);
         } catch (\Throwable $e) {
             report($e);
 
-            throw $e;
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menghapus keputusan kepala desa.',
+            ], 500);
         }
     }
 }

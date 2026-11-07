@@ -9,9 +9,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class VillageRegulationService
 {
-    /**
-     * Get village regulation DataTables with filtering.
-     */
+
     public function getData(Request $request)
     {
         $query = VillageRegulation::query()
@@ -35,6 +33,7 @@ class VillageRegulationService
                 'created_by',
                 'created_at',
                 'updated_at',
+                'deleted_at',
             ]);
 
         // Filter jenis peraturan.
@@ -59,12 +58,18 @@ class VillageRegulationService
 
         // Filter tahun.
         $query->when(
-            $request->filled('tahun')
-                && $request->input('tahun') !== 'all',
+            $request->filled('year')
+                && $request->input('year') !== 'all',
             fn($query) => $query->whereYear(
                 'tgl_ditetapkan',
-                $request->input('tahun')
+                $request->input('year')
             )
+        );
+
+        // Filter status data berdasarkan SoftDeletes.
+        $query->when(
+            $request->input('deleted') === 'trashed',
+            fn($query) => $query->onlyTrashed()
         );
 
         $query->latest('created_at');
@@ -86,8 +91,15 @@ class VillageRegulationService
                     'tgl_ditetapkan',
                     $request->input('tahun')
                 )
-            )
-            ->selectRaw('COUNT(*) as total');
+            );
+
+        // Filter status data untuk statistik.
+        $summaryQuery->when(
+            $request->input('deleted') === 'trashed',
+            fn($query) => $query->onlyTrashed()
+        );
+
+        $summaryQuery->selectRaw('COUNT(*) as total');
 
         foreach (RegulationStatusList::cases() as $status) {
             $summaryQuery->selectRaw(
@@ -95,7 +107,9 @@ class VillageRegulationService
                 [$status->value]
             );
         }
+
         $summary = $summaryQuery->first();
+
         return DataTables::eloquent($query)
             ->with('summary', [
                 'total' => (int) $summary->total,
@@ -105,6 +119,7 @@ class VillageRegulationService
                     ])
                     ->all(),
             ])
+
             ->addIndexColumn()
 
             ->editColumn(
@@ -218,9 +233,6 @@ class VillageRegulationService
             ->toJson();
     }
 
-    /**
-     * Format date to Indonesian.
-     */
     private function formatDate($date): string
     {
         return $date
@@ -228,9 +240,6 @@ class VillageRegulationService
             ->translatedFormat('d F Y') ?? '-';
     }
 
-    /**
-     * Render tooltip component.
-     */
     private function tooltip(?string $value): string
     {
         return view('components.tooltip', [
@@ -238,16 +247,17 @@ class VillageRegulationService
         ])->render();
     }
 
-    /**
-     * Store village regulation.
-     */
-    public function getStore(array $data): VillageRegulation
+    public function getStore(array $data): \Illuminate\Http\JsonResponse
     {
         $documentPath = null;
 
         try {
-            return \DB::transaction(function () use ($data, &$documentPath) {
-                if (isset($data['dokumen'])) {
+            \DB::transaction(function () use ($data, &$documentPath) {
+                // Upload dokumen.
+                if (
+                    isset($data['dokumen']) &&
+                    $data['dokumen'] instanceof \Illuminate\Http\UploadedFile
+                ) {
                     $documentPath = $data['dokumen']->store(
                         'village-regulations',
                         'public'
@@ -255,31 +265,44 @@ class VillageRegulationService
 
                     $data['dokumen'] = $documentPath;
                 }
+
+                // Informasi pembuat data.
                 $data['created_by'] = \Auth::id() ?? 1;
-                return VillageRegulation::create($data);
+
+                // Insert data.
+                VillageRegulation::create($data);
             });
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Peraturan desa berhasil ditambahkan.',
+            ], 201);
         } catch (\Throwable $e) {
+            // Hapus dokumen jika proses insert gagal.
             if ($documentPath) {
                 \Storage::disk('public')->delete($documentPath);
             }
 
             report($e);
 
-            throw $e;
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan peraturan desa.',
+            ], 500);
         }
     }
 
-    public function getUpdate(VillageRegulation $regulation, array $data): VillageRegulation
+    public function getUpdate(VillageRegulation $regulation, array $data): \Illuminate\Http\JsonResponse
     {
         $documentPath = null;
         $oldDocumentPath = $regulation->dokumen;
-
         try {
-            $updatedRegulation = \DB::transaction(function () use (
+            \DB::transaction(function () use (
                 $regulation,
                 $data,
                 &$documentPath
             ) {
+                // Upload dokumen baru jika tersedia.
                 if (
                     isset($data['dokumen']) &&
                     $data['dokumen'] instanceof \Illuminate\Http\UploadedFile
@@ -291,12 +314,12 @@ class VillageRegulationService
 
                     $data['dokumen'] = $documentPath;
                 } else {
+                    // Pertahankan dokumen lama.
                     unset($data['dokumen']);
                 }
 
+                // Update data peraturan.
                 $regulation->update($data);
-
-                return $regulation->refresh();
             });
 
             // Hapus dokumen lama setelah transaksi berhasil.
@@ -304,7 +327,10 @@ class VillageRegulationService
                 \Storage::disk('public')->delete($oldDocumentPath);
             }
 
-            return $updatedRegulation;
+            return response()->json([
+                'success' => true,
+                'message' => 'Peraturan desa berhasil diperbarui.',
+            ]);
         } catch (\Throwable $e) {
             // Bersihkan dokumen baru jika proses update gagal.
             if ($documentPath) {
@@ -313,36 +339,64 @@ class VillageRegulationService
 
             report($e);
 
-            throw $e;
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat memperbarui peraturan desa.',
+            ], 500);
         }
     }
 
-    public function getDestroy(VillageRegulation $regulation, bool $forceDelete = false): bool
+    public function getDestroy(Request $request, VillageRegulation $regulation)
     {
-        $documentPath = $regulation->dokumen;
-
         try {
+            $forceDelete = $request->boolean('confirm_delete');
+
+            // Data Trash wajib dikonfirmasi.
+            if ($regulation->trashed() && !$forceDelete) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data sudah berada di sampah. Centang konfirmasi untuk menghapus permanen.',
+                    'errors' => [
+                        'confirm_delete' => [
+                            'Data sudah berada di sampah. Centang konfirmasi untuk menghapus permanen.',
+                        ],
+                    ],
+                ], 422);
+            }
+
+            $documentPath = $regulation->dokumen;
+
             $deleted = \DB::transaction(function () use (
                 $regulation,
                 $forceDelete
             ) {
-                if ($forceDelete) {
-                    return $regulation->forceDelete();
-                }
-
-                return $regulation->delete();
+                return $forceDelete
+                    ? $regulation->forceDelete()
+                    : $regulation->delete();
             });
 
+            if (!$deleted) {
+                throw new \RuntimeException('Peraturan desa gagal dihapus.');
+            }
+
             // Hapus dokumen hanya jika force delete berhasil.
-            if ($deleted && $forceDelete && $documentPath) {
+            if ($forceDelete && filled($documentPath)) {
                 \Storage::disk('public')->delete($documentPath);
             }
 
-            return (bool) $deleted;
+            return response()->json([
+                'success' => true,
+                'message' => $forceDelete
+                    ? 'Peraturan desa dan dokumennya berhasil dihapus permanen.'
+                    : 'Peraturan desa berhasil dipindahkan ke sampah.',
+            ]);
         } catch (\Throwable $e) {
             report($e);
 
-            throw $e;
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menghapus peraturan desa.',
+            ], 500);
         }
     }
 }

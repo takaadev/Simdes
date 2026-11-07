@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Enums\VillagePositionCategoryList;
 use App\Models\VillagePosition;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -13,38 +12,43 @@ class VillagePositionFactory extends Factory
 {
     protected $model = VillagePosition::class;
 
+    private const POSITIONS = [
+        // Pemerintah Desa
+        ['kode' => '101', 'nama' => 'Kepala Desa', 'kategori' => '10'],
+        ['kode' => '102', 'nama' => 'Sekretaris Desa', 'kategori' => '10'],
+        ['kode' => '103', 'nama' => 'Bendahara Desa', 'kategori' => '10'],
+
+        // KAUR
+        ['kode' => '201', 'nama' => 'Kepala KAUR Keuangan', 'kategori' => '20'],
+        ['kode' => '202', 'nama' => 'Kepala KAUR Tata Usaha dan Umum', 'kategori' => '20'],
+        ['kode' => '203', 'nama' => 'Kepala KAUR Perencanaan', 'kategori' => '20'],
+
+        // BPD
+        ['kode' => '301', 'nama' => 'Ketua BPD', 'kategori' => '30'],
+        ['kode' => '302', 'nama' => 'Wakil Ketua BPD', 'kategori' => '30'],
+        ['kode' => '303', 'nama' => 'Sekretaris BPD', 'kategori' => '30'],
+        ['kode' => '304', 'nama' => 'Anggota BPD', 'kategori' => '30'],
+
+        // LAD
+        ['kode' => '401', 'nama' => 'Ketua LAD', 'kategori' => '40'],
+        ['kode' => '402', 'nama' => 'Wakil Ketua LAD', 'kategori' => '40'],
+        ['kode' => '403', 'nama' => 'Sekretaris LAD', 'kategori' => '40'],
+        ['kode' => '404', 'nama' => 'Anggota LAD', 'kategori' => '40'],
+    ];
+
     public function definition(): array
     {
-        $category = fake()->randomElement(
-            VillagePositionCategoryList::cases()
-        );
-
         return [
-            'name' => fake()->jobTitle(),
-            'code' => fake()->unique()->numerify('###'),
-            'category' => $category,
+            ...fake()->randomElement(self::POSITIONS),
             'is_active' => true,
         ];
     }
 
-    public function active(): static
+    /**
+     * Get master position data.
+     */
+    public static function positions(): array
     {
-        return $this->state(fn(array $attributes) => [
-            'is_active' => true,
-        ]);
-    }
-
-    public function inactive(): static
-    {
-        return $this->state(fn(array $attributes) => [
-            'is_active' => false,
-        ]);
-    }
-
-    public function category(VillagePositionCategoryList $category): static
-    {
-        return $this->state(fn(array $attributes) => [
-            'category' => $category,
-        ]);
+        return self::POSITIONS;
     }
 }

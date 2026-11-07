@@ -26,9 +26,7 @@ class UpdateVillageRegulationRequest extends FormRequest
         $regulation = $this->route('villageRegulation');
 
         // Ambil ID data yang sedang diedit.
-        $regulationId = $regulation instanceof \Illuminate\Database\Eloquent\Model
-            ? $regulation->getKey()
-            : $regulation;
+        $regulationId = $regulation instanceof \Illuminate\Database\Eloquent\Model ? $regulation->getKey() : $regulation;
 
         return [
             // Informasi Peraturan

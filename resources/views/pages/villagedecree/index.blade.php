@@ -1,67 +1,48 @@
+
 <x-appcontent>
     <x-app-heading />
+
     @include('pages.villagedecree.comp.widgets')
     @include('pages.villagedecree.comp.filter')
+
     <x-table id="villageDecreesTable">
-        <tr class="text-center">
-            <th style="width: 20px;">
-                No.
-            </th>
-            <th style="min-width: 180px;">
-                Nomor Keputusan
-            </th>
-            <th style="min-width: 180px;">
-                Tanggal Keputusan
-            </th>
-            <th style="min-width: 250px;">
-                Nama Keputusan
-            </th>
-            <th style="min-width: 250px;">
-                Uraian
-            </th>
-            <th style="min-width: 200px;">
-                Nomor Dilaporkan
-            </th>
-            <th style="min-width: 200px;">
-                Tanggal Dilaporkan
-            </th>
-            <th style="min-width: 160px;">
-                Dokumen
-            </th>
-            <th style="min-width: 220px;">
-                Keterangan
-            </th>
-            <th style="min-width: 180px;" class="text-center">
-                Status
-            </th>
-            <th>
-                <small>Aksi</small>
-            </th>
+        <tr >
+            <th>No.</th>
+            <th>Nomor Keputusan</th>
+            <th>Tanggal Keputusan</th>
+            <th>Nama Keputusan</th>
+            <th>Uraian</th>
+            <th>Nomor Dilaporkan</th>
+            <th>Tanggal Dilaporkan</th>
+            <th>Dokumen</th>
+            <th>Keterangan</th>
+            <th>Status</th>
+            <th>Aksi</th>
         </tr>
     </x-table>
 
     @push('footer')
         <script>
-            $(document).ready(function() {
+            $(document).ready(function () {
                 const tableElement = $('#villageDecreesTable');
 
                 if (!tableElement.length) return;
 
                 // =====================================================
-                // WRAPPER HORIZONTAL SCROLL
+                // HORIZONTAL SCROLL WRAPPER
                 // =====================================================
                 function wrapTableWithScroll(tableNode) {
                     if (!tableNode) return;
 
                     const parent = tableNode.parentElement;
 
-                    if (parent && !parent.classList.contains('wide-scroll-ledger')) {
-                        const scrollWrapper = document.createElement('div');
+                    if (!parent?.classList.contains('wide-scroll-ledger')) {
+                        const wrapper = document.createElement('div');
 
-                        scrollWrapper.className = 'wide-scroll-ledger';
+                        wrapper.className = 'wide-scroll-ledger';
 
-                        parent.insertBefore(scrollWrapper, tableNode);
-                        scrollWrapper.appendChild(tableNode);
+                        parent.insertBefore(wrapper, tableNode);
+                        wrapper.appendChild(tableNode);
                     }
                 }
 
@@ -162,24 +143,23 @@
                         }
                     ],
 
-
-                    // Urutkan berdasarkan tanggal ditetapkan
+                    // Urutkan berdasarkan tanggal keputusan
                     order: [
-                        [3, 'desc']
+                        [2, 'desc']
                     ],
 
                     // =================================================
                     // LANGUAGE
                     // =================================================
                     language: {
-                        emptyTable: 'Belum ada data peraturan',
+                        emptyTable: 'Belum ada data keputusan',
                         zeroRecords: 'Data tidak ditemukan',
                         processing: 'Memproses data...',
                         info: 'Menampilkan _START_–_END_ dari _TOTAL_ data',
                         infoEmpty: 'Menampilkan 0 data',
                         infoFiltered: '(difilter dari _MAX_ total data)',
                         lengthMenu: 'Tampilkan _MENU_ data',
-                        search: 'Pencarian:',
+                        search: 'Pencarian:'
                     },
 
                     // =================================================
@@ -195,7 +175,7 @@
                     // =================================================
                     // DRAW CALLBACK
                     // =================================================
-                    drawCallback: function() {
+                    drawCallback: function () {
                         wrapTableWithScroll(table.table().node());
                     }
                 });

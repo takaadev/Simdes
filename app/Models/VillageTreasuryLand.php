@@ -2,29 +2,37 @@
 
 namespace App\Models;
 
-use App\Enums\LandAcquisitionList;
-use App\Enums\LandTypeList;
+use App\Contracts\Restorable;
+use App\Models\Concerns\RestoresSoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class VillageTreasuryLand extends Model
+class VillageTreasuryLand extends Model implements Restorable
 {
     /** @use HasFactory<\Database\Factories\VillageTreasuryLandFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, RestoresSoftDeletes;
 
     protected $guarded = ['id'];
 
     protected function casts(): array
     {
         return [
-            'acquisition' => LandAcquisitionList::class,
-            'land_type' => LandTypeList::class,
-            'land_area' => 'decimal:2',
-            'acquisition_date' => 'date',
-            'has_marker' => 'boolean',
-            'has_plate' => 'boolean',
+            'luas_tanah' => 'decimal:2',
+            'lt_asli_desa' => 'decimal:2',
+            'lt_pemerintah' => 'decimal:2',
+            'lt_provinsi' => 'decimal:2',
+            'lt_kabupaten' => 'decimal:2',
+            'lt_lainya' => 'decimal:2',
+            'tgl_perolehan' => 'date',
+            'lt_tipe_sawah' => 'decimal:2',
+            'lt_tipe_tegal' => 'decimal:2',
+            'lt_tipe_kebun' => 'decimal:2',
+            'lt_tipe_tambak' => 'decimal:2',
+            'lt_tipe_kering' => 'decimal:2',
+            'patok_tanah' => 'boolean',
+            'papan_nama' => 'boolean',
         ];
     }
 

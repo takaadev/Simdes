@@ -11,7 +11,6 @@
 
 @php
     $componentId = 'simdes-edit-' . $id;
-
     $modalId = $componentId . '-modal';
     $formId = $componentId . '-form';
     $buttonId = $componentId . '-button';

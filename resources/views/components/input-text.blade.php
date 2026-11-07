@@ -32,7 +32,7 @@
 @endphp
 
 <div class="simdes-field mb-2">
-    <label for="{{ $id }}" class="simdes-label">
+    <label for="{{ $id }}" class="simdes-label mb-0">
         @if ($number)
             {{ $number }}.
         @endif
@@ -45,7 +45,7 @@
     </label>
 
     @if ($hint)
-        <span id="{{ $hintId }}" class="simdes-field-hint">
+        <span id="{{ $hintId }}" class="simdes-field-hint my-0">
             {{ $hint }}
         </span>
     @endif

@@ -1,92 +1,74 @@
-<x-action-edit :id="$data->id" href="{{ route('village-regulations.update', $data->id) }}"
-    modalTitle="Ubah Peraturan Desa" size="lg">
-    {{-- A. Informasi Peraturan --}}
-    <x-fieldset label="A. Informasi Peraturan">
+<x-action-edit :id="$data->id" href="{{ route('village-decrees.update', $data->id) }}"
+    modalTitle="Ubah Keputusan Kepala Desa" size="xl">
+    {{-- A. Informasi Keputusan --}}
+    <x-fieldset label="A. Informasi Keputusan">
         <div class="row g-3">
             <div class="col-12 col-md-6">
-                <x-input-select name="jenis_peraturan" label="Jenis Peraturan di Desa"
-                    :options="\App\Enums\RegulationTypeList::options()" placeholder="-- Pilih Jenis Peraturan --"
-                    value="{{ $data->jenis_peraturan }}" required />
+                <x-input-text name="nomor_keputusan" label="Nomor Keputusan"
+                    hint="Nomor resmi keputusan kepala desa sesuai urutan administrasi dan tahun penerbitan."
+                    placeholder="Contoh: 09/KEP-CONTOH/XI/2026" value="{{ $data->nomor_keputusan }}" required />
             </div>
+
             <div class="col-12 col-md-6">
-                <x-input-text name="nomor_peraturan" label="Nomor Peraturan" placeholder="Contoh: 01 Tahun 2026"
-                    value="{{ $data->nomor_peraturan }}" required />
+                <x-input-text type="date" name="tgl_keputusan" label="Tanggal Ditetapkan"
+                    hint="Tanggal keputusan ditandatangani atau resmi ditetapkan oleh kepala desa."
+                    value="{{ $data->tgl_keputusan?->format('Y-m-d') }}" required />
             </div>
+
             <div class="col-12">
-                <x-input-text name="nama_peraturan" label="Judul atau Tentang Peraturan"
-                    placeholder="Masukkan judul atau pokok materi peraturan" value="{{ $data->nama_peraturan }}"
-                    required />
+                <x-input-text name="nama_keputusan" label="Judul atau Tentang Keputusan"
+                    placeholder="Masukkan judul atau pokok materi keputusan"
+                    hint="Tuliskan judul atau pokok kebijakan yang menjadi dasar penetapan keputusan."
+                    value="{{ $data->nama_keputusan }}" required />
             </div>
+
             <div class="col-12">
-                <x-input-textarea name="uraian" label="Uraian Peraturan"
-                    placeholder="Tuliskan ringkasan substansi pokok peraturan..." :rows="4"
-                    value="{{ $data->uraian }}" />
+                <x-input-textarea name="uraian" label="Uraian Keputusan"
+                    placeholder="Tuliskan ringkasan substansi pokok keputusan..."
+                    hint="Jelaskan isi, tujuan, dasar pertimbangan, serta ruang lingkup keputusan secara ringkas."
+                    value="{{ $data->uraian }}" :rows="4" />
             </div>
         </div>
     </x-fieldset>
 
-    {{-- B. Penetapan dan Kesepakatan --}}
-    <x-fieldset label="B. Penetapan dan Kesepakatan">
+    {{-- B. Informasi Pelaporan --}}
+    <x-fieldset label="B. Informasi Pelaporan">
         <div class="row g-3">
-            <div class="col-12 col-md-6">
-                <x-input-text type="date" name="tgl_ditetapkan" label="Tanggal Ditetapkan" required
-                    value="{{ format_date_input($data->tgl_ditetapkan) }}" />
-            </div>
-
-            <div class="col-12 col-md-6">
-                <x-input-text type="date" name="tgl_kesepakatan" label="Tanggal Kesepakatan"
-                    value="{{ format_date_input($data->tgl_kesepakatan) }}" />
-            </div>
-        </div>
-    </x-fieldset>
-
-    {{-- C. Pelaporan dan Pengundangan --}}
-    <x-fieldset label="C. Pelaporan dan Pengundangan">
-        <div class="row g-3">
-            <div class="col-12 col-md-6">
-                <x-input-text name="nomor_dilaporkan" label="Nomor Dilaporkan" placeholder="Masukkan nomor pelaporan"
+            <div class="col-12 col-md-4">
+                <x-input-text name="nomor_dilaporkan" label="Nomor Pelaporan" placeholder="Masukkan nomor pelaporan"
+                    hint="Nomor surat atau bukti administrasi pelaporan keputusan kepada instansi terkait."
                     value="{{ $data->nomor_dilaporkan }}" />
             </div>
 
-            <div class="col-12 col-md-6">
+            <div class="col-12 col-md-4">
                 <x-input-text type="date" name="tgl_dilaporkan" label="Tanggal Dilaporkan"
-                    value="{{ format_date_input($data->tgl_dilaporkan) }}" />
+                    hint="Tanggal keputusan disampaikan atau dilaporkan kepada instansi terkait."
+                    value="{{ $data->tgl_dilaporkan?->format('Y-m-d') }}" />
             </div>
 
-            <div class="col-12 col-md-6">
-                <x-input-text name="nomor_diundang" label="Nomor Pengundangan" placeholder="Masukkan nomor pengundangan"
-                    value="{{ $data->nomor_diundang }}" />
-            </div>
-
-            <div class="col-12 col-md-6">
-                <x-input-text type="date" name="tgl_diundang" label="Tanggal Diundangkan"
-                    value="{{ format_date_input($data->tgl_diundang) }}" />
+            <div class="col-12 col-md-4">
+                <x-input-select name="status" label="Status Keputusan" :options="\App\Enums\DecreeStatusList::options()"
+                    placeholder="-- Pilih Status Keputusan --"
+                    hint="Tentukan status administrasi keputusan sesuai tahapan pengelolaannya."
+                    value="{{ $data->status }}" />
             </div>
         </div>
     </x-fieldset>
 
-    {{-- D. Berita Desa dan Dokumen --}}
-    <x-fieldset label="D. Berita Desa dan Dokumen">
+    {{-- C. Dokumen dan Catatan --}}
+    <x-fieldset label="C. Dokumen dan Catatan">
         <div class="row g-3">
-            <div class="col-12 col-md-6">
-                <x-input-text name="nomor_berita" label="Nomor Berita" placeholder="Masukkan nomor berita"
-                    value="{{ $data->nomor_berita }}" />
-            </div>
-
-            <div class="col-12 col-md-6">
-                <x-input-text type="date" name="tgl_berita" label="Tanggal Berita"
-                    value="{{ format_date_input($data->tgl_berita) }}" />
-            </div>
-
             <div class="col-12">
-                <x-input-text type="file" name="dokumen" label="Dokumen Peraturan" accept=".pdf"
-                    hint="Unggah dokumen peraturan dalam format PDF." />
+                <x-input-text type="file" name="dokumen" label="Dokumen Keputusan" accept=".pdf,application/pdf"
+                    hint="Unggah dokumen keputusan terbaru dalam format PDF. Kosongkan jika tidak ingin mengganti dokumen sebelumnya." />
             </div>
 
             <div class="col-12">
                 <x-input-textarea name="catatan" label="Catatan" placeholder="Tambahkan catatan jika diperlukan..."
-                    :rows="3" value="{{ $data->catatan }}" />
+                    hint="Tambahkan informasi atau keterangan lain yang dianggap penting terkait keputusan."
+                    value="{{ $data->catatan }}" :rows="3" />
             </div>
         </div>
     </x-fieldset>
+
 </x-action-edit>

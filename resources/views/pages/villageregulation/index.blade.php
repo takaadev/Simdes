@@ -2,66 +2,32 @@
     <x-app-heading />
     @include('pages.villageregulation.comp.widgets')
     @include('pages.villageregulation.comp.filter')
-    <x-table>
-        <tr class="text-center">
-            <th style="width: 20px;">
-                No.
-            </th>
-            <th style="min-width: 200px;">
-                Jenis Peraturan
-            </th>
-            <th style="min-width: 180px;">
-                Nomor Peraturan
-            </th>
-            <th style="min-width: 200px;">
-                Tanggal Ditetapkan
-            </th>
-            <th style="min-width: 200px;">
-                Tentang
-            </th>
-            <th style="min-width: 250px;">
-                Uraian
-            </th>
-            <th style="min-width: 220px;">
-                Tanggal Kesepakatan
-            </th>
-            <th style="min-width: 220px;">
-                Nomor Dilaporkan
-            </th>
-            <th style="min-width: 220px;">
-                Tanggal Dilaporkan
-            </th>
-            <th style="min-width: 220px;">
-                Nomor Diundang
-            </th>
-            <th style="min-width: 220px;">
-                Tanggal Diundang
-            </th>
-            <th style="min-width: 220px;">
-                Nomor Berita Desa
-            </th>
-            <th style="min-width: 220px;">
-                Tanggal Berita Desa
-            </th>
-            <th style="min-width: 160px;">
-                Dokumen
-            </th>
-            <th style="min-width: 220px;">
-                Keterangan
-            </th>
-            <th style="min-width: 180px;" class="text-center">
-                Status
-            </th>
-            <th>
-                <small>Aksi</small>
-            </th>
+    <x-table id="villageRegulationsTable">
+        <tr>
+            <th>No.</th>
+            <th>Jenis Peraturan</th>
+            <th>Nomor Peraturan</th>
+            <th>Tanggal Ditetapkan</th>
+            <th>Tentang</th>
+            <th>Uraian</th>
+            <th>Tanggal Kesepakatan</th>
+            <th>Nomor Dilaporkan</th>
+            <th>Tanggal Dilaporkan</th>
+            <th>Nomor Diundang</th>
+            <th>Tanggal Diundang</th>
+            <th>Nomor Berita Desa</th>
+            <th>Tanggal Berita Desa</th>
+            <th>Dokumen</th>
+            <th>Keterangan</th>
+            <th>Status</th>
+            <th>Aksi</th>
         </tr>
     </x-table>
 
     @push('footer')
         <script>
             $(document).ready(function() {
-                const tableElement = $('#simdesDataTable');
+                const tableElement = $('#villageRegulationsTable');
 
                 if (!tableElement.length) return;
 

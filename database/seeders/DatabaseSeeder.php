@@ -22,6 +22,7 @@ use App\Models\VillageProfile;
 use App\Models\VillagePublication;
 use App\Models\VillageRegulation;
 use App\Models\VillageTreasuryLand;
+use Database\Factories\VillagePositionFactory;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -34,9 +35,9 @@ class DatabaseSeeder extends Seeder
         |--------------------------------------------------------------------------
         */
 
-        $this->call([
-            VillagePositionSeeder::class,
-        ]);
+        // $this->call([
+        //     VillagePositionSeeder::class,
+        // ]);
 
         /*
         |--------------------------------------------------------------------------
@@ -63,7 +64,7 @@ class DatabaseSeeder extends Seeder
         AppSetting::factory(10)->create([
             'updated_by' => $admin->id,
         ]);
-
+    
         /*
         |--------------------------------------------------------------------------
         | Population
@@ -102,18 +103,12 @@ class DatabaseSeeder extends Seeder
         |--------------------------------------------------------------------------
         */
 
-        VillageOfficial::factory(10)->create();
-
+        VillageOfficial::factory(15)->create();
         VillageRegulation::factory(10)->create();
-
         VillageDecree::factory(10)->create();
-
         VillagePublication::factory(10)->create();
-
         VillageAsset::factory(15)->create();
-
         VillageLand::factory(10)->create();
-
         VillageTreasuryLand::factory(10)->create();
 
         /*

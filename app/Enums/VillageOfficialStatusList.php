@@ -21,6 +21,17 @@ enum VillageOfficialStatusList: string
         };
     }
 
+    public function color(): string
+    {
+        return match ($this) {
+            self::ACTIVE => 'success',
+            self::INACTIVE => 'secondary',
+            self::RETIRED => 'info',
+            self::DISMISSED => 'danger',
+            self::RESIGNED => 'warning',
+        };
+    }
+
     public static function options(): array
     {
         return array_column(

@@ -1,19 +1,23 @@
-<x-action-show :id="$data->id" modalTitle="Detail Peraturan Desa" size="lg">
+<x-action-show :id="$data->id" modalTitle="Detail Peraturan Desa" size="xl">
+
     {{-- A. Informasi Peraturan --}}
     <x-fieldset label="A. Informasi Peraturan">
         <div class="row g-3">
             <div class="col-12 col-md-6">
-                <x-input-select label="Jenis Peraturan di Desa" :options="\App\Enums\RegulationTypeList::options()" value="{{ $data->jenis_peraturan }}"
-                    disabled />
+                <x-input-select name="jenis_peraturan" label="Jenis Peraturan di Desa" :options="\App\Enums\RegulationTypeList::options()"
+                    value="{{ $data->jenis_peraturan }}" disabled />
             </div>
+
             <div class="col-12 col-md-6">
                 <x-input-text name="nomor_peraturan" label="Nomor Peraturan" value="{{ $data->nomor_peraturan }}"
                     disabled />
             </div>
+
             <div class="col-12">
                 <x-input-text name="nama_peraturan" label="Judul atau Tentang Peraturan"
                     value="{{ $data->nama_peraturan }}" disabled />
             </div>
+
             <div class="col-12">
                 <x-input-textarea name="uraian" label="Uraian Peraturan" :rows="4" value="{{ $data->uraian }}"
                     disabled />
@@ -40,7 +44,7 @@
     <x-fieldset label="C. Pelaporan dan Pengundangan">
         <div class="row g-3">
             <div class="col-12 col-md-6">
-                <x-input-text name="nomor_dilaporkan" label="Nomor Dilaporkan" value="{{ $data->nomor_dilaporkan }}"
+                <x-input-text name="nomor_dilaporkan" label="Nomor Pelaporan" value="{{ $data->nomor_dilaporkan }}"
                     disabled />
             </div>
 
@@ -61,8 +65,8 @@
         </div>
     </x-fieldset>
 
-    {{-- D. Berita Desa dan Dokumen --}}
-    <x-fieldset label="D. Berita Desa dan Dokumen">
+    {{-- D. Berita Desa --}}
+    <x-fieldset label="D. Berita Desa">
         <div class="row g-3">
             <div class="col-12 col-md-6">
                 <x-input-text name="nomor_berita" label="Nomor Berita" value="{{ $data->nomor_berita }}" disabled />
@@ -72,16 +76,54 @@
                 <x-input-text type="date" name="tgl_berita" label="Tanggal Berita"
                     value="{{ format_date_input($data->tgl_berita) }}" disabled />
             </div>
+        </div>
+    </x-fieldset>
 
+    {{-- E. Status, Dokumen dan Catatan --}}
+    <x-fieldset label="E. Status, Dokumen dan Catatan">
+        <div class="row g-3">
             <div class="col-12">
-                <x-input-select name="jenis_peraturan" label="Jenis Peraturan di Desa" :options="\App\Enums\RegulationStatusList::options()"
-                    value="{{ $data->status }}" disabled />
+                <x-input-select name="status" label="Status Peraturan" :options="\App\Enums\RegulationStatusList::options()" value="{{ $data->status }}"
+                    disabled />
             </div>
 
+            {{-- Dokumen --}}
+            <div class="col-12">
+                <label class="form-label">Dokumen Peraturan Desa</label>
+
+                @if ($data->dokumen)
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 border rounded-3 p-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <i class="fa-solid fa-file-pdf text-danger fs-3"></i>
+
+                            <div>
+                                <div class="fw-semibold">Dokumen Peraturan Desa</div>
+                                <small class="text-muted">
+                                    File PDF peraturan desa
+                                </small>
+                            </div>
+                        </div>
+
+                        <a href="{{ asset('storage/' . $data->dokumen) }}" target="_blank" rel="noopener noreferrer"
+                            class="btn btn-sm btn-outline-danger">
+                            <i class="fa-solid fa-eye me-1"></i>
+                            Lihat Dokumen PDF
+                        </a>
+                    </div>
+                @else
+                    <div class="alert alert-light border mb-0">
+                        <i class="fa-solid fa-circle-info me-1"></i>
+                        Dokumen peraturan desa belum tersedia.
+                    </div>
+                @endif
+            </div>
+
+            {{-- Catatan --}}
             <div class="col-12">
                 <x-input-textarea name="catatan" label="Catatan" :rows="3" value="{{ $data->catatan }}"
                     disabled />
             </div>
         </div>
     </x-fieldset>
+
 </x-action-show>

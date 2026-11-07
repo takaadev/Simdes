@@ -3,6 +3,7 @@
     'id' => 'filterSelect',
     'name' => 'filter',
     'options' => [],
+    'value'=>''
 ])
 
 <div class="ledger-filter-item">
@@ -16,7 +17,9 @@
         data-default-value="all"
         {{ $attributes }}
     >
-        <option value="all">Semua</option>
+        @if (!$value)
+            <option value="all">Semua</option>
+        @endif
 
         @foreach ($options as $optionValue => $optionLabel)
             @if ($optionValue !== 'all')

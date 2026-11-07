@@ -13,27 +13,25 @@ return new class extends Migration
     {
         Schema::create('village_assets', function (Blueprint $table) {
             $table->id();
-            $table->string('register_number', 30)->unique();
-            $table->string('asset_code', 50)->nullable();
-            $table->string('asset_name', 150);
-            $table->string('asset_category', 100);
-            $table->date('acquisition_date')->nullable();
-            $table->string('acquisition_source', 100)->nullable();
-            $table->decimal('acquisition_value', 15, 2)->nullable();
-            $table->decimal('quantity', 12, 2)->default(1);
-            $table->string('unit', 30)->nullable();
-            $table->string('condition', 30)->nullable();
-            $table->text('location')->nullable();
-            $table->string('ownership_status', 50)->nullable();
-            $table->text('notes')->nullable();
+            $table->string('nama_asset', 150);
+            $table->integer('asal_beli')->default(0);
+            $table->integer('asal_pemerintah')->default(0);
+            $table->integer('asal_provinsi')->default(0);
+            $table->integer('asal_kabupaten')->default(0);
+            $table->integer('asal_sumbangan')->default(0);
+            $table->integer('kondisi_awal_baik')->default(0);
+            $table->integer('kondisi_awal_rusak')->default(0);
+            $table->integer('hapus_rusak')->default(0);
+            $table->integer('hapus_dijual')->default(0);
+            $table->integer('hapus_disumbangkan')->default(0);
+            $table->date('tgl_hapus')->nullable();
+            $table->integer('kondisi_ahir_baik')->default(0);
+            $table->integer('kondisi_ahir_rusak')->default(0);
+            $table->text('catatan')->nullable();
+            $table->string('dokumen')->nullable();
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
             $table->softDeletes();
-            $table->index('asset_category');
-            $table->index('asset_name');
-            $table->index('condition');
-            $table->index('ownership_status');
-            $table->index('acquisition_date');
         });
     }
 

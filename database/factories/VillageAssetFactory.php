@@ -2,8 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Enums\AssetConditionList;
-use App\Enums\AssetOwnershipStatusList;
 use App\Models\User;
 use App\Models\VillageAsset;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -18,56 +16,83 @@ class VillageAssetFactory extends Factory
     public function definition(): array
     {
         $assets = [
-            ['name' => 'Komputer Desktop', 'category' => 'Peralatan Komputer', 'unit' => 'Unit'],
-            ['name' => 'Laptop', 'category' => 'Peralatan Komputer', 'unit' => 'Unit'],
-            ['name' => 'Printer', 'category' => 'Peralatan Komputer', 'unit' => 'Unit'],
-            ['name' => 'Meja Kerja', 'category' => 'Perabot Kantor', 'unit' => 'Unit'],
-            ['name' => 'Kursi Kantor', 'category' => 'Perabot Kantor', 'unit' => 'Unit'],
-            ['name' => 'Lemari Arsip', 'category' => 'Perabot Kantor', 'unit' => 'Unit'],
-            ['name' => 'Kendaraan Operasional', 'category' => 'Kendaraan', 'unit' => 'Unit'],
+            'Komputer Desktop',
+            'Laptop',
+            'Printer',
+            'Meja Kerja',
+            'Kursi Kantor',
+            'Lemari Arsip',
+            'Kendaraan Operasional',
+            'Mesin Potong Rumput',
+            'Proyektor',
+            'Peralatan Kebersihan',
+            'Peralatan Pertanian',
+            'Peralatan Pembangunan',
         ];
 
-        $asset = fake()->randomElement($assets);
+        $totalAwal = fake()->numberBetween(1, 20);
+
+        $kondisiAwalRusak = fake()->numberBetween(
+            0,
+            min(5, $totalAwal)
+        );
+
+        $kondisiAwalBaik = $totalAwal - $kondisiAwalRusak;
+
+        $hapusRusak = fake()->numberBetween(
+            0,
+            $kondisiAwalRusak
+        );
+
+        $hapusDijual = fake()->numberBetween(
+            0,
+            $kondisiAwalBaik
+        );
+
+        $hapusDisumbangkan = fake()->numberBetween(
+            0,
+            $kondisiAwalBaik - $hapusDijual
+        );
+
+        $kondisiAkhirRusak = $kondisiAwalRusak - $hapusRusak;
+
+        $kondisiAkhirBaik = $kondisiAwalBaik
+            - $hapusDijual
+            - $hapusDisumbangkan;
+
+        $tanggalHapus = (
+            $hapusRusak + $hapusDijual + $hapusDisumbangkan
+        ) > 0
+            ? fake()->dateTimeBetween('-3 years', 'now')->format('Y-m-d')
+            : null;
 
         return [
-            'register_number' => fake()->unique()->numerify('####/INV/####'),
-            'asset_code' => fake()->optional()->bothify('AST-####-??'),
+            'nama_asset' => fake()->randomElement($assets),
 
-            'asset_name' => $asset['name'],
-            'asset_category' => $asset['category'],
+            // Asal perolehan
+            'asal_beli' => fake()->numberBetween(0, $totalAwal),
+            'asal_pemerintah' => 0,
+            'asal_provinsi' => 0,
+            'asal_kabupaten' => 0,
+            'asal_sumbangan' => 0,
 
-            'acquisition_date' => fake()->dateTimeBetween('-5 years', 'now')
-                ->format('Y-m-d'),
+            // Kondisi awal
+            'kondisi_awal_baik' => $kondisiAwalBaik,
+            'kondisi_awal_rusak' => $kondisiAwalRusak,
 
-            'acquisition_source' => fake()->randomElement([
-                'APBDes',
-                'Bantuan Pemerintah',
-                'Hibah',
-                'Sumbangan',
-                'Lainnya',
-            ]),
+            // Penghapusan
+            'hapus_rusak' => $hapusRusak,
+            'hapus_dijual' => $hapusDijual,
+            'hapus_disumbangkan' => $hapusDisumbangkan,
+            'tgl_hapus' => $tanggalHapus,
 
-            'acquisition_value' => fake()->numberBetween(500000, 50000000),
+            // Kondisi akhir
+            'kondisi_ahir_baik' => $kondisiAkhirBaik,
+            'kondisi_ahir_rusak' => $kondisiAkhirRusak,
 
-            'quantity' => fake()->randomElement([1, 2, 3, 5, 10]),
-            'unit' => $asset['unit'],
+            'catatan' => fake()->optional()->sentence(),
 
-            'condition' => fake()->randomElement(
-                AssetConditionList::cases()
-            ),
-
-            'location' => fake()->randomElement([
-                'Kantor Desa',
-                'Balai Desa',
-                'Gudang Desa',
-                'Ruang Pelayanan',
-            ]),
-
-            'ownership_status' => fake()->randomElement(
-                AssetOwnershipStatusList::cases()
-            ),
-
-            'notes' => fake()->optional()->sentence(),
+            'dokumen' => null,
 
             'created_by' => User::factory(),
         ];
@@ -76,21 +101,15 @@ class VillageAssetFactory extends Factory
     public function good(): static
     {
         return $this->state(fn() => [
-            'condition' => AssetConditionList::GOOD,
+            'kondisi_awal_rusak' => 0,
+            'kondisi_ahir_rusak' => 0,
         ]);
     }
 
     public function damaged(): static
     {
         return $this->state(fn() => [
-            'condition' => AssetConditionList::LIGHTLY_DAMAGED,
-        ]);
-    }
-
-    public function heavilyDamaged(): static
-    {
-        return $this->state(fn() => [
-            'condition' => AssetConditionList::HEAVILY_DAMAGED,
+            'kondisi_awal_rusak' => fake()->numberBetween(1, 5),
         ]);
     }
 }

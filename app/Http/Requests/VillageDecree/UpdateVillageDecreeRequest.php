@@ -23,7 +23,7 @@ class UpdateVillageDecreeRequest extends FormRequest
      */
     public function rules(): array
     {
-        $decree = $this->route('villageDecrees');
+        $decree = $this->route('villageDecree');
 
         return [
             'nomor_keputusan' => [

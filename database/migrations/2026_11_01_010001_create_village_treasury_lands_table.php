@@ -12,28 +12,33 @@ return new class extends Migration
     public function up(): void
     {
 
-
         Schema::create('village_treasury_lands', function (Blueprint $table) {
             $table->id();
-            $table->string('land_origin', 100);
-            $table->string('certificate_number', 100)->nullable();
-            $table->decimal('land_area', 15, 2);
-            $table->string('land_class', 30)->nullable();
-            $table->string('acquisition', 100);
-            $table->date('acquisition_date')->nullable();
-            $table->string('land_type', 50);
-            $table->boolean('has_marker')->default(false);
-            $table->boolean('has_plate')->default(false);
-            $table->text('land_location');
-            $table->string('land_use', 150)->nullable();
-            $table->text('mutation')->nullable();
-            $table->text('notes')->nullable();
+            $table->string('asal_tanah', 100);
+            $table->string('nomor_sertifikat', 100)->unique();
+            $table->string('kelas_tanah', 30);
+            $table->decimal('luas_tanah', 15, 2)->default(0);
+            $table->decimal('lt_asli_desa', 15, 2)->default(0);
+            $table->decimal('lt_pemerintah', 15, 2)->default(0);
+            $table->decimal('lt_provinsi', 15, 2)->default(0);
+            $table->decimal('lt_kabupaten', 15, 2)->default(0);
+            $table->decimal('lt_lainnya', 15, 2)->default(0);
+            $table->date('tgl_perolehan')->nullable();
+            $table->decimal('lt_tipe_sawah', 15, 2)->default(0);
+            $table->decimal('lt_tipe_tegal', 15, 2)->default(0);
+            $table->decimal('lt_tipe_kebun', 15, 2)->default(0);
+            $table->decimal('lt_tipe_tambak', 15, 2)->default(0);
+            $table->decimal('lt_tipe_kering', 15, 2)->default(0);
+            $table->boolean('patok_tanah')->default(false);
+            $table->boolean('papan_nama')->default(false);
+            $table->text('lokasi');
+            $table->string('peruntukan', 255)->nullable();
+            $table->text('mutasi')->nullable();
+            $table->text('catatan')->nullable();
+            $table->string('dokumen')->nullable();
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
             $table->softDeletes();
-            $table->index('land_origin');
-            $table->index('land_type');
-            $table->index('acquisition_date');
         });
     }
 

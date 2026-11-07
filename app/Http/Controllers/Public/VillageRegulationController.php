@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Public;
 
+use App\Http\Controllers\Concerns\HandlesRestore;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\VillageRegulation\StoreVillageRegulationRequest;
 use App\Http\Requests\VillageRegulation\UpdateVillageRegulationRequest;
@@ -11,13 +12,8 @@ use Illuminate\Http\Request;
 
 class VillageRegulationController extends Controller
 {
-    public function __construct(
-        protected VillageRegulationService $service
-    ) {}
-    /**
-     * Display a listing of the resource.
-     */
-
+    use HandlesRestore;
+    public function __construct(protected VillageRegulationService $service) {}
     public function index(Request $request)
     {
         if (! $request->expectsJson() && ! $request->ajax()) {
@@ -25,94 +21,20 @@ class VillageRegulationController extends Controller
         }
         return $this->service->getData($request);
     }
-
-
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function store(StoreVillageRegulationRequest $request): \Illuminate\Http\JsonResponse
     {
-        //
+        return $this->service->getStore($request->validated());
     }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreVillageRegulationRequest $request)
+    public function update(UpdateVillageRegulationRequest $request, VillageRegulation $villageRegulation): \Illuminate\Http\JsonResponse
     {
-        try {
-            $this->service->getStore($request->validated());
-            return response()->json([
-                'success' => true,
-                'message' => 'Peraturan desa berhasil ditambahkan.',
-            ], 201);
-        } catch (\Throwable $e) {
-            report($e);
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan peraturan desa.',
-            ], 500);
-        }
+        return $this->service->getUpdate($villageRegulation, $request->validated());
     }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(UpdateVillageRegulationRequest $villageRegulation) {}
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(VillageRegulation $villageRegulation)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-
-    public function update(UpdateVillageRegulationRequest $request, VillageRegulation $villageRegulation)
-    {
-        try {
-            $this->service->getUpdate($villageRegulation, $request->validated());
-            return response()->json([
-                'success' => true,
-                'message' => 'Peraturan desa berhasil diperbarui.',
-            ]);
-        } catch (\Throwable $e) {
-            report($e);
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat memperbarui peraturan desa.',
-            ], 500);
-        }
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Request $request, VillageRegulation $villageRegulation)
     {
-        try {
-            $forceDelete = $request->boolean('confirm_delete');
-
-            $this->service->getDestroy($villageRegulation, $forceDelete);
-
-            return response()->json([
-                'success' => true,
-                'message' => $forceDelete
-                    ? 'Peraturan desa dan dokumennya berhasil dihapus permanen.'
-                    : 'Peraturan desa berhasil dipindahkan ke sampah.',
-            ]);
-        } catch (\Throwable $e) {
-            report($e);
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat menghapus peraturan desa.',
-            ], 500);
-        }
+        return $this->service->getDestroy($request, $villageRegulation);
+    }
+    public function restore(int $id)
+    {
+        return HandlesRestore::restore(VillageRegulation::onlyTrashed()->findOrFail($id));
     }
 }
