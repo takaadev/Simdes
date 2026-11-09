@@ -2,38 +2,60 @@
 
 namespace Database\Factories;
 
-use App\Enums\RegulationTypeList;
+use App\Enums\PublicationStatusList;
+use App\Enums\RegulationStatusList;
 use App\Models\User;
+use App\Models\VillagePublication;
+use App\Models\VillageRegulation;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\VillagePublication>
+ * @extends Factory<VillagePublication>
  */
 class VillagePublicationFactory extends Factory
 {
+    protected $model = VillagePublication::class;
+
     public function definition(): array
     {
-        $stipulationDate = fake()->dateTimeBetween('-5 years', 'now');
+        $tglDiundang = fake()->dateTimeBetween('-5 years', 'now');
+
+        $tglBerita = fake()->optional(0.8)
+            ->dateTimeBetween($tglDiundang, 'now');
 
         return [
-            'regulation_type' => fake()->randomElement(RegulationTypeList::cases()),
-            'regulation_number' => fake()->unique()->numerify('## Tahun 202#'),
-            'stipulation_date' => $stipulationDate,
-            'subject' => fake()->randomElement([
-                'Anggaran Pendapatan dan Belanja Desa',
-                'Rencana Pembangunan Jangka Menengah Desa',
-                'Rencana Kerja Pemerintah Desa',
-                'Pembentukan Tim Pelaksana Kegiatan',
-                'Penetapan Perangkat Desa',
-                'Pengelolaan Aset Desa',
-                'Kewenangan Berdasarkan Hak Asal Usul Desa',
-            ]),
-            'promulgation_date' => fake()->optional(0.8)->dateTimeBetween(
-                $stipulationDate,
-                'now'
+            // Relasi Peraturan
+            'regulation_id' => VillageRegulation::factory(),
+
+            // Pengundangan
+            'nomor_diundang' => fake()->unique()->numerify('##/UND/20##'),
+            'tgl_diundang' => $tglDiundang->format('Y-m-d'),
+
+            // Berita Desa
+            'nomor_berita' => fake()->unique()->numerify('##/20##'),
+            'tgl_berita' => $tglBerita?->format('Y-m-d'),
+
+            // Status
+            'status' => fake()->randomElement(
+                RegulationStatusList::cases()
             ),
-            'notes' => fake()->optional()->sentence(),
+
+            // Relasi Pengguna
             'created_by' => User::factory(),
         ];
+    }
+
+    public function draft(): static
+    {
+        return $this->state(fn() => [
+            'status' => RegulationStatusList::DRAFT,
+        ]);
+    }
+
+    public function published(): static
+    {
+        return $this->state(fn() => [
+            'status' => RegulationStatusList::PUBLISHED,
+        ]);
     }
 }

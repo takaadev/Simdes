@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Contracts\Restorable;
+use App\Enums\LandClassList;
+use App\Enums\RegionLandList;
 use App\Models\Concerns\RestoresSoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,15 +18,18 @@ class VillageTreasuryLand extends Model implements Restorable
 
     protected $guarded = ['id'];
 
+
     protected function casts(): array
     {
         return [
+            'asal_tanah' => RegionLandList::class,
+            'kelas_tanah' => LandClassList::class,
             'luas_tanah' => 'decimal:2',
             'lt_asli_desa' => 'decimal:2',
             'lt_pemerintah' => 'decimal:2',
             'lt_provinsi' => 'decimal:2',
             'lt_kabupaten' => 'decimal:2',
-            'lt_lainya' => 'decimal:2',
+            'lt_lainnya' => 'decimal:2',
             'tgl_perolehan' => 'date',
             'lt_tipe_sawah' => 'decimal:2',
             'lt_tipe_tegal' => 'decimal:2',

@@ -4,14 +4,18 @@
     'icon' => 'angle-right',
     'active' => false,
     'ready' => true,
-    'slug' => null,
 ])
 
 <li {{ $attributes->only(['class']) }}>
-    <a href="{{ $href }}" @class(['sidebar-sublink', 'active' => $active])
-        @if ($active) aria-current="page" @endif data-book-ready="{{ $ready ? 'true' : 'false' }}"
-        data-book-label="{{ $label }}"
-        @if ($slug) data-book-slug="{{ $slug }}" @endif>
+    <a href="{{ $href }}"
+        @class([
+            'sidebar-sublink',
+            'active' => $active,
+        ])
+        @if ($active) aria-current="page" @endif
+        data-book-ready="{{ $ready ? 'true' : 'false' }}"
+        data-book-label="{{ $label }}">
+
         <span class="sidebar-sublink-icon">
             <i class="fa-solid fa-{{ $icon }}" aria-hidden="true"></i>
         </span>

@@ -12,7 +12,37 @@ class VillageRegulationService
 
     public function getData(Request $request)
     {
-        $query = VillageRegulation::query()
+        // Filter bersama untuk tabel dan statistik.
+        $applyFilters = function ($query) use ($request) {
+            $query
+                ->when(
+                    $request->filled('jenis_peraturan')
+                        && $request->input('jenis_peraturan') !== 'all',
+                    fn($query) => $query->where(
+                        'jenis_peraturan',
+                        $request->input('jenis_peraturan')
+                    )
+                )
+                ->when(
+                    $request->filled('year')
+                        && $request->input('year') !== 'all',
+                    fn($query) => $query->whereYear(
+                        'tgl_ditetapkan',
+                        $request->input('year')
+                    )
+                )
+                ->when(
+                    $request->input('deleted') === 'trashed',
+                    fn($query) => $query->onlyTrashed()
+                );
+
+            return $query;
+        };
+
+        // Query utama.
+        $query = $applyFilters(
+            VillageRegulation::query()
+        )
             ->select([
                 'id',
                 'jenis_peraturan',
@@ -23,10 +53,6 @@ class VillageRegulationService
                 'tgl_kesepakatan',
                 'nomor_dilaporkan',
                 'tgl_dilaporkan',
-                'nomor_diundang',
-                'tgl_diundang',
-                'nomor_berita',
-                'tgl_berita',
                 'catatan',
                 'dokumen',
                 'status',
@@ -34,17 +60,19 @@ class VillageRegulationService
                 'created_at',
                 'updated_at',
                 'deleted_at',
-            ]);
-
-        // Filter jenis peraturan.
-        $query->when(
-            $request->filled('jenis_peraturan')
-                && $request->input('jenis_peraturan') !== 'all',
-            fn($query) => $query->where(
-                'jenis_peraturan',
-                $request->input('jenis_peraturan')
-            )
-        );
+            ])
+            ->with([
+                'publication' => fn($query) => $query->select([
+                    'id',
+                    'regulation_id',
+                    'nomor_diundang',
+                    'tgl_diundang',
+                    'nomor_berita',
+                    'tgl_berita',
+                    'status',
+                ]),
+            ])
+            ->latest('created_at');
 
         // Filter status hanya untuk tabel.
         $query->when(
@@ -56,47 +84,9 @@ class VillageRegulationService
             )
         );
 
-        // Filter tahun.
-        $query->when(
-            $request->filled('year')
-                && $request->input('year') !== 'all',
-            fn($query) => $query->whereYear(
-                'tgl_ditetapkan',
-                $request->input('year')
-            )
-        );
-
-        // Filter status data berdasarkan SoftDeletes.
-        $query->when(
-            $request->input('deleted') === 'trashed',
-            fn($query) => $query->onlyTrashed()
-        );
-
-        $query->latest('created_at');
-
-        // Query statistik: tanpa filter status.
-        $summaryQuery = VillageRegulation::query()
-            ->when(
-                $request->filled('jenis_peraturan')
-                    && $request->input('jenis_peraturan') !== 'all',
-                fn($query) => $query->where(
-                    'jenis_peraturan',
-                    $request->input('jenis_peraturan')
-                )
-            )
-            ->when(
-                $request->filled('tahun')
-                    && $request->input('tahun') !== 'all',
-                fn($query) => $query->whereYear(
-                    'tgl_ditetapkan',
-                    $request->input('tahun')
-                )
-            );
-
-        // Filter status data untuk statistik.
-        $summaryQuery->when(
-            $request->input('deleted') === 'trashed',
-            fn($query) => $query->onlyTrashed()
+        // Query statistik tanpa filter status.
+        $summaryQuery = $applyFilters(
+            VillageRegulation::query()
         );
 
         $summaryQuery->selectRaw('COUNT(*) as total');
@@ -111,17 +101,21 @@ class VillageRegulationService
         $summary = $summaryQuery->first();
 
         return DataTables::eloquent($query)
+
+            // Statistik.
             ->with('summary', [
-                'total' => (int) $summary->total,
+                'total' => (int) ($summary->total ?? 0),
+
                 ...collect(RegulationStatusList::cases())
                     ->mapWithKeys(fn($status) => [
-                        $status->value => (int) $summary->{$status->value},
+                        $status->value => (int) ($summary->{$status->value} ?? 0),
                     ])
                     ->all(),
             ])
 
             ->addIndexColumn()
 
+            // Identitas Peraturan.
             ->editColumn(
                 'jenis_peraturan',
                 fn($row) => $row->jenis_peraturan?->label() ?? '-'
@@ -142,16 +136,19 @@ class VillageRegulationService
                 fn($row) => $this->tooltip($row->nama_peraturan)
             )
 
+            // Uraian.
             ->editColumn(
                 'uraian',
                 fn($row) => $this->tooltip($row->uraian)
             )
 
+            // Kesepakatan.
             ->editColumn(
                 'tgl_kesepakatan',
                 fn($row) => $this->formatDate($row->tgl_kesepakatan)
             )
 
+            // Pelaporan.
             ->editColumn(
                 'nomor_dilaporkan',
                 fn($row) => $row->nomor_dilaporkan ?: '-'
@@ -162,26 +159,33 @@ class VillageRegulationService
                 fn($row) => $this->formatDate($row->tgl_dilaporkan)
             )
 
-            ->editColumn(
+            // Pengundangan dari relasi VillagePublication.
+            ->addColumn(
                 'nomor_diundang',
-                fn($row) => $row->nomor_diundang ?: '-'
+                fn($row) => $row->publication?->nomor_diundang ?: '-'
             )
 
-            ->editColumn(
+            ->addColumn(
                 'tgl_diundang',
-                fn($row) => $this->formatDate($row->tgl_diundang)
+                fn($row) => $this->formatDate(
+                    $row->publication?->tgl_diundang
+                )
             )
 
-            ->editColumn(
+            // Berita Desa dari relasi VillagePublication.
+            ->addColumn(
                 'nomor_berita',
-                fn($row) => $row->nomor_berita ?: '-'
+                fn($row) => $row->publication?->nomor_berita ?: '-'
             )
 
-            ->editColumn(
+            ->addColumn(
                 'tgl_berita',
-                fn($row) => $this->formatDate($row->tgl_berita)
+                fn($row) => $this->formatDate(
+                    $row->publication?->tgl_berita
+                )
             )
 
+            // Dokumen.
             ->editColumn('dokumen', function ($row) {
                 if (! $row->dokumen) {
                     return '-';
@@ -193,11 +197,13 @@ class VillageRegulationService
                 ])->render();
             })
 
+            // Keterangan.
             ->editColumn(
                 'catatan',
                 fn($row) => $this->tooltip($row->catatan)
             )
 
+            // Status.
             ->editColumn('status', function ($row) {
                 $status = $row->status;
 
@@ -215,21 +221,24 @@ class VillageRegulationService
                 ])->render();
             })
 
+            // Action.
             ->addColumn(
                 'action',
-                fn($row) => view('pages.villageregulation.comp.actions', [
-                    'row' => $row,
-                ])->render()
+                fn($row) => view(
+                    'pages.villageregulation.comp.actions',
+                    ['row' => $row]
+                )->render()
             )
 
             ->rawColumns([
                 'nama_peraturan',
                 'uraian',
                 'catatan',
+                'dokumen',
                 'status',
                 'action',
-                'dokumen',
             ])
+
             ->toJson();
     }
 

@@ -21,10 +21,6 @@ return new class extends Migration
             $table->date('tgl_kesepakatan')->nullable();
             $table->string('nomor_dilaporkan', 100)->nullable()->unique();
             $table->date('tgl_dilaporkan')->nullable();
-            $table->string('nomor_diundang', 100)->nullable()->unique();
-            $table->date('tgl_diundang')->nullable();
-            $table->string('nomor_berita', 100)->nullable()->unique();
-            $table->date('tgl_berita')->nullable();
             $table->text('catatan')->nullable();
             $table->string('dokumen')->nullable();
             $table->string('status', 15)->default('draft');

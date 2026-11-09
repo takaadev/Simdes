@@ -13,17 +13,18 @@ return new class extends Migration
     {
         Schema::create('expedition_entries', function (Blueprint $table) {
             $table->id();
-            $table->date('sent_date');
-            $table->string('letter_number', 100)->nullable();
-            $table->date('letter_date')->nullable();
-            $table->text('summary');
-            $table->string('recipient', 150);
-            $table->text('notes')->nullable();
+            $table->foreignId('agenda_entry_id')->nullable()->constrained('agenda_entries')->nullOnDelete();
+            $table->date('tanggal_kirim');
+            $table->string('nomor_surat', 100)->nullable();
+            $table->date('tgl_surat')->nullable();
+            $table->string('penerima', 150);
+            $table->text('isi_surat');
+            $table->text('catatan')->nullable();
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
             $table->softDeletes();
-            $table->index('sent_date');
-            $table->index('letter_date');
+            $table->index('tanggal_kirim');
+            $table->index('nomor_surat');
         });
     }
 

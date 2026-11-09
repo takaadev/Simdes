@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Enums\LandClassList;
+use App\Enums\RegionLandList;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -20,7 +22,7 @@ class VillageTreasuryLandFactory extends Factory
             'lt_pemerintah',
             'lt_provinsi',
             'lt_kabupaten',
-            'lt_lainnya'
+            'lt_lainnya',
         ];
 
         $acquisition = array_fill_keys($acquisitionColumns, 0);
@@ -41,22 +43,15 @@ class VillageTreasuryLandFactory extends Factory
         $landTypes[fake()->randomElement($typeColumns)] = $luasTanah;
 
         return [
-            'asal_tanah' => fake()->randomElement([
-                'Tanah Bengkok',
-                'Tanah Kas Desa',
-                'Tanah Pengganti',
-                'Tanah Hibah',
-            ]),
+            'asal_tanah' => fake()->randomElement(
+                RegionLandList::cases()
+            )->value,
 
             'nomor_sertifikat' => fake()->unique()->numerify('####/####/####'),
 
-            'kelas_tanah' => fake()->randomElement([
-                'SI',
-                'DI',
-                'Kelas I',
-                'Kelas II',
-                'Kelas III',
-            ]),
+            'kelas_tanah' => fake()->randomElement(
+                LandClassList::cases()
+            )->value,
 
             'luas_tanah' => $luasTanah,
 

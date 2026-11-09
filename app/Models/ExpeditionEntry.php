@@ -17,11 +17,22 @@ class ExpeditionEntry extends Model
     protected function casts(): array
     {
         return [
-            'sent_date' => 'date',
-            'letter_date' => 'date',
+            'tanggal_kirim' => 'date',
+            'tgl_surat' => 'date',
         ];
     }
 
+    /**
+     * Agenda surat keluar yang terkait.
+     */
+    public function agendaEntry(): BelongsTo
+    {
+        return $this->belongsTo(AgendaEntry::class);
+    }
+
+    /**
+     * Pembuat data ekspedisi.
+     */
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');

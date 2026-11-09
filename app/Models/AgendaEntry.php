@@ -7,25 +7,42 @@ use App\Enums\AgendaTypeList;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class AgendaEntry extends Model
 {
     /** @use HasFactory<\Database\Factories\AgendaEntryFactory> */
-    use HasFactory;
+    use HasFactory, SoftDeletes;
+
+    protected $guarded = ['id'];
 
     protected function casts(): array
     {
         return [
-            'agenda_type' => AgendaTypeList::class,
-            'agenda_category' => AgendaCategoryList::class,
-            'letter_date' => 'date',
-            'received_date' => 'date',
-            'disposition_date' => 'date',
+            'tipe_agenda' => AgendaTypeList::class,
+            'kategori_agenda' => AgendaCategoryList::class,
+
+            'tanggal_terima' => 'date',
+            'tanggal_kirim' => 'date',
+            'tgl_surat' => 'date',
+            'tgl_disposisi' => 'date',
         ];
     }
 
+    /**
+     * Pembuat data agenda.
+     */
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * Daftar ekspedisi surat keluar.
+     */
+    public function expeditionEntries(): HasMany
+    {
+        return $this->hasMany(ExpeditionEntry::class);
     }
 }

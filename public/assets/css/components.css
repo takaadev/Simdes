@@ -592,134 +592,164 @@
 /* --------------------------------------------------------------------------
    Forms & Interaction-Aware Validation
    -------------------------------------------------------------------------- */
+/* =========================================
+   FORM FIELD
+========================================= */
+
 .simdes-field {
-  margin-block-end: 1.15rem;
+    margin-block-end: 0.85rem;
 }
 
 .simdes-label {
-  display: inline-block;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--simdes-text);
-  margin-block-end: 0.38rem;
+    display: inline-block;
+    margin-block-end: 0.3rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--simdes-text);
 }
 
 .simdes-field-hint {
-  display: block;
-  font-size: 0.77rem;
-  color: var(--simdes-text-muted);
-  margin-block-end: 0.35rem;
+    display: block;
+    margin-block-end: 0.3rem;
+    font-size: 0.75rem;
+    color: var(--simdes-text-muted);
 }
 
+/* =========================================
+   INPUT WRAPPER & ICON
+========================================= */
+
 .simdes-input-wrap {
-  position: relative;
-  display: flex;
-  align-items: center;
+    position: relative;
+    display: flex;
+    align-items: center;
 }
 
 .simdes-input-icon {
-  position: absolute;
-  inset-inline-start: 0.95rem;
-  color: var(--simdes-text-light);
-  font-size: 0.92rem;
-  pointer-events: none;
-  transition: color var(--transition-fast);
+    position: absolute;
+    inset-inline-start: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--simdes-text-light);
+    pointer-events: none;
+    transition: color var(--transition-fast);
 }
 
+/* =========================================
+   INPUT
+========================================= */
+
 .simdes-input {
-  inline-size: 100%;
-  min-block-size: 48px;
-  padding: 0.68rem 0.95rem;
-  font-size: 1rem; /* >=16px prevents mobile browser auto-zoom */
-  font-family: var(--font-sans);
-  color: var(--simdes-text);
-  background-color: var(--simdes-surface);
-  border: 1.5px solid var(--simdes-border);
-  border-radius: var(--radius-sm);
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
+    inline-size: 100%;
+    min-block-size: 40px;
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+    font-family: var(--font-sans);
+    color: var(--simdes-text);
+    background-color: var(--simdes-surface);
+    border: 1px solid var(--simdes-border);
+    border-radius: var(--radius-sm);
+    transition:
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast),
+        background-color var(--transition-fast);
 }
 
 .simdes-input.has-start-icon {
-  padding-inline-start: 2.65rem;
+    padding-inline-start: 2.35rem;
 }
 
 .simdes-input.has-end-btn {
-  padding-inline-end: 3rem;
+    padding-inline-end: 2.75rem;
 }
 
 .simdes-input::placeholder {
-  color: #93A39B;
+    color: #93A39B;
 }
 
 .simdes-input:focus {
-  outline: none;
-  border-color: var(--simdes-primary);
-  box-shadow: 0 0 0 3.5px rgba(23, 76, 58, 0.12);
+    outline: none;
+    border-color: var(--simdes-primary);
+    box-shadow: 0 0 0 3px rgba(23, 76, 58, 0.1);
 }
 
 .simdes-input-wrap:focus-within .simdes-input-icon {
-  color: var(--simdes-primary);
+    color: var(--simdes-primary);
 }
 
-/* Password Show/Hide Button */
+/* =========================================
+   PASSWORD SHOW / HIDE
+========================================= */
+
 .password-toggle-btn {
-  position: absolute;
-  inset-inline-end: 0.35rem;
-  inline-size: 40px;
-  block-size: 40px;
-  border: 0;
-  border-radius: var(--radius-xs);
-  background: transparent;
-  color: var(--simdes-text-muted);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: color var(--transition-fast), background-color var(--transition-fast);
+    position: absolute;
+    inset-inline-end: 0.25rem;
+    inline-size: 36px;
+    block-size: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-xs);
+    background: transparent;
+    color: var(--simdes-text-muted);
+    cursor: pointer;
+    transition:
+        color var(--transition-fast),
+        background-color var(--transition-fast);
 }
 
 .password-toggle-btn:hover {
-  color: var(--simdes-primary);
-  background-color: var(--simdes-bg);
+    color: var(--simdes-primary);
+    background-color: var(--simdes-bg);
 }
 
-/* Checkbox Accent Branding */
+/* =========================================
+   CHECKBOX
+========================================= */
+
 .simdes-checkbox {
-  inline-size: 1.1rem;
-  block-size: 1.1rem;
-  accent-color: var(--simdes-primary);
-  cursor: pointer;
+    inline-size: 1rem;
+    block-size: 1rem;
+    accent-color: var(--simdes-primary);
+    cursor: pointer;
 }
 
-/* Interaction-deferred Validation States (:user-invalid + JS WeakMap Fallback) */
+/* =========================================
+   VALIDATION STATES
+========================================= */
+
 .simdes-input:user-invalid,
 .simdes-input.user-invalid-fallback,
 .simdes-input.is-invalid-field {
-  border-color: var(--simdes-danger);
-  background-color: #FFF9F9;
+    border-color: var(--simdes-danger);
+    background-color: #FFF9F9;
 }
 
 .simdes-input:user-valid,
 .simdes-input.user-valid-fallback {
-  border-color: rgba(30, 111, 80, 0.55);
+    border-color: rgba(30, 111, 80, 0.55);
 }
 
+/* =========================================
+   ERROR MESSAGE
+========================================= */
+
 .field-error-msg {
-  display: none;
-  align-items: center;
-  gap: 0.4rem;
-  margin-block-start: 0.4rem;
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: var(--simdes-danger);
+    display: none;
+    align-items: center;
+    gap: 0.35rem;
+    margin-block-start: 0.3rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--simdes-danger);
 }
 
 .simdes-field:has(.simdes-input:user-invalid) .field-error-msg,
 .simdes-field:has(.simdes-input.user-invalid-fallback) .field-error-msg,
 .simdes-field.has-error .field-error-msg {
-  display: flex;
+    display: flex;
 }
-
 /* Modals & Toasts */
 .simdes-modal .modal-content {
   border: 1px solid var(--simdes-border);
@@ -912,49 +942,53 @@
 } */
 
 .simdes-select {
-  min-block-size: 42px;
-  padding: 0.48rem 2.1rem 0.48rem 0.85rem;
-  font-size: 0.84rem;
-  font-weight: 500;
-  font-family: var(--font-sans);
-  color: var(--simdes-text);
-  background-color: var(--simdes-surface);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23477568' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0.75rem center;
-  background-size: 12px 12px;
-  appearance: none;
-  border: 1.5px solid var(--simdes-border);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    inline-size: 100%;
+    min-block-size: 40px;
+    padding: 0.5rem 2rem 0.5rem 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    font-family: var(--font-sans);
+    color: var(--simdes-text);
+    background-color: var(--simdes-surface);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23477568' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 12px 12px;
+    appearance: none;
+    border: 1px solid var(--simdes-border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition:
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast),
+        background-color var(--transition-fast);
 }
 
 .simdes-select:focus {
-  outline: none;
-  border-color: var(--simdes-primary);
-  box-shadow: 0 0 0 3px rgba(23, 76, 58, 0.1);
+    outline: none;
+    border-color: var(--simdes-primary);
+    box-shadow: 0 0 0 3px rgba(23, 76, 58, 0.1);
 }
 
+/* Samakan ukuran select di dalam field */
 .simdes-field .simdes-select {
-  inline-size: 100%;
-  min-block-size: 48px;
-  padding: 0.68rem 2.35rem 0.68rem 0.95rem;
-  font-size: 1rem;
+    inline-size: 100%;
+    min-block-size: 40px;
+    padding: 0.5rem 2rem 0.5rem 0.75rem;
+    font-size: 1rem;
 }
 
 .simdes-select:user-invalid,
 .simdes-select.user-invalid-fallback,
 .simdes-select.is-invalid-field {
-  border-color: var(--simdes-danger);
-  background-color: #FFF9F9;
+    border-color: var(--simdes-danger);
+    background-color: #FFF9F9;
 }
 
 .simdes-field:has(.simdes-select:user-invalid) .field-error-msg,
 .simdes-field:has(.simdes-select.user-invalid-fallback) .field-error-msg {
-  display: flex;
+    display: flex;
 }
-
 /* Accessible Scrollable Table Container */
 .simdes-table-wrapper {
   inline-size: 100%;

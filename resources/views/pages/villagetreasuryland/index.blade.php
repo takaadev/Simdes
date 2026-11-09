@@ -6,7 +6,7 @@
 
     <x-table id="villageTreasuryLandTable">
         <tr>
-            <th rowspan="3" scope="col" style="width:58px;">No.</th>
+            <th rowspan="3" scope="col">No.</th>
 
             <th rowspan="3" >
                 Nomor Sertifikat 
@@ -16,12 +16,12 @@
                 Asal Tanah
             </th>
 
-            <th rowspan="3" scope="col" style="min-width:100px;" class="text-center">
-                Kelas Tanah
+            <th rowspan="3" scope="col" class="text-center">
+                Kelas
             </th>
 
-            <th rowspan="3" scope="col" style="min-width:120px;" class="text-center">
-                Luas Tanah (m²)
+            <th rowspan="3" scope="col" >
+                L.T (m²)
             </th>
 
             <th colspan="5" class="text-center">
@@ -67,31 +67,31 @@
 
         <tr>
             {{-- Perolehan Tanah --}}
-            <th rowspan="2" style="min-width:100px;">Asli Milik Desa</th>
-            <th colspan="3" class="text-center">Bantuan</th>
-            <th rowspan="2" style="min-width:100px;">Lain-lain</th>
+            <th rowspan="2">AMD</th>
+            <th colspan="3">Bantuan</th>
+            <th rowspan="2">Lain</th>
 
             {{-- Jenis Tanah --}}
-            <th rowspan="2" style="min-width:90px;">Sawah</th>
-            <th rowspan="2" style="min-width:90px;">Tegal</th>
-            <th rowspan="2" style="min-width:90px;">Kebun</th>
-            <th rowspan="2" style="min-width:100px;">Tambak/Kolam</th>
-            <th rowspan="2" style="min-width:110px;">Tanah Kering/Darat</th>
+            <th rowspan="2" >SWH</th>
+            <th rowspan="2" >TGL</th>
+            <th rowspan="2" >KBN</th>
+            <th rowspan="2" >TBK</th>
+            <th rowspan="2" >TKD</th>
 
             {{-- Patok --}}
             <th rowspan="2" style="min-width:70px;">Ya</th>
             <th rowspan="2" style="min-width:70px;">Tidak</th>
 
             {{-- Papan Nama --}}
-            <th rowspan="2" style="min-width:70px;">Ya</th>
+            <th rowspan="2" style="min-width:70px;" >Ya</th>
             <th rowspan="2" style="min-width:70px;">Tidak</th>
         </tr>
 
         <tr>
             {{-- Rincian Bantuan --}}
-            <th style="min-width:100px;">Pemerintah</th>
-            <th style="min-width:90px;">Provinsi</th>
-            <th style="min-width:120px;">Kabupaten/Kota</th>
+            <th>Pem</th>
+            <th>Pro</th>
+            <th>Kab</th>
         </tr>
     </x-table>
 
@@ -163,6 +163,7 @@
                         {
                             data: 'kelas_tanah',
                             name: 'kelas_tanah',
+                            className: 'text-center'
                         },
 
                         // 5. Luas tanah
@@ -258,12 +259,14 @@
                         {
                             data: 'papan_nama',
                             name: 'papan_nama',
+                             className: 'text-center',
                         },
 
                         // 20. Papan nama - Tidak
                         {
                             data: 'papan_nama_tidak',
                             name: 'papan_nama_tidak',
+                            className: 'text-center',
                             searchable: false,
                             orderable: false,
                         },

@@ -53,6 +53,14 @@ class VillageTreasuryLandService
             )
         );
 
+        $query->when(
+            $request->filled('kelas') && $request->input('kelas') !== 'all',
+            fn($query) => $query->where(
+                'kelas_tanah',
+                $request->input('kelas')
+            )
+        );
+
         // Filter data berdasarkan SoftDeletes.
         $query->when(
             $request->input('deleted') === 'trashed',
@@ -94,12 +102,19 @@ class VillageTreasuryLandService
                 'total_named' => (int) $summary->total_named,
                 'total_marked' => (int) $summary->total_marked,
             ])
-
             ->addIndexColumn()
-            // ->editColumn(
-            //     'asal_tanah',
-            //     fn($row) => $this->tooltip($row->asal_tanah)
-            // )
+            ->editColumn(
+                'asal_tanah',
+                fn($row) => $this->tooltip(
+                    $row->asal_tanah?->label() ?? '-'
+                )
+            )
+            ->editColumn(
+                'kelas_tanah',
+                fn($row) => $this->tooltip(
+                    $row->kelas_tanah?->code() ?? '-'
+                )
+            )
             ->editColumn(
                 'lokasi',
                 fn($row) => $this->tooltip($row->lokasi)
@@ -249,6 +264,7 @@ class VillageTreasuryLandService
                 'catatan',
                 'peruntukan',
                 'asal_tanah',
+                'kelas_tanah'
             ])
             ->toJson();
     }
@@ -279,26 +295,33 @@ class VillageTreasuryLandService
                     $data['dokumen'] instanceof \Illuminate\Http\UploadedFile
                 ) {
                     $documentPath = $data['dokumen']->store(
-                        'village-assets',
+                        'village-treasury-lands',
                         'public'
                     );
 
                     $data['dokumen'] = $documentPath;
                 }
 
-                // Informasi pembuat data.
-                $data['created_by'] = \Auth::id() ?? 1;
+                // Hitung total luas berdasarkan asal perolehan.
+                $sourceFields = [
+                    'lt_asli_desa',
+                    'lt_pemerintah',
+                    'lt_provinsi',
+                    'lt_kabupaten',
+                    'lt_lainnya',
+                ];
 
-                // Insert data aset.
-                VillageAsset::create($data);
+                $data['luas_tanah'] = collect($sourceFields)
+                    ->sum(fn($field) => (int) round((float) $data[$field] * 100)) / 100;
+                $data['created_by'] = \Auth::id() ?? 1;
+                VillageTreasuryLand::create($data);
             });
 
             return response()->json([
                 'success' => true,
-                'message' => 'Inventaris dan kekayaan desa berhasil ditambahkan.',
+                'message' => 'Tanah kas desa berhasil ditambahkan.',
             ], 201);
         } catch (\Throwable $e) {
-            // Hapus dokumen jika proses insert gagal.
             if ($documentPath) {
                 \Storage::disk('public')->delete($documentPath);
             }
@@ -307,29 +330,25 @@ class VillageTreasuryLandService
 
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan inventaris dan kekayaan desa.',
+                'message' => 'Terjadi kesalahan saat menyimpan tanah kas desa.',
             ], 500);
         }
     }
 
-    public function getUpdate(VillageAsset $asset, array $data): \Illuminate\Http\JsonResponse
+    public function getUpdate(VillageTreasuryLand $land, array $data): \Illuminate\Http\JsonResponse
     {
         $documentPath = null;
-        $oldDocumentPath = $asset->dokumen;
+        $oldDocumentPath = $land->dokumen;
 
         try {
-            \DB::transaction(function () use (
-                $asset,
-                $data,
-                &$documentPath
-            ) {
+            \DB::transaction(function () use ($land, $data, &$documentPath) {
                 // Upload dokumen baru jika tersedia.
                 if (
                     isset($data['dokumen']) &&
                     $data['dokumen'] instanceof \Illuminate\Http\UploadedFile
                 ) {
                     $documentPath = $data['dokumen']->store(
-                        'village-assets',
+                        'village-treasury-lands',
                         'public'
                     );
 
@@ -339,8 +358,19 @@ class VillageTreasuryLandService
                     unset($data['dokumen']);
                 }
 
-                // Update data aset.
-                $asset->update($data);
+                // Hitung ulang total luas berdasarkan asal perolehan.
+                $sourceFields = [
+                    'lt_asli_desa',
+                    'lt_pemerintah',
+                    'lt_provinsi',
+                    'lt_kabupaten',
+                    'lt_lainnya',
+                ];
+
+                $data['luas_tanah'] = collect($sourceFields)
+                    ->sum(fn($field) => (int) round((float) $data[$field] * 100)) / 100;
+
+                $land->update($data);
             });
 
             // Hapus dokumen lama setelah transaksi berhasil.
@@ -350,7 +380,7 @@ class VillageTreasuryLandService
 
             return response()->json([
                 'success' => true,
-                'message' => 'Inventaris dan kekayaan desa berhasil diperbarui.',
+                'message' => 'Tanah kas desa berhasil diperbarui.',
             ]);
         } catch (\Throwable $e) {
             // Bersihkan dokumen baru jika proses update gagal.
@@ -362,18 +392,18 @@ class VillageTreasuryLandService
 
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat memperbarui inventaris dan kekayaan desa.',
+                'message' => 'Terjadi kesalahan saat memperbarui tanah kas desa.',
             ], 500);
         }
     }
 
-    public function getDestroy(Request $request, VillageAsset $asset)
+    public function getDestroy(Request $request, VillageTreasuryLand $land): \Illuminate\Http\JsonResponse
     {
         try {
             $forceDelete = $request->boolean('confirm_delete');
 
-            // Data Trash wajib dikonfirmasi.
-            if ($asset->trashed() && !$forceDelete) {
+            // Data trash wajib dikonfirmasi.
+            if ($land->trashed() && !$forceDelete) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Centang konfirmasi untuk menghapus permanen.',
@@ -385,16 +415,15 @@ class VillageTreasuryLandService
                 ], 422);
             }
 
-            $documentPath = $asset->dokumen;
-
-            $deleted = \DB::transaction(function () use ($asset, $forceDelete) {
+            $documentPath = $land->dokumen;
+            $deleted = \DB::transaction(function () use ($land, $forceDelete) {
                 return $forceDelete
-                    ? $asset->forceDelete()
-                    : $asset->delete();
+                    ? $land->forceDelete()
+                    : $land->delete();
             });
 
             if (!$deleted) {
-                throw new \RuntimeException('Data inventaris gagal dihapus.');
+                throw new \RuntimeException('Data tanah kas desa gagal dihapus.');
             }
 
             // Hapus dokumen setelah force delete berhasil.
@@ -405,15 +434,15 @@ class VillageTreasuryLandService
             return response()->json([
                 'success' => true,
                 'message' => $forceDelete
-                    ? 'Inventaris dan dokumennya berhasil dihapus permanen.'
-                    : 'Inventaris berhasil dipindahkan ke sampah.',
+                    ? 'Tanah kas desa dan dokumennya berhasil dihapus permanen.'
+                    : 'Tanah kas desa berhasil dipindahkan ke sampah.',
             ]);
         } catch (\Throwable $e) {
             report($e);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menghapus inventaris dan kekayaan desa.',
+                'message' => 'Terjadi kesalahan saat menghapus tanah kas desa.',
             ], 500);
         }
     }

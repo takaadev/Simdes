@@ -4,11 +4,12 @@ namespace Database\Factories;
 
 use App\Enums\AgendaCategoryList;
 use App\Enums\AgendaTypeList;
+use App\Models\AgendaEntry;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<\App\Models\AgendaEntry>
+ * @extends Factory<AgendaEntry>
  */
 class AgendaEntryFactory extends Factory
 {
@@ -16,33 +17,57 @@ class AgendaEntryFactory extends Factory
     {
         $agendaType = fake()->randomElement(AgendaTypeList::cases());
 
+        $category = fake()->randomElement(AgendaCategoryList::cases());
+
         $letterDate = fake()->dateTimeBetween('-1 year', 'now');
 
         $receivedDate = $agendaType === AgendaTypeList::INCOMING
             ? fake()->dateTimeBetween($letterDate, 'now')
             : null;
 
+        $sentDate = $agendaType === AgendaTypeList::OUTGOING
+            ? fake()->dateTimeBetween($letterDate, 'now')
+            : null;
+
+        // Nomor surat masuk berasal dari instansi pengirim.
+        // Nomor surat keluar dibuat berdasarkan kategori agenda.
+        $letterNumber = $agendaType === AgendaTypeList::OUTGOING
+            ? $category->formatNumber(
+                sequence: fake()->numberBetween(1, 999),
+                year: (int) $letterDate->format('Y'),
+                month: (int) $letterDate->format('n'),
+                villageCode: 'DS'
+            )
+            : fake()->numerify('###/###/####');
+
+        $disposition = $agendaType === AgendaTypeList::INCOMING
+            ? fake()->optional(0.6)->randomElement([
+                'Segera ditindaklanjuti.',
+                'Koordinasikan dengan Sekretaris Desa.',
+                'Pelajari dan siapkan laporan.',
+                'Hadiri undangan sesuai jadwal.',
+                'Arsipkan untuk dokumentasi.',
+            ])
+            : null;
+
         return [
-            'register_number' => fake()->unique()->numerify('####/2026'),
+            'tipe_agenda' => $agendaType,
 
-            'agenda_type' => $agendaType,
+            'kategori_agenda' => $category,
 
-            'agenda_category' => fake()->randomElement(
-                AgendaCategoryList::cases()
-            ),
+            'tanggal_terima' => $receivedDate,
 
-            'letter_number' => fake()->optional(0.9)
-                ->numerify('###/###/####'),
+            'tanggal_kirim' => $sentDate,
 
-            'letter_date' => $letterDate,
+            'nomor_surat' => $letterNumber,
 
-            'received_date' => $receivedDate,
+            'tgl_surat' => $letterDate,
 
-            'sender' => $agendaType === AgendaTypeList::INCOMING
+            'pengirim' => $agendaType === AgendaTypeList::INCOMING
                 ? fake()->randomElement([
-                    'Kantor Kecamatan',
+                    'Kantor Kecamatan Muara Siau',
                     'Dinas Pemberdayaan Masyarakat dan Desa',
-                    'Kantor Bupati',
+                    'Kantor Bupati Merangin',
                     'Dinas Kependudukan dan Pencatatan Sipil',
                     'Puskesmas',
                     'Kepolisian Sektor',
@@ -50,10 +75,10 @@ class AgendaEntryFactory extends Factory
                 ])
                 : null,
 
-            'recipient' => $agendaType === AgendaTypeList::OUTGOING
+            'penerima' => $agendaType === AgendaTypeList::OUTGOING
                 ? fake()->randomElement([
-                    'Camat',
-                    'Bupati',
+                    'Camat Muara Siau',
+                    'Bupati Merangin',
                     'Kepala Dinas PMD',
                     'Kepala Puskesmas',
                     'Ketua BPD',
@@ -62,7 +87,7 @@ class AgendaEntryFactory extends Factory
                 ])
                 : null,
 
-            'subject' => fake()->randomElement([
+            'isi_surat' => fake()->randomElement([
                 'Undangan rapat koordinasi pemerintahan desa.',
                 'Permohonan bantuan sarana dan prasarana desa.',
                 'Penyampaian laporan kegiatan pemerintahan desa.',
@@ -73,23 +98,15 @@ class AgendaEntryFactory extends Factory
                 'Penerbitan surat keterangan administrasi penduduk.',
             ]),
 
-            'disposition' => $agendaType === AgendaTypeList::INCOMING
-                ? fake()->optional(0.6)->randomElement([
-                    'Segera ditindaklanjuti.',
-                    'Koordinasikan dengan Sekretaris Desa.',
-                    'Pelajari dan siapkan laporan.',
-                    'Hadiri undangan sesuai jadwal.',
-                    'Arsipkan untuk dokumentasi.',
-                ])
+            'disposisi' => $disposition,
+
+            'tgl_disposisi' => $disposition
+                ? fake()->dateTimeBetween($receivedDate, 'now')
                 : null,
 
-            'disposition_date' => $agendaType === AgendaTypeList::INCOMING
-                ? fake()->optional(0.6)->dateTimeBetween($receivedDate, 'now')
-                : null,
+            'dokumen' => null,
 
-            'document_file' => null,
-
-            'notes' => fake()->optional(0.3)->sentence(),
+            'catatan' => fake()->optional(0.3)->sentence(),
 
             'created_by' => User::factory(),
         ];
@@ -98,22 +115,38 @@ class AgendaEntryFactory extends Factory
     public function incoming(): static
     {
         return $this->state(fn() => [
-            'agenda_type' => AgendaTypeList::INCOMING,
-            'sender' => fake()->company(),
-            'recipient' => null,
-            'received_date' => fake()->dateTimeBetween('-6 months', 'now'),
+            'tipe_agenda' => AgendaTypeList::INCOMING,
+
+            'tanggal_terima' => fake()->dateTimeBetween('-6 months', 'now'),
+
+            'tanggal_kirim' => null,
+
+            'pengirim' => fake()->company(),
+
+            'penerima' => null,
+
+            'disposisi' => null,
+
+            'tgl_disposisi' => null,
         ]);
     }
 
     public function outgoing(): static
     {
         return $this->state(fn() => [
-            'agenda_type' => AgendaTypeList::OUTGOING,
-            'sender' => null,
-            'recipient' => fake()->company(),
-            'received_date' => null,
-            'disposition' => null,
-            'disposition_date' => null,
+            'tipe_agenda' => AgendaTypeList::OUTGOING,
+
+            'tanggal_terima' => null,
+
+            'tanggal_kirim' => fake()->dateTimeBetween('-6 months', 'now'),
+
+            'pengirim' => null,
+
+            'penerima' => fake()->company(),
+
+            'disposisi' => null,
+
+            'tgl_disposisi' => null,
         ]);
     }
 }

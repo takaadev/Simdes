@@ -22,7 +22,6 @@ use App\Models\VillageProfile;
 use App\Models\VillagePublication;
 use App\Models\VillageRegulation;
 use App\Models\VillageTreasuryLand;
-use Database\Factories\VillagePositionFactory;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -106,7 +105,7 @@ class DatabaseSeeder extends Seeder
         VillageOfficial::factory(15)->create();
         VillageRegulation::factory(10)->create();
         VillageDecree::factory(10)->create();
-        VillagePublication::factory(10)->create();
+        // VillagePublication::factory(10)->create();
         VillageAsset::factory(15)->create();
         VillageLand::factory(10)->create();
         VillageTreasuryLand::factory(10)->create();
@@ -117,8 +116,8 @@ class DatabaseSeeder extends Seeder
         |--------------------------------------------------------------------------
         */
 
-        AgendaEntry::factory(20)->create();
+        AgendaEntry::factory(39)->create();
 
-        ExpeditionEntry::factory(15)->create();
+        // ExpeditionEntry::factory(15)->create();
     }
 }

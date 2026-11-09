@@ -60,6 +60,7 @@
         <style>
             .stat-card {
                 border-top: 3px solid transparent;
+                background: #ffff;
             }
 
             .stat-card-primary {

@@ -1,0 +1,445 @@
+<?php
+
+namespace App\Services;
+
+use App\Enums\AgendaTypeList;
+use App\Models\AgendaEntry;
+use App\Models\VillageAsset;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
+
+class AgendaEntryService
+{
+
+
+
+    public function getData(Request $request)
+    {
+        $incomingType = AgendaTypeList::INCOMING->value;
+        $outgoingType = AgendaTypeList::OUTGOING->value;
+        $filterTipe   = $request->input('tipe_agenda', 'all');
+        $filterDelete = $request->input('deleted');
+        $filterYear   = $request->input('year');
+
+        // ==========================================
+        // 1. FILTER DASAR SURAT MASUK & KELUAR
+        // ==========================================
+        $incoming = AgendaEntry::query()->where('tipe_agenda', $incomingType);
+        $outgoing = AgendaEntry::query()->where('tipe_agenda', $outgoingType);
+
+        // Filter SoftDeletes
+        if ($filterDelete === 'trashed') {
+            $incoming->onlyTrashed();
+            $outgoing->onlyTrashed();
+        } elseif ($filterDelete === 'all') {
+            $incoming->withTrashed();
+            $outgoing->withTrashed();
+        }
+
+        // Filter Tahun
+        if ($request->filled('year') && $filterYear !== 'all') {
+            $incoming->whereYear('created_at', $filterYear);
+            $outgoing->whereYear('created_at', $filterYear);
+        }
+
+        // ==========================================
+        // 2. SUMMARY AGENDA (Sebelum Filter Tipe Agenda)
+        // ==========================================
+        $summaryQuery = AgendaEntry::query();
+
+        if ($filterDelete === 'trashed') {
+            $summaryQuery->onlyTrashed();
+        } elseif ($filterDelete === 'all') {
+            $summaryQuery->withTrashed();
+        }
+
+        if ($request->filled('year') && $filterYear !== 'all') {
+            $summaryQuery->whereYear('created_at', $filterYear);
+        }
+
+        $summary = $summaryQuery
+            ->reorder()
+            ->selectRaw("
+            COUNT(*) AS total_agenda,
+            COALESCE(SUM(CASE WHEN tipe_agenda = ? THEN 1 ELSE 0 END), 0) AS total_incoming,
+            COALESCE(SUM(CASE WHEN tipe_agenda = ? THEN 1 ELSE 0 END), 0) AS total_outgoing
+        ", [$incomingType, $outgoingType])
+            ->first();
+
+        // ==========================================
+        // 3. FILTER TIPE AGENDA (Kosongkan Sisi Sebelahnya)
+        // ==========================================
+        if ($request->filled('tipe_agenda') && $filterTipe !== 'all') {
+            if ($filterTipe === $incomingType) {
+                $outgoing->whereRaw('1 = 0');
+            } elseif ($filterTipe === $outgoingType) {
+                $incoming->whereRaw('1 = 0');
+            }
+        }
+
+        // ==========================================
+        // 4. INDEXING SURAT MASUK & SURAT KELUAR
+        // ==========================================
+        $incomingSub = $incoming->selectRaw("
+        ROW_NUMBER() OVER (ORDER BY id ASC) AS urutan_agenda,
+        id AS incoming_id,
+        tanggal_terima,
+        nomor_surat AS incoming_nomor,
+        tgl_surat AS incoming_tanggal,
+        pengirim,
+        isi_surat AS incoming_ket,
+        dokumen AS incoming_dokumen,
+        deleted_at AS incoming_deleted_at
+    ")->toBase();
+
+        $outgoingSub = $outgoing->selectRaw("
+        ROW_NUMBER() OVER (ORDER BY id ASC) AS urutan_agenda,
+        id AS outgoing_id,
+        tanggal_kirim,
+        nomor_surat AS outgoing_nomor,
+        tgl_surat AS outgoing_tanggal,
+        penerima,
+        isi_surat AS outgoing_ket,
+        dokumen AS outgoing_dokumen,
+        deleted_at AS outgoing_deleted_at
+    ")->toBase();
+
+        // ==========================================
+        // 5. GABUNG SURAT MASUK DAN SURAT KELUAR (FULL OUTER JOIN)
+        // ==========================================
+        $incomingQuery = DB::query()
+            ->fromSub(clone $incomingSub, 'i')
+            ->leftJoinSub(clone $outgoingSub, 'o', function ($join) {
+                $join->on('i.urutan_agenda', '=', 'o.urutan_agenda');
+            })
+            ->select([
+                'i.urutan_agenda',
+                'i.incoming_id',
+                'o.outgoing_id',
+
+                'i.tanggal_terima',
+                'i.incoming_nomor',
+                'i.incoming_tanggal',
+                'i.pengirim',
+                'i.incoming_ket',
+                'i.incoming_dokumen',
+                'i.incoming_deleted_at',
+
+                'o.tanggal_kirim',
+                'o.outgoing_nomor',
+                'o.outgoing_tanggal',
+                'o.penerima',
+                'o.outgoing_ket',
+                'o.outgoing_dokumen',
+                'o.outgoing_deleted_at',
+            ]);
+
+        $outgoingOnlyQuery = DB::query()
+            ->fromSub(clone $outgoingSub, 'o')
+            ->leftJoinSub(clone $incomingSub, 'i', function ($join) {
+                $join->on('i.urutan_agenda', '=', 'o.urutan_agenda');
+            })
+            ->whereNull('i.incoming_id')
+            ->selectRaw("
+            o.urutan_agenda,
+            NULL AS incoming_id,
+            o.outgoing_id,
+
+            NULL AS tanggal_terima,
+            NULL AS incoming_nomor,
+            NULL AS incoming_tanggal,
+            NULL AS pengirim,
+            NULL AS incoming_ket,
+            NULL AS incoming_dokumen,
+            NULL AS incoming_deleted_at,
+
+            o.tanggal_kirim,
+            o.outgoing_nomor,
+            o.outgoing_tanggal,
+            o.penerima,
+            o.outgoing_ket,
+            o.outgoing_dokumen,
+            o.outgoing_deleted_at
+        ");
+
+        $combinedQuery = $incomingQuery->unionAll($outgoingOnlyQuery);
+
+        $query = DB::query()
+            ->fromSub($combinedQuery, 'agenda')
+            ->select('agenda.*');
+
+        // ==========================================
+        // 6. DATATABLES RESPONSE
+        // ==========================================
+        return DataTables::query($query)
+            ->order(function ($q) use ($request) {
+                if (! $request->has('order')) {
+                    $q->orderBy('agenda.urutan_agenda', 'asc');
+                }
+            })
+            ->with('summary', [
+                'total_agenda'   => (int) ($summary->total_agenda ?? 0),
+                'total_incoming' => (int) ($summary->total_incoming ?? 0),
+                'total_outgoing' => (int) ($summary->total_outgoing ?? 0),
+            ])
+            ->addIndexColumn()
+
+            // ==========================================
+            // INCOMING - SURAT MASUK
+            // ==========================================
+            ->editColumn('incoming_nomor', fn($row) => $row->incoming_nomor ?: '-')
+            ->editColumn('incoming_tanggal', fn($row) => $row->incoming_tanggal ? $this->formatDate($row->incoming_tanggal) : '-')
+            ->addColumn('incoming_pengirim', fn($row) => $row->pengirim ? $this->tooltip($row->pengirim) : '-')
+            ->addColumn('incoming_tanggal_terima', fn($row) => $row->tanggal_terima ? $this->formatDate($row->tanggal_terima) : '-')
+            ->editColumn('incoming_ket', fn($row) => $row->incoming_ket ? $this->tooltip($row->incoming_ket) : '-')
+
+            // ==========================================
+            // OUTGOING - SURAT KELUAR
+            // ==========================================
+            ->editColumn('outgoing_nomor', fn($row) => $row->outgoing_nomor ?: '-')
+            ->editColumn('outgoing_tanggal', fn($row) => $row->outgoing_tanggal ? $this->formatDate($row->outgoing_tanggal) : '-')
+            ->addColumn('outgoing_tujuan', fn($row) => $row->penerima ? $this->tooltip($row->penerima) : '-')
+            ->addColumn('outgoing_tanggal_kirim', fn($row) => $row->tanggal_kirim ? $this->formatDate($row->tanggal_kirim) : '-')
+            ->editColumn('outgoing_ket', fn($row) => $row->outgoing_ket ? $this->tooltip($row->outgoing_ket) : '-')
+
+            // ==========================================
+            // DOKUMEN
+            // ==========================================
+            ->addColumn('dokumen', function ($row) {
+                $html = '';
+
+                foreach ([$row->incoming_dokumen, $row->outgoing_dokumen] as $document) {
+                    if ($document) {
+                        $html .= view('components.view-pdf', [
+                            'src'   => $document,
+                            'title' => 'Dokumen Agenda Surat',
+                        ])->render();
+                    }
+                }
+
+                return $html ?: '-';
+            })
+
+            // ==========================================
+            // ACTION SURAT MASUK
+            // ==========================================
+            ->addColumn('incoming_action', function ($row) {
+                if (! $row->incoming_id) {
+                    return '-';
+                }
+
+                $actionRow = (new AgendaEntry())->forceFill([
+                    'id'          => $row->incoming_id,
+                    'tipe_agenda' => AgendaTypeList::INCOMING,
+                    'dokumen'     => $row->incoming_dokumen,
+                    'deleted_at'  => $row->incoming_deleted_at,
+                ]);
+
+                return view('pages.agenda.comp.actions-incoming', [
+                    'row' => $actionRow,
+                ])->render();
+            })
+
+            // ==========================================
+            // ACTION SURAT KELUAR
+            // ==========================================
+            ->addColumn('outgoing_action', function ($row) {
+                if (! $row->outgoing_id) {
+                    return '-';
+                }
+
+                $actionRow = (new AgendaEntry())->forceFill([
+                    'id'          => $row->outgoing_id,
+                    'tipe_agenda' => AgendaTypeList::OUTGOING,
+                    'dokumen'     => $row->outgoing_dokumen,
+                    'deleted_at'  => $row->outgoing_deleted_at,
+                ]);
+
+                return view('pages.agenda.comp.actions-outgoing', [
+                    'row' => $actionRow,
+                ])->render();
+            })
+
+            ->rawColumns([
+                'incoming_pengirim',
+                'incoming_ket',
+                'outgoing_tujuan',
+                'outgoing_ket',
+                'dokumen',
+                'incoming_action',
+                'outgoing_action',
+            ])
+            ->toJson();
+    }
+
+
+    private function formatDate($date): string
+    {
+        if (empty($date)) {
+            return '-';
+        }
+
+        return \Illuminate\Support\Carbon::parse($date)
+            ->locale('id')
+            ->translatedFormat('d F Y');
+    }
+
+    private function tooltip(?string $value): string
+    {
+        return view('components.tooltip', [
+            'value' => $value,
+        ])->render();
+    }
+
+    public function getStore(array $data): \Illuminate\Http\JsonResponse
+    {
+        $documentPath = null;
+
+        try {
+            \DB::transaction(function () use ($data, &$documentPath) {
+                // Upload dokumen.
+                if (
+                    isset($data['dokumen']) &&
+                    $data['dokumen'] instanceof \Illuminate\Http\UploadedFile
+                ) {
+                    $documentPath = $data['dokumen']->store(
+                        'village-assets',
+                        'public'
+                    );
+
+                    $data['dokumen'] = $documentPath;
+                }
+
+                // Informasi pembuat data.
+                $data['created_by'] = \Auth::id() ?? 1;
+
+                // Insert data aset.
+                VillageAsset::create($data);
+            });
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Inventaris dan kekayaan desa berhasil ditambahkan.',
+            ], 201);
+        } catch (\Throwable $e) {
+            // Hapus dokumen jika proses insert gagal.
+            if ($documentPath) {
+                \Storage::disk('public')->delete($documentPath);
+            }
+
+            report($e);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan inventaris dan kekayaan desa.',
+            ], 500);
+        }
+    }
+
+    public function getUpdate(VillageAsset $asset, array $data): \Illuminate\Http\JsonResponse
+    {
+        $documentPath = null;
+        $oldDocumentPath = $asset->dokumen;
+
+        try {
+            \DB::transaction(function () use (
+                $asset,
+                $data,
+                &$documentPath
+            ) {
+                // Upload dokumen baru jika tersedia.
+                if (
+                    isset($data['dokumen']) &&
+                    $data['dokumen'] instanceof \Illuminate\Http\UploadedFile
+                ) {
+                    $documentPath = $data['dokumen']->store(
+                        'village-assets',
+                        'public'
+                    );
+
+                    $data['dokumen'] = $documentPath;
+                } else {
+                    // Pertahankan dokumen lama.
+                    unset($data['dokumen']);
+                }
+
+                // Update data aset.
+                $asset->update($data);
+            });
+
+            // Hapus dokumen lama setelah transaksi berhasil.
+            if ($documentPath && $oldDocumentPath) {
+                \Storage::disk('public')->delete($oldDocumentPath);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Inventaris dan kekayaan desa berhasil diperbarui.',
+            ]);
+        } catch (\Throwable $e) {
+            // Bersihkan dokumen baru jika proses update gagal.
+            if ($documentPath) {
+                \Storage::disk('public')->delete($documentPath);
+            }
+
+            report($e);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat memperbarui inventaris dan kekayaan desa.',
+            ], 500);
+        }
+    }
+
+    public function getDestroy(Request $request, VillageAsset $asset)
+    {
+        try {
+            $forceDelete = $request->boolean('confirm_delete');
+
+            // Data Trash wajib dikonfirmasi.
+            if ($asset->trashed() && !$forceDelete) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Centang konfirmasi untuk menghapus permanen.',
+                    'errors' => [
+                        'confirm_delete' => [
+                            'Data sudah berada di sampah. Centang konfirmasi untuk menghapus permanen.',
+                        ],
+                    ],
+                ], 422);
+            }
+
+            $documentPath = $asset->dokumen;
+
+            $deleted = \DB::transaction(function () use ($asset, $forceDelete) {
+                return $forceDelete
+                    ? $asset->forceDelete()
+                    : $asset->delete();
+            });
+
+            if (!$deleted) {
+                throw new \RuntimeException('Data inventaris gagal dihapus.');
+            }
+
+            // Hapus dokumen setelah force delete berhasil.
+            if ($forceDelete && filled($documentPath)) {
+                \Storage::disk('public')->delete($documentPath);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => $forceDelete
+                    ? 'Inventaris dan dokumennya berhasil dihapus permanen.'
+                    : 'Inventaris berhasil dipindahkan ke sampah.',
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menghapus inventaris dan kekayaan desa.',
+            ], 500);
+        }
+    }
+}

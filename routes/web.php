@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\Archieves\AgendaEntryController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\Public\VillageAssetController;
-use App\Http\Controllers\Public\VillageDecreeController;
-use App\Http\Controllers\Public\VillageOfficialController;
-use App\Http\Controllers\Public\VillageRegulationController;
-use App\Http\Controllers\Public\VillageTreasuryLandController;
+use App\Http\Controllers\Generals\VillageAssetController;
+use App\Http\Controllers\Generals\VillageDecreeController;
+use App\Http\Controllers\Generals\VillageOfficialController;
+use App\Http\Controllers\Generals\VillagePublicationController;
+use App\Http\Controllers\Generals\VillageRegulationController;
+use App\Http\Controllers\Generals\VillageTreasuryLandController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -40,6 +42,15 @@ Route::prefix('admumum')->group(function () {
         ->parameters(['tanah-kas-desa' => 'villageTreasuryLand'])
         ->names('village-treasury-lands')
         ->except(['create', 'edit', 'show'])->withTrashed(['update', 'destroy']);
+
+    Route::resource('lembar-dan-berita-desa', VillagePublicationController::class)
+        ->parameters(['lembar-dan-berita-desa' => 'villagePublication'])
+        ->names('village-publications')
+        ->except(['create', 'edit', 'show'])->withTrashed(['update', 'destroy']);
+});
+
+Route::prefix('arsip')->group(function () {
+    Route::resource('agenda', AgendaEntryController::class)->names('agendas')->except(['create', 'edit', 'show'])->withTrashed(['update', 'destroy']);
 });
 
 Route::prefix('admpenduduk')->group(function () {

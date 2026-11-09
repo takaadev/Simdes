@@ -51,7 +51,9 @@
     @endif
 
     <input type="{{ $type }}" id="{{ $id }}" name="{{ $name }}"
-        class="simdes-input {{ $errorMessage ? 'is-invalid' : '' }}" placeholder="{{ $placeholder }}"
+        class="simdes-input @if ($type==='number')
+            text-end
+        @endif {{ $errorMessage ? 'is-invalid' : '' }}" placeholder="{{ $placeholder }}"
         @if (!$isFile) value="{{ $inputValue }}" @endif @required($required)
         @disabled($disabled) @readonly($readonly)
         @if ($min !== null) min="{{ $min }}" @endif

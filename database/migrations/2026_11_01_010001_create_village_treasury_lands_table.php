@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->string('asal_tanah', 100);
             $table->string('nomor_sertifikat', 100)->unique();
-            $table->string('kelas_tanah', 30);
+            $table->string('kelas_tanah', 20);
             $table->decimal('luas_tanah', 15, 2)->default(0);
             $table->decimal('lt_asli_desa', 15, 2)->default(0);
             $table->decimal('lt_pemerintah', 15, 2)->default(0);

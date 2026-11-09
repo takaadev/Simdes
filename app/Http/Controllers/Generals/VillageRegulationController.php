@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Public;
+namespace App\Http\Controllers\Generals;
 
 use App\Http\Controllers\Concerns\HandlesRestore;
 use App\Http\Controllers\Controller;
@@ -12,7 +12,6 @@ use Illuminate\Http\Request;
 
 class VillageRegulationController extends Controller
 {
-    use HandlesRestore;
     public function __construct(protected VillageRegulationService $service) {}
     public function index(Request $request)
     {

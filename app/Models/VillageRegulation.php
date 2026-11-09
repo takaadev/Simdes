@@ -9,6 +9,7 @@ use App\Models\Concerns\RestoresSoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class VillageRegulation extends Model implements Restorable
@@ -21,21 +22,21 @@ class VillageRegulation extends Model implements Restorable
     protected function casts(): array
     {
         return [
-            // Enum
             'jenis_peraturan' => RegulationTypeList::class,
             'status' => RegulationStatusList::class,
-
-            // Tanggal
             'tgl_ditetapkan' => 'date',
             'tgl_kesepakatan' => 'date',
             'tgl_dilaporkan' => 'date',
-            'tgl_diundang' => 'date',
-            'tgl_berita' => 'date',
         ];
     }
 
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function publication(): HasOne
+    {
+        return $this->hasOne(VillagePublication::class, 'regulation_id');
     }
 }

@@ -26,7 +26,7 @@ class Menu extends Component
                 'type' => 'link',
                 'label' => 'Dashboard',
                 'icon' => 'table-columns',
-                'route' => route('dashboard'),
+                'route' => 'dashboard',
             ],
 
             [
@@ -41,16 +41,14 @@ class Menu extends Component
                 'label' => 'Adm Umum',
                 'icon' => 'book-bookmark',
                 'tooltip' => 'Administrasi Umum (9 Buku)',
-                'expanded' => request()->is('admumum', 'admumum/*'),
                 'items' => [
-                    ['no' => '1', 'slug' => 'peraturan-di-desa', 'route' => route('village-regulations.index'), 'label' => 'Peraturan di Desa', 'ready' => true],
-                    ['no' => '2', 'slug' => 'keputusan-kepala-desa', 'route' => route('village-decrees.index'), 'label' => 'Keputusan Kepala Desa', 'ready' => true],
-                    ['no' => '3', 'slug' => 'inventaris-dan-kekayaan-desa', 'route' => route('village-assets.index'), 'label' => 'Inventaris dan Kekayaan Desa', 'ready' => true],
-                    ['no' => '4', 'slug' => 'aparat-pemerintah-desa', 'route' => route('village-officials.index'), 'label' => 'Aparat Pemerintah Desa', 'ready' => true],
-                    ['no' => '5', 'slug' => 'tanah-kas-desa', 'route' => route('village-treasury-lands.index'), 'label' => 'Tanah Kas Desa', 'ready' => true],
-                    ['no' => '6', 'slug' => 'tanah-di-desa', 'route' => '#', 'label' => 'Tanah Desa', 'ready' => true],
-                    ['no' => '8', 'slug' => 'ekspedisi', 'route' => '#', 'label' => 'Ekspedisi', 'ready' => true],
-                    ['no' => '9', 'slug' => 'lembaran-desa-dan-berita-desa', 'route' => '#', 'label' => 'Lembaran Desa dan Berita Desa', 'ready' => true],
+                    ['no' => '1', 'route' => 'village-regulations.index', 'label' => 'Peraturan di Desa', 'ready' => true],
+                    ['no' => '2', 'route' => 'village-decrees.index', 'label' => 'Keputusan Kepala Desa', 'ready' => true],
+                    ['no' => '3', 'route' => 'village-assets.index', 'label' => 'Inventaris dan Kekayaan Desa', 'ready' => true],
+                    ['no' => '4', 'route' => 'village-officials.index', 'label' => 'Aparat Pemerintah Desa', 'ready' => true],
+                    ['no' => '5', 'route' => 'village-treasury-lands.index', 'label' => 'Tanah Kas Desa', 'ready' => true],
+                    ['no' => '6', 'route' => '#', 'label' => 'Tanah Desa', 'ready' => true],
+                    ['no' => '9', 'route' => 'village-publications.index', 'label' => 'Lembaran Desa dan Berita Desa', 'ready' => true],
                 ],
             ],
 
@@ -61,13 +59,12 @@ class Menu extends Component
                 'label' => 'Adm Penduduk',
                 'icon' => 'users',
                 'tooltip' => 'Administrasi Penduduk (5 Buku)',
-                'expanded' => '',
                 'items' => [
-                    ['no' => '1', 'slug' => 'buku-induk-penduduk', 'route' => '#', 'label' => 'Buku IP', 'ready' => true],
-                    ['no' => '2', 'slug' => 'buku-mutasi-penduduk-desa', 'route' => '#', 'label' => 'Buku MPD', 'ready' => true],
-                    ['no' => '3', 'slug' => 'buku-rekapitulasi-jumlah-penduduk', 'route' => '#', 'label' => 'Buku RJP', 'ready' => true],
-                    ['no' => '4', 'slug' => 'buku-penduduk-sementara', 'route' => '#', 'label' => 'Buku PS', 'ready' => true],
-                    ['no' => '5', 'slug' => 'buku-ktp-dan-kk', 'route' => '#', 'label' => 'Buku KTP & KK', 'ready' => true],
+                    ['no' => '1', 'route' => '#', 'label' => 'Buku IP', 'ready' => true],
+                    ['no' => '2', 'route' => '#', 'label' => 'Buku MPD', 'ready' => true],
+                    ['no' => '3', 'route' => '#', 'label' => 'Buku RJP', 'ready' => true],
+                    ['no' => '4', 'route' => '#', 'label' => 'Buku PS', 'ready' => true],
+                    ['no' => '5', 'route' => '#', 'label' => 'Buku KTP & KK', 'ready' => true],
                 ],
             ],
 
@@ -78,18 +75,16 @@ class Menu extends Component
                 'label' => 'Arsip Digital',
                 'icon' => 'envelope-open-text',
                 'tooltip' => 'Arsip Surat',
-                'expanded' => '',
                 'items' => [
-                    ['no' => '1', 'slug' => 'buku-agenda', 'route' => '#', 'label' => 'Buku Agenda', 'ready' => true, 'enabled' => true],
-                    ['no' => '2', 'slug' => 'surat-masuk', 'route' => '#', 'label' => 'Surat Masuk', 'ready' => true, 'enabled' => true],
-                    ['no' => '3', 'slug' => 'surat-keluar', 'route' => '#', 'label' => 'Surat Keluar', 'ready' => true, 'enabled' => true],
-                    ['no' => '4', 'slug' => 'klasifikasi-surat', 'route' => '#', 'label' => 'Klasifikasi Surat', 'ready' => true, 'enabled' => true],
-                    ['no' => '5', 'slug' => 'arsip-dokumen-surat', 'route' => '#', 'label' => 'Arsip Dokumen Surat', 'ready' => true, 'enabled' => true],
+                    ['no' => '1', 'route' => 'agendas.index', 'label' => 'Buku Agenda', 'ready' => true],
+                    ['no' => '2', 'route' => '#', 'label' => 'Surat Masuk', 'ready' => true],
+                    ['no' => '3', 'route' => '#', 'label' => 'Surat Keluar', 'ready' => true],
+                    ['no' => '4', 'route' => '#', 'label' => 'Buku Ekspedisi', 'ready' => true],
+                    ['no' => '5', 'route' => '#', 'label' => 'Arsip Dokumen Surat', 'ready' => true],
                 ],
             ],
         ];
     }
-
     public function render(): View|Closure|string
     {
         return view('components.menu');

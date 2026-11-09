@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Public;
+namespace App\Http\Controllers\Generals;
 
 use App\Http\Controllers\Concerns\HandlesRestore;
 use App\Http\Controllers\Controller;
@@ -22,12 +22,17 @@ class VillageTreasuryLandController extends Controller
         return $this->service->getData($request);
     }
 
-    public function store(StoreVillageTreasuryLandRequest $request):\Illuminate\Http\JsonResponse
+    public function create()
+    {
+        return view('pages.villagetreasuryland.create');
+    }
+
+    public function store(StoreVillageTreasuryLandRequest $request): \Illuminate\Http\JsonResponse
     {
         return $this->service->getStore($request->validated());
     }
 
-    public function update(UpdateVillageTreasuryLandRequest $request, VillageTreasuryLand $villageTreasuryLand):\Illuminate\Http\JsonResponse
+    public function update(UpdateVillageTreasuryLandRequest $request, VillageTreasuryLand $villageTreasuryLand): \Illuminate\Http\JsonResponse
     {
         return $this->service->getUpdate($villageTreasuryLand, $request->validated());
     }

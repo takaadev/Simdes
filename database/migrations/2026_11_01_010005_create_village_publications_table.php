@@ -13,18 +13,17 @@ return new class extends Migration
     {
         Schema::create('village_publications', function (Blueprint $table) {
             $table->id();
-            $table->string('regulation_type', 50);
-            $table->string('regulation_number', 100);
-            $table->date('stipulation_date');
-            $table->text('subject');
-            $table->date('promulgation_date')->nullable();
-            $table->text('notes')->nullable();
+            $table->foreignId('regulation_id')->unique()->constrained('village_regulations')->cascadeOnDelete();
+            $table->string('nomor_diundang', 100)->nullable()->unique();
+            $table->date('tgl_diundang')->nullable();
+            $table->string('nomor_berita', 100)->nullable()->unique();
+            $table->date('tgl_berita')->nullable();
+            $table->string('status', 15)->default('draft');
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
             $table->softDeletes();
-            $table->index('regulation_type');
-            $table->index('stipulation_date');
-            $table->index('promulgation_date');
+            $table->index('status');
+            $table->index('tgl_diundang');
         });
     }
 

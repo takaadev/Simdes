@@ -8,6 +8,9 @@ use App\Models\User;
 use App\Models\VillageRegulation;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/**
+ * @extends Factory<VillageRegulation>
+ */
 class VillageRegulationFactory extends Factory
 {
     protected $model = VillageRegulation::class;
@@ -22,20 +25,14 @@ class VillageRegulationFactory extends Factory
         $tglDilaporkan = fake()->optional(0.8)
             ->dateTimeBetween($tglDitetapkan, 'now');
 
-        $tglDiundang = fake()->optional(0.8)
-            ->dateTimeBetween($tglDitetapkan, 'now');
-
-        $tglBerita = fake()->optional(0.8)
-            ->dateTimeBetween($tglDitetapkan, 'now');
-
         return [
             // Identitas Peraturan
             'jenis_peraturan' => fake()->randomElement(
                 RegulationTypeList::cases()
             ),
-            'nomor_peraturan' => fake()->numerify('## Tahun ####'),
+            'nomor_peraturan' => fake()->unique()->numerify('## Tahun 20##'),
             'tgl_ditetapkan' => $tglDitetapkan->format('Y-m-d'),
-            'nama_peraturan' => 'Peraturan tentang ' . fake()->sentence(4),
+            'nama_peraturan' => 'Peraturan tentang ' . fake()->unique()->sentence(4),
 
             // Uraian Peraturan
             'uraian' => fake()->optional()->paragraphs(3, true),
@@ -44,20 +41,12 @@ class VillageRegulationFactory extends Factory
             'tgl_kesepakatan' => $tglKesepakatan?->format('Y-m-d'),
 
             // Pelaporan
-            'nomor_dilaporkan' => fake()->optional(0.8)
-                ->numerify('##/LAP/####'),
+            // Pelaporan
+            'nomor_dilaporkan' => fake()->optional(0.8, null)
+                ->randomElement([
+                    fake()->unique()->numerify('##/LAP/20##'),
+                ]),
             'tgl_dilaporkan' => $tglDilaporkan?->format('Y-m-d'),
-
-            // Pengundangan
-            'nomor_diundang' => fake()->optional(0.8)
-                ->numerify('##/UND/####'),
-            'tgl_diundang' => $tglDiundang?->format('Y-m-d'),
-
-            // Berita Desa
-            'nomor_berita' => fake()->optional(0.8)
-                ->numerify('##/####'),
-            'tgl_berita' => $tglBerita?->format('Y-m-d'),
-
             // Keterangan
             'catatan' => fake()->optional()->sentence(),
 
@@ -65,9 +54,10 @@ class VillageRegulationFactory extends Factory
             'dokumen' => null,
 
             // Status
-            'status' => fake()->randomElement(
-                RegulationStatusList::cases()
-            ),
+            'status' => 'draft',
+            // 'status' => fake()->randomElement(
+            //     RegulationStatusList::cases()
+            // ),
 
             // Relasi Pengguna
             'created_by' => User::factory(),
