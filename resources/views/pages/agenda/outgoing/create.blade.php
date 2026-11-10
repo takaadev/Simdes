@@ -65,7 +65,6 @@
                 <x-input-textarea name="isi_surat" label="Perihal Surat"
                     placeholder="Tuliskan perihal atau ringkasan isi surat..." :rows="3" required />
             </div>
-
         </div>
     </x-fieldset>
     @push('footer')
