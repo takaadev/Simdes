@@ -2,11 +2,15 @@
 
 namespace App\Services;
 
+use App\Enums\AgendaCategoryList;
 use App\Enums\AgendaTypeList;
 use App\Models\AgendaEntry;
+use App\Models\AgendaNumberSequence;
 use App\Models\VillageAsset;
+use Carbon\CarbonInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use RuntimeException;
 use Yajra\DataTables\Facades\DataTables;
 
 class AgendaEntryService
@@ -39,8 +43,8 @@ class AgendaEntryService
 
         // Filter Tahun
         if ($request->filled('year') && $filterYear !== 'all') {
-            $incoming->whereYear('created_at', $filterYear);
-            $outgoing->whereYear('created_at', $filterYear);
+            $incoming->whereYear('tgl_surat', $filterYear);
+            $outgoing->whereYear('tgl_surat', $filterYear);
         }
 
         // ==========================================
@@ -82,28 +86,28 @@ class AgendaEntryService
         // 4. INDEXING SURAT MASUK & SURAT KELUAR
         // ==========================================
         $incomingSub = $incoming->selectRaw("
-        ROW_NUMBER() OVER (ORDER BY id ASC) AS urutan_agenda,
-        id AS incoming_id,
-        tanggal_terima,
-        nomor_surat AS incoming_nomor,
-        tgl_surat AS incoming_tanggal,
-        pengirim,
-        isi_surat AS incoming_ket,
-        dokumen AS incoming_dokumen,
-        deleted_at AS incoming_deleted_at
-    ")->toBase();
+            ROW_NUMBER() OVER (ORDER BY id ASC) AS urutan_agenda,
+            id AS incoming_id,
+            tanggal_terima,
+            nomor_surat AS incoming_nomor,
+            tgl_surat AS incoming_tanggal,
+            pengirim,
+            isi_surat AS incoming_ket,
+            dokumen AS incoming_dokumen,
+            deleted_at AS incoming_deleted_at
+        ")->toBase();
 
         $outgoingSub = $outgoing->selectRaw("
-        ROW_NUMBER() OVER (ORDER BY id ASC) AS urutan_agenda,
-        id AS outgoing_id,
-        tanggal_kirim,
-        nomor_surat AS outgoing_nomor,
-        tgl_surat AS outgoing_tanggal,
-        penerima,
-        isi_surat AS outgoing_ket,
-        dokumen AS outgoing_dokumen,
-        deleted_at AS outgoing_deleted_at
-    ")->toBase();
+            ROW_NUMBER() OVER (ORDER BY id ASC) AS urutan_agenda,
+            id AS outgoing_id,
+            tanggal_kirim,
+            nomor_surat AS outgoing_nomor,
+            tgl_surat AS outgoing_tanggal,
+            penerima,
+            isi_surat AS outgoing_ket,
+            dokumen AS outgoing_dokumen,
+            deleted_at AS outgoing_deleted_at
+        ")->toBase();
 
         // ==========================================
         // 5. GABUNG SURAT MASUK DAN SURAT KELUAR (FULL OUTER JOIN)
@@ -271,6 +275,57 @@ class AgendaEntryService
                 'outgoing_action',
             ])
             ->toJson();
+    }
+
+
+
+    public function getGenerateNumber(AgendaCategoryList $category, CarbonInterface $date, string $villageCode = 'DS', bool $useLegacyCode = false): string
+    {
+        return DB::transaction(function () use (
+            $category,
+            $date,
+            $villageCode,
+            $useLegacyCode
+        ) {
+            $year = (int) $date->format('Y');
+
+            // Pastikan penghitung kategori dan tahun tersedia.
+            DB::table('agenda_number_sequences')->insertOrIgnore([
+                'category' => $category->value,
+                'year' => $year,
+                'last_number' => 0,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            // Kunci baris agar tidak digunakan bersamaan
+            // oleh transaksi lain.
+            $sequence = AgendaNumberSequence::query()
+                ->where('category', $category->value)
+                ->where('year', $year)
+                ->lockForUpdate()
+                ->first();
+
+            if (! $sequence) {
+                throw new RuntimeException(
+                    'Gagal mengambil nomor urut surat.'
+                );
+            }
+
+            $nextNumber = $sequence->last_number + 1;
+
+            $sequence->update([
+                'last_number' => $nextNumber,
+            ]);
+
+            return $category->formatNumber(
+                sequence: $nextNumber,
+                year: $year,
+                month: (int) $date->format('n'),
+                villageCode: $villageCode,
+                useLegacyCode: $useLegacyCode
+            );
+        });
     }
 
 

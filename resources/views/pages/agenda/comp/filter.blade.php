@@ -12,6 +12,7 @@
             <i class="fa-solid fa-print" aria-hidden="true"></i>
             <span>Cetak</span>
         </button>
-        @include('pages.agenda.create')
+        @include('pages.agenda.outgoing.create')
+        @include('pages.agenda.incoming.create')
     </x-slot:actions>
 </x-filters>

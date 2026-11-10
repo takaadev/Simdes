@@ -20,7 +20,7 @@
                 Aksi
             </th>
             <th scope="col" rowspan="2">
-                TANGGAL PENGIRIMAN 
+                TANGGAL PENGIRIMAN
             </th>
             <th scope="colgroup" colspan="3" class="text-center">
                 SURAT KELUAR

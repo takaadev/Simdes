@@ -20,5 +20,6 @@ Route::prefix('admumum')->group(function () {
 });
 
 Route::prefix('arsip')->group(function () {
-    Route::patch('agenda/{id}/restore', [AgendaEntryController::class, 'restore'])->name('agenda.restore');
+    Route::patch('agenda/{id}/restore', [AgendaEntryController::class, 'restore'])->name('agendas.restore');
+    Route::post('agendas/generate-number', [AgendaEntryController::class, 'generateNumber'])->name('agendas.generate-number');
 });

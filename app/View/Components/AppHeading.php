@@ -1,4 +1,6 @@
-<?php namespace App\View\Components;
+<?php
+
+namespace App\View\Components;
 
 use Closure;
 use Illuminate\Contracts\View\View;
@@ -125,6 +127,11 @@ class AppHeading extends Component
                 'description' => 'Kelola pengelompokan dan kode klasifikasi surat untuk mendukung tertib administrasi persuratan desa.',
             ],
 
+            'klasifikasi-surat' => [
+                'title' => 'Klasifikasi Surat',
+                'description' => 'Kelola pengelompokan dan kode klasifikasi surat untuk mendukung tertib administrasi persuratan desa.',
+            ],
+
             'arsip-dokumen-surat' => [
                 'title' => 'Arsip Dokumen Surat',
                 'description' => 'Simpan, kelola, dan telusuri arsip digital dokumen surat Pemerintah Desa Tiaro.',
@@ -162,9 +169,6 @@ class AppHeading extends Component
 
             // Arsip Surat
             'arsip-surat' => 'Arsip Surat',
-            'surat-masuk' => 'Surat Masuk',
-            'surat-keluar' => 'Surat Keluar',
-            'klasifikasi-surat' => 'Klasifikasi Surat',
             'arsip-dokumen-surat' => 'Arsip Dokumen Surat',
         ];
 

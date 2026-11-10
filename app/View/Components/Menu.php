@@ -77,8 +77,6 @@ class Menu extends Component
                 'tooltip' => 'Arsip Surat',
                 'items' => [
                     ['no' => '1', 'route' => 'agendas.index', 'label' => 'Buku Agenda', 'ready' => true],
-                    ['no' => '2', 'route' => '#', 'label' => 'Surat Masuk', 'ready' => true],
-                    ['no' => '3', 'route' => '#', 'label' => 'Surat Keluar', 'ready' => true],
                     ['no' => '4', 'route' => '#', 'label' => 'Buku Ekspedisi', 'ready' => true],
                     ['no' => '5', 'route' => '#', 'label' => 'Arsip Dokumen Surat', 'ready' => true],
                 ],

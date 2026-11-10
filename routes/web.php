@@ -50,7 +50,7 @@ Route::prefix('admumum')->group(function () {
 });
 
 Route::prefix('arsip')->group(function () {
-    Route::resource('agenda', AgendaEntryController::class)->names('agendas')->except(['create', 'edit', 'show'])->withTrashed(['update', 'destroy']);
+    Route::resource('agendas', AgendaEntryController::class)->names('agendas')->except(['create', 'edit', 'show'])->withTrashed(['update', 'destroy']);
 });
 
 Route::prefix('admpenduduk')->group(function () {

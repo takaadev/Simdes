@@ -1,6 +1,6 @@
 @props([
     'name',
-    'label',
+    'label' => '',
     'type' => 'text',
     'id' => null,
     'placeholder' => '',
@@ -51,11 +51,9 @@
     @endif
 
     <input type="{{ $type }}" id="{{ $id }}" name="{{ $name }}"
-        class="simdes-input @if ($type==='number')
-            text-end
-        @endif {{ $errorMessage ? 'is-invalid' : '' }}" placeholder="{{ $placeholder }}"
-        @if (!$isFile) value="{{ $inputValue }}" @endif @required($required)
-        @disabled($disabled) @readonly($readonly)
+        class="simdes-input @if ($type === 'number') text-end @endif {{ $errorMessage ? 'is-invalid' : '' }}"
+        placeholder="{{ $placeholder }}" @if (!$isFile) value="{{ $inputValue }}" @endif
+        @required($required) @disabled($disabled) @readonly($readonly)
         @if ($min !== null) min="{{ $min }}" @endif
         @if ($max !== null) max="{{ $max }}" @endif
         @if ($step !== null) step="{{ $step }}" @endif

@@ -1,4 +1,3 @@
-
 @props([
     'label' => 'Tambah',
     'icon' => 'plus-circle',
@@ -6,6 +5,7 @@
     'href' => '',
     'modalTitle' => 'Tambah Data',
     'size' => 'md',
+    'color' => 'btn-simdes-primary',
 ])
 
 @php
@@ -17,29 +17,18 @@
     $titleId = $componentId . '-title';
     $submitId = $componentId . '-submit';
 
-    $modalSize = in_array($size, ['sm', 'lg', 'xl', 'fullscreen'])
-        ? 'modal-' . $size
-        : '';
+    $modalSize = in_array($size, ['sm', 'lg', 'xl', 'fullscreen']) ? 'modal-' . $size : '';
 @endphp
 
 @if ($type === 'button')
-    <button
-        type="button"
-        id="{{ $buttonId }}"
-        class="btn-simdes-primary"
-        data-simdes-modal-open="{{ $modalId }}"
-    >
+    <button type="button" id="{{ $buttonId }}" class="{{ $color }}"
+        data-simdes-modal-open="{{ $modalId }}">
         <i class="fa-solid fa-{{ $icon }}" aria-hidden="true"></i>
         <span>{{ $label }}</span>
     </button>
 
-    <div
-        class="modal fade simdes-modal"
-        id="{{ $modalId }}"
-        tabindex="-1"
-        aria-labelledby="{{ $titleId }}"
-        aria-hidden="true"
-    >
+    <div class="modal fade simdes-modal" id="{{ $modalId }}" tabindex="-1" aria-labelledby="{{ $titleId }}"
+        aria-hidden="true">
         <div class="modal-dialog {{ $modalSize }} modal-dialog-scrollable">
             <div class="modal-content">
 
@@ -49,25 +38,13 @@
                         {{ $modalTitle }}
                     </h2>
 
-                    <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Tutup formulir"
-                    ></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Tutup formulir"></button>
                 </div>
 
-                <form
-                    id="{{ $formId }}"
-                    action="{{ $href }}"
-                    method="POST"
-                    enctype="multipart/form-data"
-                    novalidate
-                    data-simdes-ajax-form
-                    data-simdes-form-type="create"
-                    data-simdes-submit-label="Simpan"
-                    data-simdes-submit-icon="floppy-disk"
-                >
+                <form id="{{ $formId }}" action="{{ $href }}" method="POST"
+                    enctype="multipart/form-data" novalidate data-simdes-ajax-form data-simdes-form-type="create"
+                    data-simdes-submit-label="Simpan" data-simdes-submit-icon="floppy-disk">
                     @csrf
 
                     <div class="modal-body p-4">
@@ -77,19 +54,11 @@
                     <div class="modal-footer bg-light border-top px-4 py-1"
                         style="border-color:var(--simdes-border) !important;">
 
-                        <button
-                            type="button"
-                            class="btn-simdes-outline"
-                            data-bs-dismiss="modal"
-                        >
+                        <button type="button" class="btn-simdes-outline" data-bs-dismiss="modal">
                             Batal
                         </button>
 
-                        <button
-                            type="submit"
-                            id="{{ $submitId }}"
-                            class="btn-simdes-primary"
-                        >
+                        <button type="submit" id="{{ $submitId }}" class="btn-simdes-primary">
                             <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i>
                             <span>Simpan</span>
                         </button>
