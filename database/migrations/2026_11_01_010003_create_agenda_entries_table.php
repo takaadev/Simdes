@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('kategori_agenda', 100)->nullable();
             $table->date('tanggal_terima')->nullable();
             $table->date('tanggal_kirim')->nullable();
-            $table->string('nomor_surat', 100)->nullable();
-            $table->date('tgl_surat')->nullable();
+            $table->string('nomor_surat')->unique();
+            $table->date('tgl_surat');
             $table->string('pengirim', 150)->nullable();
             $table->string('penerima', 150)->nullable();
             $table->text('isi_surat');

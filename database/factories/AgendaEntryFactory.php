@@ -17,8 +17,6 @@ class AgendaEntryFactory extends Factory
     {
         $agendaType = fake()->randomElement(AgendaTypeList::cases());
 
-        $category = fake()->randomElement(AgendaCategoryList::cases());
-
         $letterDate = fake()->dateTimeBetween('-1 year', 'now');
 
         $receivedDate = $agendaType === AgendaTypeList::INCOMING
@@ -29,16 +27,20 @@ class AgendaEntryFactory extends Factory
             ? fake()->dateTimeBetween($letterDate, 'now')
             : null;
 
+        $category = $agendaType === AgendaTypeList::OUTGOING
+            ? fake()->randomElement(AgendaCategoryList::cases())
+            : null;
+
         // Nomor surat masuk berasal dari instansi pengirim.
-        // Nomor surat keluar dibuat berdasarkan kategori agenda.
+        // Nomor surat keluar mengikuti format kategori agenda.
         $letterNumber = $agendaType === AgendaTypeList::OUTGOING
             ? $category->formatNumber(
-                sequence: fake()->numberBetween(1, 999),
+                sequence: fake()->unique()->numberBetween(1, 999999),
                 year: (int) $letterDate->format('Y'),
                 month: (int) $letterDate->format('n'),
                 villageCode: 'DS'
             )
-            : fake()->numerify('###/###/####');
+            : fake()->unique()->numerify('###/###/####');
 
         $disposition = $agendaType === AgendaTypeList::INCOMING
             ? fake()->optional(0.6)->randomElement([
@@ -112,10 +114,15 @@ class AgendaEntryFactory extends Factory
         ];
     }
 
+    /**
+     * Factory khusus surat masuk.
+     */
     public function incoming(): static
     {
         return $this->state(fn() => [
             'tipe_agenda' => AgendaTypeList::INCOMING,
+
+            'kategori_agenda' => null,
 
             'tanggal_terima' => fake()->dateTimeBetween('-6 months', 'now'),
 
@@ -131,22 +138,42 @@ class AgendaEntryFactory extends Factory
         ]);
     }
 
+    /**
+     * Factory khusus surat keluar.
+     */
     public function outgoing(): static
     {
-        return $this->state(fn() => [
-            'tipe_agenda' => AgendaTypeList::OUTGOING,
+        return $this->state(function () {
+            $letterDate = fake()->dateTimeBetween('-6 months', 'now');
 
-            'tanggal_terima' => null,
+            $category = fake()->randomElement(AgendaCategoryList::cases());
 
-            'tanggal_kirim' => fake()->dateTimeBetween('-6 months', 'now'),
+            return [
+                'tipe_agenda' => AgendaTypeList::OUTGOING,
 
-            'pengirim' => null,
+                'kategori_agenda' => $category,
 
-            'penerima' => fake()->company(),
+                'tanggal_terima' => null,
 
-            'disposisi' => null,
+                'tanggal_kirim' => fake()->dateTimeBetween($letterDate, 'now'),
 
-            'tgl_disposisi' => null,
-        ]);
+                'tgl_surat' => $letterDate,
+
+                'nomor_surat' => $category->formatNumber(
+                    sequence: fake()->unique()->numberBetween(1, 999999),
+                    year: (int) $letterDate->format('Y'),
+                    month: (int) $letterDate->format('n'),
+                    villageCode: 'DS'
+                ),
+
+                'pengirim' => null,
+
+                'penerima' => fake()->company(),
+
+                'disposisi' => null,
+
+                'tgl_disposisi' => null,
+            ];
+        });
     }
 }

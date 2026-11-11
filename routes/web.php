@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Archieves\AgendaEntryController;
+use App\Http\Controllers\Archieves\ExpeditionEntryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Generals\VillageAssetController;
 use App\Http\Controllers\Generals\VillageDecreeController;
@@ -51,8 +52,9 @@ Route::prefix('admumum')->group(function () {
 
 Route::prefix('arsip')->group(function () {
     Route::resource('agendas', AgendaEntryController::class)->names('agendas')->except(['create', 'edit', 'show'])->withTrashed(['update', 'destroy']);
+    Route::resource('ekspedisi', ExpeditionEntryController::class)->names('expeditions')->except(['create', 'edit', 'show'])->withTrashed(['update', 'destroy']);
 });
 
 Route::prefix('admpenduduk')->group(function () {
-    // 
+    //
 });

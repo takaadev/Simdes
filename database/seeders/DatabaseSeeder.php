@@ -63,7 +63,7 @@ class DatabaseSeeder extends Seeder
         AppSetting::factory(10)->create([
             'updated_by' => $admin->id,
         ]);
-    
+
         /*
         |--------------------------------------------------------------------------
         | Population
@@ -116,7 +116,7 @@ class DatabaseSeeder extends Seeder
         |--------------------------------------------------------------------------
         */
 
-        AgendaEntry::factory(39)->create();
+        AgendaEntry::factory(5)->create();
 
         // ExpeditionEntry::factory(15)->create();
     }

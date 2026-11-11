@@ -1,7 +1,7 @@
 <x-actions-table>
     @if ($row->deleted_at === null)
-        @include('pages.agenda.show', ['data' => $row])
-        @include('pages.agenda.edit', ['data' => $row])
+        @include('pages.agenda.incoming.show', ['data' => $row])
+        @include('pages.agenda.incoming.edit', ['data' => $row])
     @else
         <x-action-restore :id="$row->id" href="{{ route('agendas.restore', $row->id) }}" />
     @endif

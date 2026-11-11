@@ -24,16 +24,12 @@ class AgendaEntryController extends Controller
         return $this->service->getData($request);
     }
 
-    public function generateNumber(Request $request)
+    public function generateNumber(Request $request): \Illuminate\Http\JsonResponse
     {
         $validated = $request->validate([
             'kategori_agenda' => [
                 'required',
                 \Illuminate\Validation\Rule::enum(AgendaCategoryList::class),
-            ],
-            'tgl_surat' => [
-                'required',
-                'date',
             ],
         ]);
 
@@ -41,9 +37,10 @@ class AgendaEntryController extends Controller
             $validated['kategori_agenda']
         );
 
-        $date = \Carbon::parse($validated['tgl_surat']);
-
-        $number = $this->service->getGenerateNumber(category: $category, date: $date, villageCode: 'DS');
+        $number = $this->service->getGenerateNumber(
+            category: $category,
+            villageCode: 'DS'
+        );
 
         return response()->json([
             'success' => true,
@@ -51,13 +48,19 @@ class AgendaEntryController extends Controller
         ]);
     }
 
-    public function store(StoreAgendaEntryRequest $request) {}
+    public function store(StoreAgendaEntryRequest $request): \Illuminate\Http\JsonResponse
+    {
+        return $this->service->getStore($request->validated());
+    }
 
-    public function update(UpdateAgendaEntryRequest $request) {}
+    public function update(UpdateAgendaEntryRequest $request, AgendaEntry $agenda): \Illuminate\Http\JsonResponse
+    {
+        return $this->service->getUpdate($agenda, $request->validated());
+    }
 
     public function destroy(Request $request, AgendaEntry $agenda)
     {
-        //
+        return $this->service->getDestroy($request, $agenda);
     }
 
     public function restore(int $id)

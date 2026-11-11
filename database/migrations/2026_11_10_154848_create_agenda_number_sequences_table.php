@@ -13,7 +13,14 @@ return new class extends Migration
     {
         Schema::create('agenda_number_sequences', function (Blueprint $table) {
             $table->id();
+            $table->string('category', 100);
+            $table->unsignedSmallInteger('year');
+            $table->unsignedInteger('last_number')->default(0);
             $table->timestamps();
+            $table->unique(
+                ['category', 'year'],
+                'agenda_number_sequences_category_year_unique'
+            );
         });
     }
 

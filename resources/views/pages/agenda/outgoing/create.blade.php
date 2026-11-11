@@ -1,11 +1,12 @@
-<x-action-create href="{{ route('agendas.store') }}" size="lg" modalTitle="Tambah Surat Keluar" icon="share">
+<x-action-create href="{{ route('agendas.store') }}" size="lg" modalTitle="Tambah Surat Keluar" label="Surat Keluar" icon="share" color="btn-simdes-outline bg-orange">
+    <x-input-text value="outgoing" name="tipe_agenda" type="hidden" />
 
     {{-- A. Informasi Surat Keluar --}}
     <x-fieldset label="A. Informasi Surat Keluar">
         <div class="row g-3">
 
             {{-- Kategori Surat --}}
-            <div class="col-12">
+            <div class="col-12 col-md-6">
                 <label class="form-label">
                     Kategori Surat <span class="text-danger">*</span>
                 </label>
@@ -26,14 +27,26 @@
             </div>
 
             {{-- Nomor Surat --}}
-            <div class="col-12">
+            <div class="col-12 col-md-6">
                 <label class="form-label">Nomor Surat</label>
 
                 <div class="input-group">
-                    <input type="text" name="nomor_surat" id="nomor_surat" class="form-control"
-                        placeholder="Nomor surat belum dibuat" readonly required>
+                    <input
+                        type="text"
+                        name="nomor_surat"
+                        id="nomor_surat"
+                        class="form-control"
+                        placeholder="Nomor surat belum dibuat"
+                        readonly
+                        required
+                    >
 
-                    <button type="button" id="btnGenerateNumber" class="btn btn-simdes-outline">
+                    <button
+                        type="button"
+                        id="btnGenerateNumber"
+                        class="btn btn-simdes-primary"
+                        title="Generate Nomor Surat"
+                    >
                         <i class="fa-solid fa-wand-magic-sparkles me-1"></i>
                         Generate
                     </button>
@@ -45,115 +58,216 @@
             </div>
 
             {{-- Tanggal Surat --}}
-            <div class="col-12 col-md-6">
-                <x-input-text type="date" name="tgl_surat" label="Tanggal Surat" required />
+            <div class="col-12 col-md-3">
+                <x-input-text
+                    type="date"
+                    name="tgl_surat"
+                    label="Tanggal Surat"
+                    required
+                />
             </div>
 
             {{-- Tanggal Kirim --}}
-            <div class="col-12 col-md-6">
-                <x-input-text type="date" name="tanggal_kirim" label="Tanggal Kirim" :value="now()->format('Y-m-d')" required />
+            <div class="col-12 col-md-3">
+                <x-input-text
+                    type="date"
+                    name="tanggal_kirim"
+                    label="Tanggal Kirim"
+                    value="{{ now()->format('Y-m-d') }}"
+                    required
+                />
             </div>
 
             {{-- Tujuan --}}
-            <div class="col-12">
-                <x-input-text name="tujuan" label="Tujuan / Penerima Surat"
-                    placeholder="Nama instansi atau pihak penerima" required />
+            <div class="col-12 col-md-6">
+                <x-input-text
+                    name="penerima"
+                    label="Tujuan / Penerima Surat"
+                    placeholder="Nama instansi atau pihak penerima"
+                    required
+                />
             </div>
 
             {{-- Perihal --}}
             <div class="col-12">
-                <x-input-textarea name="isi_surat" label="Perihal Surat"
-                    placeholder="Tuliskan perihal atau ringkasan isi surat..." :rows="3" required />
+                <x-input-textarea
+                    name="isi_surat"
+                    label="Perihal Surat"
+                    placeholder="Tuliskan perihal atau ringkasan isi surat..."
+                    :rows="3"
+                    required
+                />
             </div>
+
         </div>
     </x-fieldset>
+
     @push('footer')
-    <script>
-        $(document).ready(function() {
+        <script>
+            (function ($, window) {
+                'use strict';
 
-            // =====================================================
-            // GENERATE NOMOR SURAT
-            // =====================================================
-            $('#btnGenerateNumber').on('click', function() {
+                const $category = $('#kategori_agenda');
+                const $number = $('#nomor_surat');
+                const $button = $('#btnGenerateNumber');
 
-                const button = $(this);
-                const category = $('#kategori_agenda').val();
-                const date = $('[name="tgl_surat"]').val();
-
-                if (!category) {
-                    console.warn('Silakan pilih kategori surat terlebih dahulu.');
+                if (!$category.length || !$number.length || !$button.length) {
                     return;
                 }
 
-                if (!date) {
-                    console.warn('Silakan tentukan tanggal surat terlebih dahulu.');
-                    return;
-                }
+                /**
+                 * Menampilkan notifikasi SIMDES.
+                 */
+                function showNotification(message, type = 'success') {
+                    const variantMap = {
+                        success: {
+                            title: 'Berhasil',
+                            variant: 'success',
+                        },
+                        error: {
+                            title: 'Terjadi Kesalahan',
+                            variant: 'danger',
+                        },
+                        warning: {
+                            title: 'Perhatian',
+                            variant: 'warning',
+                        },
+                        info: {
+                            title: 'Informasi Sistem',
+                            variant: 'primary',
+                        },
+                    };
 
-                button.prop('disabled', true);
+                    const config = variantMap[type] || variantMap.success;
 
-                const originalHtml = button.html();
-
-                button.html(
-                    '<span class="spinner-border spinner-border-sm me-1"></span> Generate...'
-                );
-
-                $.ajax({
-                    url: "{{ route('agendas.generate-number') }}",
-                    method: 'POST',
-                    data: {
-                        kategori_agenda: category,
-                        tgl_surat: date,
-                        _token: $('meta[name="csrf-token"]').attr('content')
-                    },
-
-                    success: function(response) {
-
-                        console.log('Generate Nomor Surat:', response);
-
-                        if (response.success) {
-
-                            $('#nomor_surat')
-                                .val(response.nomor_surat)
-                                .trigger('change');
-
-                            console.log('Nomor Surat Berhasil Dibuat:', response.nomor_surat);
-
-                        } else {
-                            console.warn('Nomor surat gagal dibuat:', response);
-                        }
-                    },
-
-                    error: function(xhr) {
-
-                        console.error('Generate Nomor Surat Error:', {
-                            status: xhr.status,
-                            response: xhr.responseJSON,
-                            errors: xhr.responseJSON?.errors
+                    if (typeof window.showToast === 'function') {
+                        window.showToast({
+                            title: config.title,
+                            message: message,
+                            variant: config.variant,
+                            duration: 4200,
                         });
-
-                    },
-
-                    complete: function() {
-                        button.prop('disabled', false);
-                        button.html(originalHtml);
                     }
+                }
+
+                /**
+                 * Status tombol Generate.
+                 */
+                function setProcessing(processing) {
+                    $button
+                        .prop('disabled', processing)
+                        .html(
+                            processing
+                                ? '<span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span> Generate...'
+                                : '<i class="fa-solid fa-wand-magic-sparkles me-1"></i> Generate'
+                        );
+                }
+
+                /**
+                 * Generate nomor surat.
+                 */
+                $button.on('click', function () {
+                    const category = $category.val();
+
+                    if (!category) {
+                        showNotification(
+                            'Silakan pilih kategori surat terlebih dahulu.',
+                            'warning'
+                        );
+
+                        $category.trigger('focus');
+                        return;
+                    }
+
+                    const selectedCategory = category;
+
+                    setProcessing(true);
+
+                    $.ajax({
+                        url: "{{ route('agendas.generate-number') }}",
+                        method: 'POST',
+                        dataType: 'json',
+
+                        headers: {
+                            Accept: 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+
+                        data: {
+                            kategori_agenda: selectedCategory,
+                            _token: $('meta[name="csrf-token"]').attr('content'),
+                        },
+
+                        success: function (response) {
+                            // Pastikan kategori belum berubah.
+                            if ($category.val() !== selectedCategory) {
+                                return;
+                            }
+
+                            if (response.success && response.nomor_surat) {
+                                $number
+                                    .val(response.nomor_surat)
+                                    .trigger('change');
+
+                                showNotification(
+                                    'Nomor surat berhasil dibuat: ' + response.nomor_surat,
+                                    'success'
+                                );
+
+                                return;
+                            }
+
+                            showNotification(
+                                response.message || 'Nomor surat gagal dibuat.',
+                                'error'
+                            );
+                        },
+
+                        error: function (xhr) {
+                            const response = xhr.responseJSON || {};
+
+                            if (xhr.status === 422 && response.errors) {
+                                const firstError = Object.values(response.errors)[0];
+
+                                showNotification(
+                                    Array.isArray(firstError)
+                                        ? firstError[0]
+                                        : 'Kategori surat tidak valid.',
+                                    'warning'
+                                );
+
+                                return;
+                            }
+
+                            if (xhr.status === 401 || xhr.status === 419) {
+                                showNotification(
+                                    'Sesi Anda telah berakhir. Silakan muat ulang halaman.',
+                                    'error'
+                                );
+
+                                return;
+                            }
+
+                            showNotification(
+                                response.message || 'Terjadi kesalahan saat membuat nomor surat.',
+                                'error'
+                            );
+                        },
+
+                        complete: function () {
+                            setProcessing(false);
+                        },
+                    });
                 });
 
-            });
+                /**
+                 * Reset nomor surat ketika kategori berubah.
+                 */
+                $category.on('change', function () {
+                    $number.val('').trigger('change');
+                });
 
-            // =====================================================
-            // RESET NOMOR JIKA KATEGORI / TANGGAL BERUBAH
-            // =====================================================
-            $('#kategori_agenda, [name="tgl_surat"]').on('change', function() {
-
-                $('#nomor_surat').val('');
-
-                console.log('Nomor surat direset karena kategori atau tanggal berubah.');
-
-            });
-
-        });
-    </script>
-@endpush
+            })(window.jQuery, window);
+        </script>
+    @endpush
 </x-action-create>

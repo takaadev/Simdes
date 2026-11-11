@@ -2,18 +2,20 @@
 
 namespace App\Models;
 
+use App\Contracts\Restorable;
 use App\Enums\AgendaCategoryList;
 use App\Enums\AgendaTypeList;
+use App\Models\Concerns\RestoresSoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class AgendaEntry extends Model
+class AgendaEntry extends Model implements Restorable
 {
     /** @use HasFactory<\Database\Factories\AgendaEntryFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, RestoresSoftDeletes;
 
     protected $guarded = ['id'];
 
