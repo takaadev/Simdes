@@ -51,7 +51,6 @@
                     {{ $slot }}
 
                     <div class="mt-3 p-3 rounded-3" style="background: #FFF9F9; border: 1px solid rgba(220,53,69,.15);">
-
                         <div class="form-check d-flex align-items-start gap-2">
                             <input class="form-check-input mt-1" type="checkbox" id="{{ $confirmId }}"
                                 name="confirm_delete" value="1" required>

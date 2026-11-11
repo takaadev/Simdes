@@ -60,7 +60,7 @@ class Menu extends Component
                 'icon' => 'users',
                 'tooltip' => 'Administrasi Penduduk (5 Buku)',
                 'items' => [
-                    ['no' => '1', 'route' => '#', 'label' => 'Buku IP', 'ready' => true],
+                    ['no' => '1', 'route' => 'residents.index', 'label' => 'Buku Induk Penduduk', 'ready' => true],
                     ['no' => '2', 'route' => '#', 'label' => 'Buku MPD', 'ready' => true],
                     ['no' => '3', 'route' => '#', 'label' => 'Buku RJP', 'ready' => true],
                     ['no' => '4', 'route' => '#', 'label' => 'Buku PS', 'ready' => true],
@@ -77,8 +77,8 @@ class Menu extends Component
                 'tooltip' => 'Arsip Surat',
                 'items' => [
                     ['no' => '1', 'route' => 'agendas.index', 'label' => 'Buku Agenda', 'ready' => true],
-                    ['no' => '4', 'route' => 'expeditions.index', 'label' => 'Buku Ekspedisi', 'ready' => true],
-                    ['no' => '5', 'route' => '#', 'label' => 'Arsip Dokumen Surat', 'ready' => true],
+                    ['no' => '2', 'route' => 'expeditions.index', 'label' => 'Buku Ekspedisi', 'ready' => true],
+                    // ['no' => '5', 'route' => '#', 'label' => 'Arsip Dokumen Surat', 'ready' => true],
                 ],
             ],
         ];

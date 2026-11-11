@@ -6,7 +6,6 @@ use App\Enums\AgendaCategoryList;
 use App\Enums\AgendaTypeList;
 use App\Models\AgendaEntry;
 use App\Models\AgendaNumberSequence;
-use App\Models\VillageAsset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
@@ -103,6 +102,7 @@ class AgendaEntryService
             nomor_surat AS outgoing_nomor,
             tgl_surat AS outgoing_tanggal,
             penerima,
+            has_expedition,
             isi_surat AS outgoing_ket,
             catatan AS outgoing_catatan,
             dokumen AS outgoing_dokumen,
@@ -133,6 +133,7 @@ class AgendaEntryService
                 'i.incoming_deleted_at',
 
                 // Surat Keluar
+               // Surat Keluar
                 'o.outgoing_kategori',
                 'o.tanggal_kirim',
                 'o.outgoing_nomor',
@@ -140,6 +141,7 @@ class AgendaEntryService
                 'o.penerima',
                 'o.outgoing_ket',
                 'o.outgoing_catatan',
+                'o.has_expedition',
                 'o.outgoing_dokumen',
                 'o.outgoing_deleted_at',
             ]);
@@ -171,6 +173,7 @@ class AgendaEntryService
                 o.penerima,
                 o.outgoing_ket,
                 o.outgoing_catatan,
+                o.has_expedition,
                 o.outgoing_dokumen,
                 o.outgoing_deleted_at
             ");
@@ -268,17 +271,18 @@ class AgendaEntryService
                 }
 
                 $actionRow = (new AgendaEntry())->forceFill([
-                    'id'             => $row->outgoing_id,
-                    'tipe_agenda'    => AgendaTypeList::OUTGOING,
+                    'id'              => $row->outgoing_id,
+                    'tipe_agenda'     => AgendaTypeList::OUTGOING,
                     'kategori_agenda' => $row->outgoing_kategori,
-                    'nomor_surat'    => $row->outgoing_nomor,
-                    'tanggal_kirim'  => $row->tanggal_kirim,
-                    'tgl_surat'      => $row->outgoing_tanggal,
-                    'penerima'       => $row->penerima,
-                    'isi_surat'      => $row->outgoing_ket,
-                    'catatan'        => $row->outgoing_catatan,
-                    'dokumen'        => $row->outgoing_dokumen,
-                    'deleted_at'     => $row->outgoing_deleted_at,
+                    'nomor_surat'     => $row->outgoing_nomor,
+                    'tanggal_kirim'   => $row->tanggal_kirim,
+                    'tgl_surat'       => $row->outgoing_tanggal,
+                    'penerima'        => $row->penerima,
+                    'has_expedition'  => $row->has_expedition,
+                    'isi_surat'       => $row->outgoing_ket,
+                    'catatan'         => $row->outgoing_catatan,
+                    'dokumen'         => $row->outgoing_dokumen,
+                    'deleted_at'      => $row->outgoing_deleted_at,
                 ]);
 
                 return view('pages.agenda.comp.actions-outgoing', [

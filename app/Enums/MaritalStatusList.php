@@ -14,6 +14,16 @@ enum MaritalStatusList: string
         return ucfirst($this->value);
     }
 
+    public function color(): string
+    {
+        return match ($this) {
+            self::MARRIED => 'success',
+            self::UNMARRIED => 'primary',
+            self::DIVORCED => 'warning',
+            self::WIDOWED => 'secondary',
+        };
+    }
+
     public static function options(): array
     {
         return array_column(

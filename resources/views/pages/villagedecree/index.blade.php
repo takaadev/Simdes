@@ -1,7 +1,5 @@
 
 <x-appcontent>
-    <x-app-heading />
-
     @include('pages.villagedecree.comp.widgets')
     @include('pages.villagedecree.comp.filter')
 

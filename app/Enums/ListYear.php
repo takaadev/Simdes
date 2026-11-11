@@ -10,7 +10,7 @@ enum ListYear
         ?int $startYear = null,
         ?int $endYear = null
     ): array {
-        $startYear ??= 2000;
+        $startYear ??= 1900;
         $endYear ??= Carbon::now()->year;
 
         return array_column(

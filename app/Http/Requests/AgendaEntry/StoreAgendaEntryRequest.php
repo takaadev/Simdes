@@ -100,6 +100,11 @@ class StoreAgendaEntryRequest extends FormRequest
                 'max:5120',
             ],
 
+            'has_expedition' => [
+                'required',
+                'boolean',
+            ],
+
             // L. Catatan
             'catatan' => [
                 'nullable',
@@ -160,9 +165,18 @@ class StoreAgendaEntryRequest extends FormRequest
             'dokumen.mimes' => 'Dokumen harus berformat PDF.',
             'dokumen.mimetypes' => 'Dokumen harus memiliki tipe MIME application/pdf.',
             'dokumen.max' => 'Ukuran dokumen maksimal 5 MB.',
-
+            // M. Pencatatan Buku Ekspedisi
+            'has_expedition.required' => 'Status pencatatan buku ekspedisi wajib ditentukan.',
+            'has_expedition.boolean' => 'Status pencatatan buku ekspedisi tidak valid.',
             // L. Catatan
             'catatan.string' => 'Catatan harus berupa teks.',
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'has_expedition' => $this->boolean('has_expedition'),
+        ]);
     }
 }

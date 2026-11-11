@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Archieves\AgendaEntryController;
+use App\Http\Controllers\Archieves\ExpeditionEntryController;
 use App\Http\Controllers\Generals\VillageAssetController;
 use App\Http\Controllers\Generals\VillageDecreeController;
 use App\Http\Controllers\Generals\VillageOfficialController;
@@ -22,4 +23,5 @@ Route::prefix('admumum')->group(function () {
 Route::prefix('arsip')->group(function () {
     Route::patch('agenda/{id}/restore', [AgendaEntryController::class, 'restore'])->name('agendas.restore');
     Route::post('agendas/generate-number', [AgendaEntryController::class, 'generateNumber'])->name('agendas.generate-number');
+    Route::patch('ekspedisi/{id}/restore', [ExpeditionEntryController::class, 'restore'])->name('expeditions.restore');
 });

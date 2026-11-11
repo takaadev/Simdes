@@ -9,6 +9,7 @@ use App\Http\Controllers\Generals\VillageOfficialController;
 use App\Http\Controllers\Generals\VillagePublicationController;
 use App\Http\Controllers\Generals\VillageRegulationController;
 use App\Http\Controllers\Generals\VillageTreasuryLandController;
+use App\Http\Controllers\Residents\ResidentController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -51,10 +52,23 @@ Route::prefix('admumum')->group(function () {
 });
 
 Route::prefix('arsip')->group(function () {
-    Route::resource('agendas', AgendaEntryController::class)->names('agendas')->except(['create', 'edit', 'show'])->withTrashed(['update', 'destroy']);
-    Route::resource('ekspedisi', ExpeditionEntryController::class)->names('expeditions')->except(['create', 'edit', 'show'])->withTrashed(['update', 'destroy']);
+    Route::resource('agenda', AgendaEntryController::class)
+        ->names('agendas')
+        ->parameters(['agenda' => 'agenda'])
+        ->except(['create', 'edit', 'show'])
+        ->withTrashed(['update', 'destroy']);
+
+    Route::resource('ekspedisi', ExpeditionEntryController::class)
+        ->names('expeditions')
+        ->parameters(['ekspedisi' => 'expedition'])
+        ->except(['create', 'edit', 'show'])
+        ->withTrashed(['update', 'destroy']);
 });
 
 Route::prefix('admpenduduk')->group(function () {
-    //
+    Route::resource('buku-induk-penduduk', ResidentController::class)
+        ->names('residents')
+        ->parameters(['buku-induk-penduduk' => 'resident'])
+        ->except(['create', 'edit', 'show'])
+        ->withTrashed(['update', 'destroy']);
 });

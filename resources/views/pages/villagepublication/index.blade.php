@@ -1,5 +1,4 @@
 <x-appcontent>
-    <x-app-heading />
     @include('pages.villagepublication.comp.widgets')
     @include('pages.villagepublication.comp.filter')
     <x-table id="villagePublicationTable">

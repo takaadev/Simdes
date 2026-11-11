@@ -1,4 +1,5 @@
-<x-action-create href="{{ route('agendas.store') }}" size="lg" modalTitle="Tambah Surat Keluar" label="Surat Keluar" icon="share" color="btn-simdes-outline bg-orange">
+<x-action-create href="{{ route('agendas.store') }}" size="lg" modalTitle="Tambah Surat Keluar" label="Surat Keluar"
+    icon="share" color="btn-simdes-outline bg-orange">
     <x-input-text value="outgoing" name="tipe_agenda" type="hidden" />
 
     {{-- A. Informasi Surat Keluar --}}
@@ -15,13 +16,13 @@
                     <option value="">Pilih Kategori Surat</option>
 
                     @foreach (\App\Enums\AgendaCategoryList::groupedOptions() as $group => $options)
-                        <optgroup label="{{ $group }}">
-                            @foreach ($options as $value => $label)
-                                <option value="{{ $value }}">
-                                    {{ $label }}
-                                </option>
-                            @endforeach
-                        </optgroup>
+                    <optgroup label="{{ $group }}">
+                        @foreach ($options as $value => $label)
+                        <option value="{{ $value }}">
+                            {{ $label }}
+                        </option>
+                        @endforeach
+                    </optgroup>
                     @endforeach
                 </select>
             </div>
@@ -31,22 +32,11 @@
                 <label class="form-label">Nomor Surat</label>
 
                 <div class="input-group">
-                    <input
-                        type="text"
-                        name="nomor_surat"
-                        id="nomor_surat"
-                        class="form-control"
-                        placeholder="Nomor surat belum dibuat"
-                        readonly
-                        required
-                    >
+                    <input type="text" name="nomor_surat" id="nomor_surat" class="form-control"
+                        placeholder="Nomor surat belum dibuat" readonly required>
 
-                    <button
-                        type="button"
-                        id="btnGenerateNumber"
-                        class="btn btn-simdes-primary"
-                        title="Generate Nomor Surat"
-                    >
+                    <button type="button" id="btnGenerateNumber" class="btn btn-simdes-primary"
+                        title="Generate Nomor Surat">
                         <i class="fa-solid fa-wand-magic-sparkles me-1"></i>
                         Generate
                     </button>
@@ -59,52 +49,46 @@
 
             {{-- Tanggal Surat --}}
             <div class="col-12 col-md-3">
-                <x-input-text
-                    type="date"
-                    name="tgl_surat"
-                    label="Tanggal Surat"
-                    required
-                />
+                <x-input-text type="date" name="tgl_surat" label="Tanggal Surat" required />
             </div>
 
             {{-- Tanggal Kirim --}}
             <div class="col-12 col-md-3">
-                <x-input-text
-                    type="date"
-                    name="tanggal_kirim"
-                    label="Tanggal Kirim"
-                    value="{{ now()->format('Y-m-d') }}"
-                    required
-                />
+                <x-input-text type="date" name="tanggal_kirim" label="Tanggal Kirim"
+                    value="{{ now()->format('Y-m-d') }}" required />
             </div>
 
             {{-- Tujuan --}}
             <div class="col-12 col-md-6">
-                <x-input-text
-                    name="penerima"
-                    label="Tujuan / Penerima Surat"
-                    placeholder="Nama instansi atau pihak penerima"
-                    required
-                />
+                <x-input-text name="penerima" label="Tujuan / Penerima Surat"
+                    placeholder="Nama instansi atau pihak penerima" required />
             </div>
 
             {{-- Perihal --}}
             <div class="col-12">
-                <x-input-textarea
-                    name="isi_surat"
-                    label="Perihal Surat"
-                    placeholder="Tuliskan perihal atau ringkasan isi surat..."
-                    :rows="3"
-                    required
-                />
+                <x-input-textarea name="isi_surat" label="Perihal Surat"
+                    placeholder="Tuliskan perihal atau ringkasan isi surat..." :rows="3" required />
             </div>
+            <div class="col-12">
+                <div class="mt-3 p-3 rounded-3" style="background: #d3eed3; border: 1px solid rgb(7, 165, 31);">
+                    <div class="form-check d-flex align-items-start gap-2">
+                        <input type="hidden" name="has_expedition" value="false">
 
+                        <input class="form-check-input mt-1" type="checkbox" id="has_expedition" name="has_expedition"
+                            value="true">
+
+                        <label class="form-check-label" for="has_expedition">
+                            Centang jika surat ini juga ingin dicatat dalam Buku Ekspedisi.
+                        </label>
+                    </div>
+                </div>
+            </div>
         </div>
     </x-fieldset>
 
     @push('footer')
-        <script>
-            (function ($, window) {
+    <script>
+        (function ($, window) {
                 'use strict';
 
                 const $category = $('#kategori_agenda');
@@ -268,6 +252,6 @@
                 });
 
             })(window.jQuery, window);
-        </script>
+    </script>
     @endpush
 </x-action-create>

@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Enums\BloodList;
 use App\Enums\CitizenshipList;
 use App\Enums\EducationList;
 use App\Enums\GenderList;
@@ -26,59 +25,47 @@ class ResidentFactory extends Factory
     {
         return [
             // Identitas Penduduk
-            'nik' => fake()->unique()->numerify('################'),
-            'name' => fake()->name(),
-            'gender' => fake()->randomElement(
+            'nama_lengkap' => fake()->name(),
+            'jenis_kelamin' => fake()->randomElement(
                 array_column(GenderList::cases(), 'value')
             ),
-
+            'nik' => fake()->unique()->numerify(str_repeat('#', 16)),
+            'kk' => fake()->unique()->numerify(str_repeat('#', 16)),
             // Data Kelahiran
-            'birth_place' => fake()->city(),
-            'birth_date' => fake()->dateTimeBetween('-80 years', '-17 years'),
-            'blood_type' => fake()->randomElement(
-                array_column(BloodList::cases(), 'value')
-            ),
+            'tempat_lahir' => fake()->city(),
+            'tgl_lahir' => fake()->dateTimeBetween('-80 years', '-17 years'),
 
             // Data Pribadi
-            'religion' => fake()->randomElement(
-                array_column(ReligionList::cases(), 'value')
-            ),
-            'education' => fake()->randomElement(
-                array_column(EducationList::cases(), 'value')
-            ),
-            'occupation' => fake()->randomElement(
-                array_column(OccupationList::cases(), 'value')
-            ),
-            'marital_status' => fake()->randomElement(
+            'status_perkawinan' => fake()->randomElement(
                 array_column(MaritalStatusList::cases(), 'value')
             ),
-            'citizenship' => fake()->randomElement(
+            'agama' => fake()->randomElement(
+                array_column(ReligionList::cases(), 'value')
+            ),
+            'pendidikan' => fake()->randomElement(
+                array_column(EducationList::cases(), 'value')
+            ),
+            'pekerjaan' => fake()->randomElement(
+                array_column(OccupationList::cases(), 'value')
+            ),
+            'dapat_membaca' => fake()->boolean(),
+
+            // Kewarganegaraan dan Keluarga
+            'kewarganegaraan' => fake()->randomElement(
                 array_column(CitizenshipList::cases(), 'value')
             ),
-            'nationality' => 'Indonesia',
-
-            // Data Orang Tua
-            'father_name' => fake()->name('male'),
-            'mother_name' => fake()->name('female'),
+            'kebangsaan' => 'Indonesia',
+            'status_dalam_keluarga' => 'Anak',
 
             // Alamat dan Wilayah
-            'dusun_id' => Dusun::factory(),
-            'address' => fake()->streetAddress(),
+            'dusun_id' => 1,
             'rt' => fake()->randomElement(
                 array_column(RtList::cases(), 'value')
             ),
             'rw' => fake()->randomElement(
                 array_column(RwList::cases(), 'value')
             ),
-            'postal_code' => fake()->numerify('#####'),
-
-            // Riwayat Domisili
-            'moved_in_date' => fake()->optional()->date(),
-            'moved_out_date' => null,
-
-            // Status Kependudukan
-            'resident_status' => 'active',
-            'notes' => fake()->optional()->sentence(),
+            'catatan' => fake()->optional()->sentence(),
         ];
     }
 }

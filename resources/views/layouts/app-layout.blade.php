@@ -29,7 +29,7 @@
         <div class="app-main" id="appMainWrapper">
             <x-app-header />
             {{ $slot }}
-            <x-app-footer />
+            {{-- <x-app-footer /> --}}
         </div>
     </div>
 

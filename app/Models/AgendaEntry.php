@@ -24,11 +24,11 @@ class AgendaEntry extends Model implements Restorable
         return [
             'tipe_agenda' => AgendaTypeList::class,
             'kategori_agenda' => AgendaCategoryList::class,
-
             'tanggal_terima' => 'date',
             'tanggal_kirim' => 'date',
             'tgl_surat' => 'date',
             'tgl_disposisi' => 'date',
+            'has_expedition' => 'boolean',
         ];
     }
 

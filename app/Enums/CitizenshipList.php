@@ -6,7 +6,6 @@ enum CitizenshipList: string
 {
     case WNI = 'WNI';
     case WNA = 'WNA';
-    case OTHER = 'Lainnya';
 
     public function label(): string
     {

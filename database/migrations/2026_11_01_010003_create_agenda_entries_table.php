@@ -26,6 +26,7 @@ return new class extends Migration
             $table->date('tgl_disposisi')->nullable();
             $table->string('dokumen', 255)->nullable();
             $table->text('catatan')->nullable();
+            $table->boolean('has_expedition')->default(false);
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
             $table->softDeletes();

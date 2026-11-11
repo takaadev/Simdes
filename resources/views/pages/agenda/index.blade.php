@@ -1,5 +1,4 @@
 <x-appcontent>
-    <x-app-heading />
     @include('pages.agenda.comp.widgets')
     @include('pages.agenda.comp.filter')
     <x-table id="agendaEntriesTable">

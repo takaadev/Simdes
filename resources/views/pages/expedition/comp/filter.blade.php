@@ -1,4 +1,4 @@
-<x-filters :url="route('agendas.index')" table="#agendaEntriesTable">
+<x-filters :url="route('expeditions.index')" table="#expeditionEntriesTable">
     <x-slot:filter>
         <x-filter-item label="Tahun" id="filterYearSelect" name="year" :options="\App\Enums\ListYear::options()" />
         <x-filter-item label="Status Data" id="filterDeletedSelect" name="deleted" :options="[
@@ -12,7 +12,6 @@
             <i class="fa-solid fa-print" aria-hidden="true"></i>
             <span>Cetak</span>
         </button>
-        @include('pages.agenda.outgoing.create')
-        @include('pages.agenda.incoming.create')
+        @include('pages.expedition.create')
     </x-slot:actions>
 </x-filters>

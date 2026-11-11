@@ -1,6 +1,4 @@
 <x-appcontent>
-    <x-app-heading />
-
     @include('pages.villagetreasuryland.comp.widgets')
     @include('pages.villagetreasuryland.comp.filter')
 

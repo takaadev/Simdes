@@ -22,12 +22,12 @@ class ExpeditionEntryController extends Controller
         return $this->service->getData($request);
     }
 
-    public function store(StoreExpeditionEntryRequest $request):\Illuminate\Http\JsonResponse
+    public function store(StoreExpeditionEntryRequest $request): \Illuminate\Http\JsonResponse
     {
-        //
+        return $this->service->getStore($request->validated());
     }
 
-    public function update(UpdateExpeditionEntryRequest $request, ExpeditionEntry $expedition):\Illuminate\Http\JsonResponse
+    public function update(UpdateExpeditionEntryRequest $request, ExpeditionEntry $expedition): \Illuminate\Http\JsonResponse
     {
         return $this->service->getUpdate($expedition, $request->validated());
     }

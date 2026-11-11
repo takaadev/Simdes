@@ -2,7 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\VillageAsset;
+use App\Models\AgendaEntry;
+use App\Models\ExpeditionEntry;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -10,152 +11,99 @@ class ExpeditionEntryService
 {
     public function getData(Request $request)
     {
-        $query = VillageAsset::query()
+        $query = ExpeditionEntry::query()
+            ->with([
+                'agendaEntry:id,dokumen',
+            ])
             ->select([
                 'id',
-                'nama_asset',
-                'asal_beli',
-                'asal_pemerintah',
-                'asal_provinsi',
-                'asal_kabupaten',
-                'asal_sumbangan',
-                'kondisi_awal_baik',
-                'kondisi_awal_rusak',
-                'hapus_rusak',
-                'hapus_dijual',
-                'hapus_disumbangkan',
-                'tgl_hapus',
-                'kondisi_ahir_baik',
-                'kondisi_ahir_rusak',
+                'agenda_entry_id',
+                'tanggal_kirim',
+                'nomor_surat',
+                'tgl_surat',
+                'penerima',
+                'isi_surat',
                 'catatan',
-                'dokumen',
                 'created_by',
                 'created_at',
                 'updated_at',
                 'deleted_at',
             ]);
 
-        // Filter tahun hanya untuk tabel.
+        // Filter tahun.
         $query->when(
             $request->filled('year')
                 && $request->input('year') !== 'all',
             fn($query) => $query->whereYear(
-                'created_at',
+                'tanggal_kirim',
                 $request->input('year')
             )
         );
 
-        // Filter status data berdasarkan SoftDeletes.
+        // Filter status SoftDeletes.
         $query->when(
             $request->input('deleted') === 'trashed',
             fn($query) => $query->onlyTrashed()
         );
 
-        $query->latest('created_at');
+        // Urutkan data terbaru.
+        $query->orderByDesc('tanggal_kirim')
+            ->orderByDesc('id');
 
-        // Query statistik inventaris.
-        $summaryQuery = VillageAsset::query()
+        // Query statistik.
+        $summaryQuery = ExpeditionEntry::query()
             ->when(
-                $request->filled('tahun')
-                    && $request->input('tahun') !== 'all',
+                $request->filled('year')
+                    && $request->input('year') !== 'all',
                 fn($query) => $query->whereYear(
-                    'created_at',
-                    $request->input('tahun')
+                    'tanggal_kirim',
+                    $request->input('year')
                 )
+            )
+            ->when(
+                $request->input('deleted') === 'trashed',
+                fn($query) => $query->onlyTrashed()
             );
-
-        // Filter status data untuk statistik.
-        $summaryQuery->when(
-            $request->input('deleted') === 'trashed',
-            fn($query) => $query->onlyTrashed()
-        );
 
         $summary = $summaryQuery
             ->selectRaw('
-                COUNT(*) as total_types,
-                COALESCE(SUM(kondisi_ahir_baik), 0) as kondisi_baik,
-                COALESCE(SUM(kondisi_ahir_rusak), 0) as kondisi_rusak,
-                COALESCE(SUM(
-                    hapus_rusak +
-                    hapus_dijual +
-                    hapus_disumbangkan
-                ), 0) as total_dihapus
-            ')
+            COUNT(*) as total_entries,
+            COUNT(DISTINCT agenda_entry_id) as total_linked_agendas
+        ')
             ->first();
 
         return DataTables::eloquent($query)
+
             ->with('summary', [
-                'total_types' => (int) $summary->total_types,
-                'good' => (int) $summary->kondisi_baik,
-                'damaged' => (int) $summary->kondisi_rusak,
-                'deleted' => (int) $summary->total_dihapus,
+                'total_entries' => (int) $summary->total_entries,
+                'total_linked_agendas' => (int) $summary->total_linked_agendas,
             ])
 
             ->addIndexColumn()
 
             ->editColumn(
-                'nama_asset',
-                fn($row) => $this->tooltip($row->nama_asset)
+                'tanggal_kirim',
+                fn($row) => $this->formatDate($row->tanggal_kirim)
             )
 
-            // Asal perolehan
             ->editColumn(
-                'asal_beli',
-                fn($row) => number_format($row->asal_beli, 0, ',', '.')
-            )
-            ->editColumn(
-                'asal_pemerintah',
-                fn($row) => number_format($row->asal_pemerintah, 0, ',', '.')
-            )
-            ->editColumn(
-                'asal_provinsi',
-                fn($row) => number_format($row->asal_provinsi, 0, ',', '.')
-            )
-            ->editColumn(
-                'asal_kabupaten',
-                fn($row) => number_format($row->asal_kabupaten, 0, ',', '.')
-            )
-            ->editColumn(
-                'asal_sumbangan',
-                fn($row) => number_format($row->asal_sumbangan, 0, ',', '.')
+                'tgl_surat',
+                fn($row) => $this->formatDate($row->tgl_surat)
             )
 
-            // Kondisi awal
             ->editColumn(
-                'kondisi_awal_baik',
-                fn($row) => number_format($row->kondisi_awal_baik, 0, ',', '.')
-            )
-            ->editColumn(
-                'kondisi_awal_rusak',
-                fn($row) => number_format($row->kondisi_awal_rusak, 0, ',', '.')
+                'nomor_surat',
+                fn($row) => $this->tooltip($row->nomor_surat)
             )
 
-            // Penghapusan
             ->editColumn(
-                'hapus_rusak',
-                fn($row) => number_format($row->hapus_rusak, 0, ',', '.')
-            )
-            ->editColumn(
-                'hapus_dijual',
-                fn($row) => number_format($row->hapus_dijual, 0, ',', '.')
-            )
-            ->editColumn(
-                'hapus_disumbangkan',
-                fn($row) => number_format($row->hapus_disumbangkan, 0, ',', '.')
-            )
-            ->editColumn(
-                'tgl_hapus',
-                fn($row) => $this->formatDate($row->tgl_hapus)
+                'penerima',
+                fn($row) => $this->tooltip($row->penerima)
             )
 
-            // Kondisi akhir
             ->editColumn(
-                'kondisi_ahir_baik',
-                fn($row) => number_format($row->kondisi_ahir_baik, 0, ',', '.')
-            )
-            ->editColumn(
-                'kondisi_ahir_rusak',
-                fn($row) => number_format($row->kondisi_ahir_rusak, 0, ',', '.')
+                'isi_surat',
+                fn($row) => $this->tooltip($row->isi_surat)
             )
 
             ->editColumn(
@@ -164,29 +112,32 @@ class ExpeditionEntryService
             )
 
             ->editColumn('dokumen', function ($row) {
-                if (! $row->dokumen) {
+                if (! $row->agendaEntry?->dokumen) {
                     return '-';
                 }
 
                 return view('components.view-pdf', [
-                    'src' => $row->dokumen,
-                    'title' => 'Dokumen Inventaris dan Kekayaan Desa',
+                    'src' => $row->agendaEntry?->dokumen,
+                    'title' => 'Dokumen Ekspedisi',
                 ])->render();
             })
 
-            ->addColumn(
-                'action',
-                fn($row) => view('pages.villageasset.comp.actions', [
+
+            ->addColumn('action', function ($row) {
+                return view('pages.expedition.comp.actions', [
                     'row' => $row,
-                ])->render()
-            )
+                ])->render();
+            })
 
             ->rawColumns([
-                'nama_asset',
+                'nomor_surat',
+                'penerima',
+                'isi_surat',
                 'catatan',
                 'dokumen',
                 'action',
             ])
+
             ->toJson();
     }
 
@@ -206,111 +157,121 @@ class ExpeditionEntryService
 
     public function getStore(array $data): \Illuminate\Http\JsonResponse
     {
-        $documentPath = null;
-
         try {
-            \DB::transaction(function () use ($data, &$documentPath) {
-                // Upload dokumen.
-                if (
-                    isset($data['dokumen']) &&
-                    $data['dokumen'] instanceof \Illuminate\Http\UploadedFile
-                ) {
-                    $documentPath = $data['dokumen']->store(
-                        'village-assets',
-                        'public'
-                    );
+            \DB::transaction(function () use ($data) {
 
-                    $data['dokumen'] = $documentPath;
+                // Ambil agenda surat keluar.
+                $agenda = AgendaEntry::query()
+                    ->whereKey($data['agenda_entry_id'])
+                    ->lockForUpdate()
+                    ->firstOrFail();
+
+                // Pastikan belum tercatat dalam Buku Ekspedisi.
+                $alreadyExists = ExpeditionEntry::query()
+                    ->where('agenda_entry_id', $agenda->id)
+                    ->exists();
+
+                if ($alreadyExists) {
+                    throw new \RuntimeException(
+                        'Surat tersebut sudah tercatat dalam Buku Ekspedisi.'
+                    );
                 }
 
-                // Informasi pembuat data.
-                $data['created_by'] = \Auth::id() ?? 1;
+                // Siapkan data ekspedisi.
+                $expeditionData = [
+                    'agenda_entry_id' => $agenda->id,
+                    'tanggal_kirim'   => $agenda->tanggal_kirim,
+                    'nomor_surat'     => $agenda->nomor_surat,
+                    'tgl_surat'       => $agenda->tgl_surat,
+                    'penerima'        => $agenda->penerima,
+                    'isi_surat'       => filled($data['isi_surat'] ?? null)
+                        ? $data['isi_surat']
+                        : $agenda->isi_surat,
+                    'catatan'         => filled($data['catatan'] ?? null)
+                        ? $data['catatan']
+                        : $agenda->catatan,
+                    'created_by'      => \Auth::id() ?? 1,
+                ];
 
-                // Insert data aset.
-                VillageAsset::create($data);
+                ExpeditionEntry::create($expeditionData);
             });
 
             return response()->json([
                 'success' => true,
-                'message' => 'Inventaris dan kekayaan desa berhasil ditambahkan.',
+                'message' => 'Buku Ekspedisi berhasil ditambahkan.',
             ], 201);
         } catch (\Throwable $e) {
-            // Hapus dokumen jika proses insert gagal.
-            if ($documentPath) {
-                \Storage::disk('public')->delete($documentPath);
-            }
-
             report($e);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan inventaris dan kekayaan desa.',
+                'message' => 'Terjadi kesalahan saat menyimpan Buku Ekspedisi.',
             ], 500);
         }
     }
 
-    public function getUpdate(VillageAsset $asset, array $data): \Illuminate\Http\JsonResponse
+    public function getUpdate(ExpeditionEntry $expedition, array $data): \Illuminate\Http\JsonResponse
     {
-        $documentPath = null;
-        $oldDocumentPath = $asset->dokumen;
-
         try {
-            \DB::transaction(function () use (
-                $asset,
-                $data,
-                &$documentPath
-            ) {
-                // Upload dokumen baru jika tersedia.
-                if (
-                    isset($data['dokumen']) &&
-                    $data['dokumen'] instanceof \Illuminate\Http\UploadedFile
-                ) {
-                    $documentPath = $data['dokumen']->store(
-                        'village-assets',
-                        'public'
-                    );
+            \DB::transaction(function () use ($expedition, $data) {
 
-                    $data['dokumen'] = $documentPath;
-                } else {
-                    // Pertahankan dokumen lama.
-                    unset($data['dokumen']);
+                // Ambil agenda surat keluar.
+                $agenda = AgendaEntry::query()
+                    ->whereKey($data['agenda_entry_id'])
+                    ->lockForUpdate()
+                    ->firstOrFail();
+
+                // Pastikan agenda tidak digunakan ekspedisi lain.
+                $alreadyExists = ExpeditionEntry::query()
+                    ->where('agenda_entry_id', $agenda->id)
+                    ->where('id', '!=', $expedition->getKey())
+                    ->exists();
+
+                if ($alreadyExists) {
+                    throw new \RuntimeException(
+                        'Surat tersebut sudah tercatat dalam Buku Ekspedisi.'
+                    );
                 }
 
-                // Update data aset.
-                $asset->update($data);
-            });
+                // Siapkan data pembaruan.
+                $expeditionData = [
+                    'agenda_entry_id' => $agenda->id,
+                    'tanggal_kirim'   => $agenda->tanggal_kirim,
+                    'nomor_surat'     => $agenda->nomor_surat,
+                    'tgl_surat'       => $agenda->tgl_surat,
+                    'penerima'        => $agenda->penerima,
+                    'isi_surat'       => filled($data['isi_surat'] ?? null)
+                        ? $data['isi_surat']
+                        : $agenda->isi_surat,
+                    'catatan'         => filled($data['catatan'] ?? null)
+                        ? $data['catatan']
+                        : $agenda->catatan,
+                ];
 
-            // Hapus dokumen lama setelah transaksi berhasil.
-            if ($documentPath && $oldDocumentPath) {
-                \Storage::disk('public')->delete($oldDocumentPath);
-            }
+                $expedition->update($expeditionData);
+            });
 
             return response()->json([
                 'success' => true,
-                'message' => 'Inventaris dan kekayaan desa berhasil diperbarui.',
+                'message' => 'Buku Ekspedisi berhasil diperbarui.',
             ]);
         } catch (\Throwable $e) {
-            // Bersihkan dokumen baru jika proses update gagal.
-            if ($documentPath) {
-                \Storage::disk('public')->delete($documentPath);
-            }
-
             report($e);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat memperbarui inventaris dan kekayaan desa.',
+                'message' => 'Terjadi kesalahan saat memperbarui Buku Ekspedisi.',
             ], 500);
         }
     }
 
-    public function getDestroy(Request $request, VillageAsset $asset)
+    public function getDestroy(Request $request, ExpeditionEntry $expedition): \Illuminate\Http\JsonResponse
     {
         try {
             $forceDelete = $request->boolean('confirm_delete');
 
             // Data Trash wajib dikonfirmasi.
-            if ($asset->trashed() && !$forceDelete) {
+            if ($expedition->trashed() && ! $forceDelete) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Centang konfirmasi untuk menghapus permanen.',
@@ -322,35 +283,33 @@ class ExpeditionEntryService
                 ], 422);
             }
 
-            $documentPath = $asset->dokumen;
-
-            $deleted = \DB::transaction(function () use ($asset, $forceDelete) {
+            $deleted = \DB::transaction(function () use (
+                $expedition,
+                $forceDelete
+            ) {
                 return $forceDelete
-                    ? $asset->forceDelete()
-                    : $asset->delete();
+                    ? $expedition->forceDelete()
+                    : $expedition->delete();
             });
 
-            if (!$deleted) {
-                throw new \RuntimeException('Data inventaris gagal dihapus.');
-            }
-
-            // Hapus dokumen setelah force delete berhasil.
-            if ($forceDelete && filled($documentPath)) {
-                \Storage::disk('public')->delete($documentPath);
+            if (! $deleted) {
+                throw new \RuntimeException(
+                    'Data Buku Ekspedisi gagal dihapus.'
+                );
             }
 
             return response()->json([
                 'success' => true,
                 'message' => $forceDelete
-                    ? 'Inventaris dan dokumennya berhasil dihapus permanen.'
-                    : 'Inventaris berhasil dipindahkan ke sampah.',
+                    ? 'Buku Ekspedisi berhasil dihapus permanen.'
+                    : 'Buku Ekspedisi berhasil dipindahkan ke sampah.',
             ]);
         } catch (\Throwable $e) {
             report($e);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menghapus inventaris dan kekayaan desa.',
+                'message' => 'Terjadi kesalahan saat menghapus Buku Ekspedisi.',
             ], 500);
         }
     }

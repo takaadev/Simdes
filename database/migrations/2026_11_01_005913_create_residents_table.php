@@ -12,32 +12,34 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('residents', function (Blueprint $table) {
-            $table->id();
+            $table->id();            // Identitas Penduduk
+            $table->string('nama_lengkap', 150);
+            $table->string('jenis_kelamin', 2);
             $table->string('nik', 16)->unique();
-            $table->string('name', 150);
-            $table->string('gender', 2);
-            $table->string('birth_place', 100)->nullable();
-            $table->date('birth_date')->nullable();
-            $table->string('blood_type', 3)->nullable();
-            $table->string('religion', 30)->nullable();
-            $table->string('education', 50)->nullable();
-            $table->string('occupation', 100)->nullable();
-            $table->string('marital_status', 30)->nullable();
-            $table->string('citizenship', 10)->default('WNI');
-            $table->string('nationality', 100)->nullable();
-            $table->string('father_name', 150)->nullable();
-            $table->string('mother_name', 150)->nullable();
+            $table->string('kk', 16);
+            // Data Kelahiran
+            $table->string('tempat_lahir', 100)->nullable();
+            $table->date('tgl_lahir')->nullable();
+            // Data Pribadi
+            $table->string('status_perkawinan', 30)->nullable();
+            $table->string('agama', 30)->nullable();
+            $table->string('pendidikan', 50)->nullable();
+            $table->string('pekerjaan', 100)->nullable();
+            $table->boolean('dapat_membaca')->default(false);
+            // Kewarganegaraan dan Keluarga
+            $table->string('kewarganegaraan', 10)->default('WNI');
+            $table->string('kebangsaan', 100)->default('Indonesia');
+            $table->string('status_dalam_keluarga', 30)->nullable();
+            // Alamat
+            $table->string('rt', 10)->nullable();
+            $table->string('rw', 10)->nullable();
             $table->foreignId('dusun_id')->nullable()->constrained('dusuns')->nullOnDelete();
-            $table->text('address')->nullable();
-            $table->string('rt', 6)->nullable();
-            $table->string('rw', 6)->nullable();
-            $table->string('postal_code', 10)->nullable();
-            $table->date('moved_in_date')->nullable();
-            $table->date('moved_out_date')->nullable();
-            $table->string('resident_status', 30)->default('active');
-            $table->text('notes')->nullable();
+            // Keterangan
+            $table->text('catatan')->nullable();
             $table->timestamps();
             $table->softDeletes();
+            $table->index('kk');
+            $table->index(['dusun_id', 'rt', 'rw']);
         });
     }
 
