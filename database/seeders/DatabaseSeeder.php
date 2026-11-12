@@ -70,12 +70,12 @@ class DatabaseSeeder extends Seeder
         |--------------------------------------------------------------------------
         */
 
-        Dusun::factory(1)->create();
-        Resident::factory(100)->create();
-        FamilyCard::factory(15)->create();
-        FamilyCardMember::factory(30)->create();
-        ResidentMutation::factory(15)->create();
-        TemporaryResident::factory(10)->create();
+
+        Resident::factory(1)->create();
+        // FamilyCard::factory(15)->create();
+        // FamilyCardMember::factory(30)->create();
+        ResidentMutation::factory(50)->create();
+        // TemporaryResident::factory(10)->create();
 
         /*
         |--------------------------------------------------------------------------
@@ -83,13 +83,13 @@ class DatabaseSeeder extends Seeder
         |--------------------------------------------------------------------------
         */
 
-        Recapt::factory(3)
-            ->create()
-            ->each(function (Recapt $recapt) {
-                RecaptDetail::factory(4)->create([
-                    'recapt_id' => $recapt->id,
-                ]);
-            });
+        // Recapt::factory(3)
+        //     ->create()
+        //     ->each(function (Recapt $recapt) {
+        //         RecaptDetail::factory(4)->create([
+        //             'recapt_id' => $recapt->id,
+        //         ]);
+        //     });
 
         /*
         |--------------------------------------------------------------------------

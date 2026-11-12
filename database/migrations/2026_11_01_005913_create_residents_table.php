@@ -27,14 +27,14 @@ return new class extends Migration
             $table->string('kewarganegaraan', 10);
             $table->string('kebangsaan', 100);
             $table->string('status_dalam_keluarga', 30);
-            $table->string('rt', 10);
-            $table->string('rw', 10);
-            $table->foreignId('dusun_id')->constrained('dusuns')->restrictOnDelete();
+            $table->string('rt', 10)->nullable();
+            $table->string('rw', 10)->nullable();
+            $table->string('nomor_rumah', 10)->nullable();
             $table->text('catatan')->nullable();
             $table->timestamps();
             $table->softDeletes();
             $table->index('kk');
-            $table->index(['dusun_id', 'rt', 'rw']);
+            $table->index(['rt', 'rw']);
         });
     }
 

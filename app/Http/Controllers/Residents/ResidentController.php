@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Residents;
 
 use App\Http\Controllers\Concerns\HandlesRestore;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Resident\ImportExcelResidentRequest;
 use App\Http\Requests\Resident\StoreResidentRequest;
 use App\Http\Requests\Resident\UpdateResidentRequest;
 use App\Models\Resident;
@@ -40,5 +41,10 @@ class ResidentController extends Controller
     public function restore(int $id)
     {
         return HandlesRestore::restore(Resident::onlyTrashed()->findOrFail($id));
+    }
+
+    public function importexcel(ImportExcelResidentRequest $request)
+    {
+        return $this->service->getImportExcel($request);
     }
 }

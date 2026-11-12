@@ -27,10 +27,6 @@ class FamilyCard extends Model
         return $this->belongsTo(Resident::class, 'head_of_family_id');
     }
 
-    public function dusun(): BelongsTo
-    {
-        return $this->belongsTo(Dusun::class);
-    }
 
     public function members(): HasMany
     {

@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('family_card_number', 20)->unique();
             $table->foreignId('head_of_family_id')->nullable()->constrained('residents')->nullOnDelete();
-            $table->foreignId('dusun_id')->nullable()->constrained('dusuns')->nullOnDelete();
             $table->text('address');
             $table->string('rt', 5)->nullable();
             $table->string('rw', 5)->nullable();

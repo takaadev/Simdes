@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('recapt_details', function (Blueprint $table) {
             $table->id();
             $table->foreignId('recapt_id')->constrained('recapts')->cascadeOnDelete();
-            $table->foreignId('dusun_id')->nullable()->constrained('dusuns')->nullOnDelete();
             $table->unsignedInteger('total_population')->default(0);
             $table->unsignedInteger('male_count')->default(0);
             $table->unsignedInteger('female_count')->default(0);
@@ -26,7 +25,6 @@ return new class extends Migration
             $table->text('notes')->nullable();
             $table->timestamps();
             $table->index('recapt_id');
-            $table->index('dusun_id');
         });
     }
 

@@ -61,7 +61,7 @@ class Menu extends Component
                 'tooltip' => 'Administrasi Penduduk (5 Buku)',
                 'items' => [
                     ['no' => '1', 'route' => 'residents.index', 'label' => 'Buku Induk Penduduk', 'ready' => true],
-                    ['no' => '2', 'route' => '#', 'label' => 'Buku MPD', 'ready' => true],
+                    ['no' => '2', 'route' => 'mutations.index', 'label' => 'Buku Mutasi Penduduk', 'ready' => true],
                     ['no' => '3', 'route' => '#', 'label' => 'Buku RJP', 'ready' => true],
                     ['no' => '4', 'route' => '#', 'label' => 'Buku PS', 'ready' => true],
                     ['no' => '5', 'route' => '#', 'label' => 'Buku KTP & KK', 'ready' => true],

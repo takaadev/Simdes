@@ -12,8 +12,8 @@ use App\Enums\ReligionList;
 use App\Models\Concerns\RestoresSoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Resident extends Model implements Restorable
@@ -37,11 +37,6 @@ class Resident extends Model implements Restorable
         ];
     }
 
-    public function dusun(): BelongsTo
-    {
-        return $this->belongsTo(Dusun::class);
-    }
-
     public function familyCardsAsHead(): HasMany
     {
         return $this->hasMany(FamilyCard::class, 'head_of_family_id');
@@ -52,9 +47,9 @@ class Resident extends Model implements Restorable
         return $this->hasMany(FamilyCardMember::class);
     }
 
-    public function mutations(): HasMany
+    public function mutation(): HasOne
     {
-        return $this->hasMany(ResidentMutation::class);
+        return $this->hasOne(ResidentMutation::class);
     }
 
     public function activeFamilyCardMemberships(): HasMany

@@ -14,12 +14,10 @@ class DusunFactory extends Factory
 
     public function definition(): array
     {
-        $number = fake()->unique()->numberBetween(1, 9999);
-
         return [
-            'name' => 'TIARO',
-            'code' => 'DSN-' . str_pad($number, 4, '0', STR_PAD_LEFT),
-            'description' => fake()->optional()->sentence(),
+            'nama' => fake()->unique()->word(),
+            'total_rt' => fake()->numberBetween(1, 5),
+            'total_rw' => fake()->numberBetween(1, 3),
             'is_active' => true,
         ];
     }

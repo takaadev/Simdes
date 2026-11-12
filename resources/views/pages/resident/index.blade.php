@@ -1,4 +1,3 @@
-
 <x-appcontent>
     @include('pages.resident.comp.widgets')
     @include('pages.resident.comp.filter')
@@ -19,9 +18,9 @@
             <th>Kewarganegaraan</th>
             <th>Kebangsaan</th>
             <th>Status dalam Keluarga</th>
-            <th>Dusun</th>
             <th>RT</th>
             <th>RW</th>
+            <th>NO. RUMAH</th>
             <th>Catatan</th>
             <th>Aksi</th>
         </tr>
@@ -170,12 +169,6 @@
                             name: 'status_dalam_keluarga'
                         },
 
-                        // 16. Dusun
-                        {
-                            data: 'dusun',
-                            name: 'dusun.nama_dusun',
-                            orderable: false
-                        },
 
                         // 17. RT
                         {
@@ -191,6 +184,12 @@
                             className: 'text-center'
                         },
 
+                        // 16. Dusun
+                        {
+                            data: 'nomor_rumah',
+                            name: 'nomor_rumah',
+                            orderable: false
+                        },
                         // 19. Catatan
                         {
                             data: 'catatan',

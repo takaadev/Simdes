@@ -4,28 +4,27 @@ namespace App\Enums;
 
 enum MutationTypeList: string
 {
-    case BIRTH = 'birth';
-    case DEATH = 'death';
-    case INCOMING = 'incoming';
-    case OUTGOING = 'outgoing';
+    case ADD = 'add';
+    case MINUS = 'minus';
 
     public function label(): string
     {
         return match ($this) {
-            self::BIRTH => 'Kelahiran',
-            self::DEATH => 'Kematian',
-            self::INCOMING => 'Penduduk Masuk',
-            self::OUTGOING => 'Penduduk Keluar',
+            self::ADD => 'Penambahan',
+            self::MINUS => 'Pengurangan',
         };
     }
 
     public static function options(): array
     {
         return array_column(
-            array_map(fn(self $item) => [
-                'value' => $item->value,
-                'label' => $item->label(),
-            ], self::cases()),
+            array_map(
+                fn(self $item) => [
+                    'value' => $item->value,
+                    'label' => $item->label(),
+                ],
+                self::cases()
+            ),
             'label',
             'value'
         );

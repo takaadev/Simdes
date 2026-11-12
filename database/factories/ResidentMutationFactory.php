@@ -2,9 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Enums\MutationCategoryList;
 use App\Enums\MutationTypeList;
-use App\Models\Dusun;
-use App\Models\Resident;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -15,31 +14,42 @@ class ResidentMutationFactory extends Factory
 {
     public function definition(): array
     {
+        $kategori = fake()->randomElement(MutationCategoryList::cases());
+
+        $tipe = match ($kategori) {
+            MutationCategoryList::BIRTH,
+            MutationCategoryList::INCOMING => MutationTypeList::ADD,
+
+            MutationCategoryList::DEATH,
+            MutationCategoryList::OUTGOING => MutationTypeList::MINUS,
+        };
+
         return [
             // Identitas Penduduk
-            'resident_id' => Resident::factory(),
+            'nama_lengkap' => fake()->name(),
+            'tempat_lahir' => fake()->city(),
+            'tgl_lahir' => fake()->dateTimeBetween('-80 years', '-1 year')->format('Y-m-d'),
+            'jenis_kelamin' => fake()->randomElement(['L', 'P']),
+            'kewarganegaraan' => 'WNI',
+            'kebangsaan' => 'Indonesia',
 
-            // Informasi Pencatatan
-            'mutation_number' => fake()->unique()->numerify('MUT-########'),
-            'mutation_type' => fake()->randomElement(
-                array_column(MutationTypeList::cases(), 'value')
-            ),
-            'mutation_date' => fake()->date(),
+            // Informasi Mutasi
+            'tipe_mutasi' => $tipe->value,
+            'kategori_mutasi' => $kategori->value,
+            'tgl_mutasi' => fake()->dateTimeBetween('-5 years', 'now')->format('Y-m-d'),
 
-            // Alamat Asal
-            'origin_address' => fake()->optional()->address(),
-            'origin_dusun_id' => Dusun::factory(),
+            // Tujuan Mutasi
+            'tujuan_mutasi' => match ($kategori) {
+                MutationCategoryList::INCOMING => 'Dari ' . fake()->city(),
+                MutationCategoryList::OUTGOING => 'Ke ' . fake()->city(),
+                default => null,
+            },
 
-            // Alamat Tujuan
-            'destination_address' => fake()->optional()->address(),
-            'destination_dusun_id' => Dusun::factory(),
+            // Keterangan
+            'catatan' => fake()->optional()->sentence(),
 
-            // Keterangan Mutasi
-            'reason' => fake()->optional()->sentence(),
-            'document_number' => fake()->optional()->numerify('DOC-########'),
-            'notes' => fake()->optional()->sentence(),
-
-            // Petugas Pencatat
+            // Relasi
+            'resident_id' => null,
             'recorded_by' => User::factory(),
         ];
     }
@@ -47,32 +57,36 @@ class ResidentMutationFactory extends Factory
     public function incoming(): static
     {
         return $this->state(fn() => [
-            'mutation_type' => 'incoming',
+            'tipe_mutasi' => MutationTypeList::ADD->value,
+            'kategori_mutasi' => MutationCategoryList::INCOMING->value,
+            'tujuan_mutasi' => 'Dari ' . fake()->city(),
         ]);
     }
 
     public function outgoing(): static
     {
         return $this->state(fn() => [
-            'mutation_type' => 'outgoing',
+            'tipe_mutasi' => MutationTypeList::MINUS->value,
+            'kategori_mutasi' => MutationCategoryList::OUTGOING->value,
+            'tujuan_mutasi' => 'Ke ' . fake()->city(),
         ]);
     }
 
     public function birth(): static
     {
         return $this->state(fn() => [
-            'mutation_type' => 'birth',
-            'origin_address' => null,
-            'origin_dusun_id' => null,
+            'tipe_mutasi' => MutationTypeList::ADD->value,
+            'kategori_mutasi' => MutationCategoryList::BIRTH->value,
+            'tujuan_mutasi' => null,
         ]);
     }
 
     public function death(): static
     {
         return $this->state(fn() => [
-            'mutation_type' => 'death',
-            'destination_address' => null,
-            'destination_dusun_id' => null,
+            'tipe_mutasi' => MutationTypeList::MINUS->value,
+            'kategori_mutasi' => MutationCategoryList::DEATH->value,
+            'tujuan_mutasi' => null,
         ]);
     }
 }

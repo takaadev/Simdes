@@ -78,6 +78,7 @@
                 <x-input-select name="dapat_membaca" label="Dapat Membaca?" :options="['1' => 'Ya', '0' => 'Tidak']"
                     placeholder="Pilih Status Membaca" required />
             </div>
+
         </div>
     </x-fieldset>
 
@@ -86,15 +87,16 @@
         <div class="row g-3">
 
             <div class="col-12 col-md-4">
-                <x-input-select name="dusun_id" label="Dusun" :options="\App\Models\Dusun::query()->orderBy('name')->pluck('name', 'id')->toArray()" placeholder="Pilih Dusun" required />
+                <x-input-select name="rt" label="RT" :options="\App\Enums\RtList::options()" placeholder="Pilih RT" />
             </div>
 
             <div class="col-12 col-md-4">
-                <x-input-select name="rt" label="RT" :options="\App\Enums\RtList::options()" placeholder="Pilih RT" required />
+                <x-input-select name="rw" label="RW" :options="\App\Enums\RwList::options()" placeholder="Pilih RW" />
             </div>
 
             <div class="col-12 col-md-4">
-                <x-input-select name="rw" label="RW" :options="\App\Enums\RwList::options()" placeholder="Pilih RW" required />
+                <x-input-text name="nomor_rumah" label="Nomor Rumah" placeholder="Contoh: 001 atau A12"
+                    maxlength="10" />
             </div>
 
         </div>

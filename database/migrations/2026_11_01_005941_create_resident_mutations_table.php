@@ -13,21 +13,23 @@ return new class extends Migration
     {
         Schema::create('resident_mutations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('resident_id')->nullable()->constrained('residents')->nullOnDelete();
-            $table->string('mutation_number', 50)->nullable();
-            $table->string('mutation_type', 30);
-            $table->date('mutation_date');
-            $table->text('origin_address')->nullable();
-            $table->foreignId('origin_dusun_id')->nullable()->constrained('dusuns')->nullOnDelete();
-            $table->text('destination_address')->nullable();
-            $table->foreignId('destination_dusun_id')->nullable()->constrained('dusuns')->nullOnDelete();
-            $table->text('reason')->nullable();
-            $table->string('document_number', 100)->nullable();
-            $table->text('notes')->nullable();
+            $table->string('nama_lengkap', 150);
+            $table->string('tempat_lahir', 100);
+            $table->date('tgl_lahir');
+            $table->string('jenis_kelamin', 2);
+            $table->string('kewarganegaraan', 10);
+            $table->string('kebangsaan', 100);
+            $table->string('tipe_mutasi', 5);
+            $table->string('kategori_mutasi', 15);
+            $table->date('tgl_mutasi');
+            $table->string('tujuan_mutasi')->nullable();
+            $table->text('catatan')->nullable();
+            $table->foreignId('resident_id')->nullable()->unique()->constrained('residents')->nullOnDelete();
             $table->foreignId('recorded_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
-            $table->index(['mutation_type', 'mutation_date']);
-            $table->index('mutation_number');
+            $table->softDeletes();
+            $table->index(['tipe_mutasi', 'tgl_mutasi']);
+            $table->index('kategori_mutasi');
         });
     }
 

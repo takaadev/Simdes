@@ -2,8 +2,12 @@
 
 namespace App\Services;
 
+use App\Http\Requests\Resident\ImportExcelResidentRequest;
+use App\Imports\ResidentImport;
 use App\Models\Resident;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
 class ResidentService
@@ -83,15 +87,6 @@ class ResidentService
                 )
             );
 
-            // Filter dusun.
-            $query->when(
-                $request->filled('dusun_id')
-                    && $request->input('dusun_id') !== 'all',
-                fn($query) => $query->where(
-                    'dusun_id',
-                    $request->input('dusun_id')
-                )
-            );
 
             // Filter tahun lahir.
             $query->when(
@@ -115,7 +110,6 @@ class ResidentService
         // Query utama penduduk.
         $query = $applyFilters(
             Resident::query()
-                ->with('dusun')
                 ->select([
                     'id',
                     'nama_lengkap',
@@ -134,7 +128,7 @@ class ResidentService
                     'kk',
                     'rt',
                     'rw',
-                    'dusun_id',
+                    'nomor_rumah',
                     'catatan',
                     'created_at',
                     'updated_at',
@@ -253,8 +247,8 @@ class ResidentService
             )
 
             ->addColumn(
-                'dusun',
-                fn($row) => $row->dusun?->name ?? '-'
+                'nomor_rumah',
+                fn($row) => $row->nomor_rumah ?? '-'
             )
 
             ->editColumn(
@@ -396,6 +390,61 @@ class ResidentService
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan saat menghapus data penduduk.',
+            ], 500);
+        }
+    }
+
+    public function getImportExcel(ImportExcelResidentRequest $request): \Illuminate\Http\JsonResponse
+    {
+        try {
+            $import = new ResidentImport();
+            Excel::import($import, $request->file('file'));
+            $errors = $import->getErrors();
+            // Batalkan seluruh proses jika ditemukan kesalahan validasi.
+            if (!empty($errors)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Import dibatalkan. Terdapat ' . count($errors) . ' kesalahan pada data Excel.',
+                    'total_errors' => count($errors),
+                    'errors' => $errors,
+                ], 422);
+            }
+
+            $rows = $import->getValidRows();
+
+            // Pastikan terdapat data yang dapat diimport.
+            if (empty($rows)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tidak ada data penduduk yang dapat diimport.',
+                ], 422);
+            }
+
+            // Simpan seluruh data dalam satu transaksi.
+            DB::transaction(function () use ($rows) {
+                foreach ($rows as $row) {
+                    Resident::forceCreate($row);
+                }
+            });
+
+            return response()->json([
+                'success' => true,
+                'message' => count($rows) . ' data penduduk berhasil diimport.',
+                'total_imported' => count($rows),
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+
+            logger()->error('Import Excel Penduduk Gagal', [
+                'exception' => get_class($e),
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Import gagal. Tidak ada data yang berhasil disimpan.',
             ], 500);
         }
     }

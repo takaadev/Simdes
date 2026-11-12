@@ -121,18 +121,18 @@ class UpdateResidentRequest extends FormRequest
             ],
 
             // C. Alamat Tempat Tinggal
-            'dusun_id' => [
-                'required',
-                'integer',
-                'exists:dusuns,id',
-            ],
             'rt' => [
-                'required',
+                'nullable',
                 Rule::enum(RtList::class),
             ],
             'rw' => [
-                'required',
+                'nullable',
                 Rule::enum(RwList::class),
+            ],
+            'nomor_rumah' => [
+                'nullable',
+                'string',
+                'max:10',
             ],
 
             // D. Keterangan
@@ -200,15 +200,11 @@ class UpdateResidentRequest extends FormRequest
             'status_dalam_keluarga.enum' => 'Pilihan :attribute tidak valid.',
 
             // C. Alamat Tempat Tinggal
-            'dusun_id.required' => ':attribute wajib dipilih.',
-            'dusun_id.integer' => 'Pilihan :attribute tidak valid.',
-            'dusun_id.exists' => 'Dusun yang dipilih tidak ditemukan.',
-
-            'rt.required' => ':attribute wajib dipilih.',
             'rt.enum' => 'Pilihan :attribute tidak valid.',
-
-            'rw.required' => ':attribute wajib dipilih.',
             'rw.enum' => 'Pilihan :attribute tidak valid.',
+
+            'nomor_rumah.string' => ':attribute harus berupa teks.',
+            'nomor_rumah.max' => ':attribute maksimal :max karakter.',
 
             // D. Keterangan
             'catatan.string' => ':attribute harus berupa teks.',
@@ -240,9 +236,9 @@ class UpdateResidentRequest extends FormRequest
             'status_dalam_keluarga' => 'status dalam keluarga',
 
             // C. Alamat Tempat Tinggal
-            'dusun_id' => 'dusun',
             'rt' => 'RT',
             'rw' => 'RW',
+            'nomor_rumah' => 'nomor rumah',
 
             // D. Keterangan
             'catatan' => 'catatan',

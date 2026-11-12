@@ -52,9 +52,6 @@ class ResidentFactory extends Factory
             ),
             'kebangsaan' => 'Indonesia',
             'status_dalam_keluarga' => 'Anak',
-
-            // C. Alamat Tempat Tinggal
-            'dusun_id' => 1,
             'rt' => fake()->randomElement(
                 array_column(RtList::cases(), 'value')
             ),
