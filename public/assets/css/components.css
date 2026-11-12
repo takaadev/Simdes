@@ -16,7 +16,7 @@
   font-weight: 500;
   font-size: 0.875rem;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--simdes-primary); 
+  border: 1px solid var(--simdes-primary);
   background-color: var(--simdes-primary);
   color: #FFFFFF;
   box-shadow: 0 2px 6px rgba(23, 76, 58, 0.18);
@@ -596,22 +596,34 @@
    FORM FIELD
 ========================================= */
 
+/* =========================================
+   FIELD
+========================================= */
+
 .simdes-field {
-    margin-block-end: 0.85rem;
+    margin-block-end: 0.75rem;
 }
+
+/* =========================================
+   LABEL
+========================================= */
 
 .simdes-label {
     display: inline-block;
-    margin-block-end: 0.3rem;
-    font-size: 0.8rem;
+    margin-block-end: 0.25rem;
+    font-size: 0.75rem;
     font-weight: 600;
     color: var(--simdes-text);
 }
 
+/* =========================================
+   FIELD HINT
+========================================= */
+
 .simdes-field-hint {
     display: block;
-    margin-block-end: 0.3rem;
-    font-size: 0.75rem;
+    margin-block-end: 0.25rem;
+    font-size: 0.7rem;
     color: var(--simdes-text-muted);
 }
 
@@ -627,44 +639,65 @@
 
 .simdes-input-icon {
     position: absolute;
-    inset-inline-start: 0.75rem;
-    font-size: 0.85rem;
+    inset-inline-start: 0.65rem;
+    font-size: 0.7rem;
     color: var(--simdes-text-light);
     pointer-events: none;
     transition: color var(--transition-fast);
 }
 
 /* =========================================
-   INPUT
+   INPUT - SMALL (Bootstrap form-control-sm)
 ========================================= */
 
 .simdes-input {
+    display: block;
     inline-size: 100%;
-    min-block-size: 40px;
-    padding: 0.5rem 0.75rem;
-    font-size: 1rem;
+    min-block-size: calc(1.5em + 0.5rem + 2px);
+
+    padding: 0.25rem 0.5rem;
+
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.5;
     font-family: var(--font-sans);
+
     color: var(--simdes-text);
     background-color: var(--simdes-surface);
+
     border: 1px solid var(--simdes-border);
     border-radius: var(--radius-sm);
+
     transition:
         border-color var(--transition-fast),
         box-shadow var(--transition-fast),
         background-color var(--transition-fast);
 }
 
+/* =========================================
+   INPUT WITH ICON / BUTTON
+========================================= */
+
 .simdes-input.has-start-icon {
-    padding-inline-start: 2.35rem;
+    padding-inline-start: 2.1rem;
 }
 
 .simdes-input.has-end-btn {
-    padding-inline-end: 2.75rem;
+    padding-inline-end: 2.5rem;
 }
+
+/* =========================================
+   PLACEHOLDER
+========================================= */
 
 .simdes-input::placeholder {
     color: #93A39B;
+    opacity: 1;
 }
+
+/* =========================================
+   FOCUS
+========================================= */
 
 .simdes-input:focus {
     outline: none;
@@ -675,6 +708,36 @@
 .simdes-input-wrap:focus-within .simdes-input-icon {
     color: var(--simdes-primary);
 }
+
+/* =========================================
+   DISABLED / READONLY
+========================================= */
+
+.simdes-input:disabled,
+.simdes-input[readonly] {
+    background-color: var(--simdes-bg);
+    opacity: 0.75;
+    cursor: not-allowed;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 575.98px) {
+    .simdes-field {
+        margin-block-end: 0.65rem;
+    }
+
+    .simdes-label {
+        font-size: 0.75rem;
+    }
+
+    .simdes-field-hint {
+        font-size: 0.7rem;
+    }
+}
+
 
 /* =========================================
    PASSWORD SHOW / HIDE
@@ -715,6 +778,58 @@
     cursor: pointer;
 }
 
+
+/* =========================================
+   PASSWORD SHOW / HIDE
+========================================= */
+
+.password-toggle-btn {
+    position: absolute;
+    inset-inline-end: 0.25rem;
+
+    inline-size: 30px;
+    block-size: 30px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    font-size: 0.8rem;
+
+    border: 0;
+    border-radius: var(--radius-xs);
+
+    background: transparent;
+    color: var(--simdes-text-muted);
+
+    cursor: pointer;
+
+    transition:
+        color var(--transition-fast),
+        background-color var(--transition-fast);
+}
+
+.password-toggle-btn:hover {
+    color: var(--simdes-primary);
+    background-color: var(--simdes-bg);
+}
+
+/* =========================================
+   CHECKBOX
+========================================= */
+
+.simdes-checkbox {
+    inline-size: 0.875rem;
+    block-size: 0.875rem;
+
+    flex-shrink: 0;
+
+    accent-color: var(--simdes-primary);
+    cursor: pointer;
+}
+
 /* =========================================
    VALIDATION STATES
 ========================================= */
@@ -738,10 +853,14 @@
 .field-error-msg {
     display: none;
     align-items: center;
-    gap: 0.35rem;
-    margin-block-start: 0.3rem;
-    font-size: 0.75rem;
+
+    gap: 0.3rem;
+    margin-block-start: 0.25rem;
+
+    font-size: 0.7rem;
+    line-height: 1.4;
     font-weight: 500;
+
     color: var(--simdes-danger);
 }
 
@@ -750,29 +869,80 @@
 .simdes-field.has-error .field-error-msg {
     display: flex;
 }
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 575.98px) {
+    .password-toggle-btn {
+        inline-size: 28px;
+        block-size: 28px;
+        font-size: 0.75rem;
+    }
+
+    .simdes-checkbox {
+        inline-size: 0.875rem;
+        block-size: 0.875rem;
+    }
+
+    .field-error-msg {
+        font-size: 0.7rem;
+    }
+}
+
 /* Modals & Toasts */
+
 .simdes-modal .modal-content {
-  border: 1px solid var(--simdes-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
-  overflow: clip;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-height: 100%;
+    border: 1px solid var(--simdes-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+}
+
+.simdes-modal .modal-content > form {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
 }
 
 .simdes-modal .modal-header {
-  background-color: var(--simdes-bg);
-  border-block-end: 1px solid var(--simdes-border);
-  padding: 1.1rem 1.35rem;
+    flex-shrink: 0;
+    background-color: var(--simdes-bg);
+    border-block-end: 1px solid var(--simdes-border);
+    padding: 1.1rem 1.35rem;
+}
+
+.simdes-modal .modal-footer {
+    flex-shrink: 0;
+    background-color: var(--simdes-bg);
+    border-block-end: 1px solid var(--simdes-border);
+    padding: 1.1rem 1.35rem;
 }
 
 .simdes-modal .modal-title {
-  font-size: 1.02rem;
-  font-weight: 700;
-  color: var(--simdes-deep-green);
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: var(--simdes-deep-green);
 }
 
-.simdes-modal .modal-body{
-  max-height: 85vh;
+.simdes-modal .modal-body {
+    flex: 1 1 0%;
+    height: 0;
+    min-height: 0;
+    max-height: none;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
+
+
 .simdes-toast-container {
   position: fixed;
   inset-block-end: 1.25rem;
@@ -862,107 +1032,62 @@
   font-size: 0.8125rem;
 }
 
-/* Ledger Filter & Search Toolbar */
-/* .ledger-toolbar {
-  padding: 1.05rem 1.35rem;
-  border-block-end: 1px solid var(--simdes-border);
-  background-color: #FAFBF9;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.85rem;
-}
-
-.ledger-search-wrap {
-  position: relative;
-  flex: 1 1 280px;
-  max-inline-size: 500px;
-}
-
-.ledger-search-input {
-  inline-size: 100%;
-  min-block-size: 42px;
-  padding-inline: 2.45rem 2.35rem;
-  border-radius: var(--radius-sm);
-  border: 1.5px solid var(--simdes-border);
-  background-color: var(--simdes-surface);
-  color: var(--simdes-text);
-  font-size: 0.875rem;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-}
-
-.ledger-search-input:focus {
-  outline: none;
-  border-color: var(--simdes-primary);
-  box-shadow: 0 0 0 3px rgba(23, 76, 58, 0.1);
-}
-
-.ledger-search-icon {
-  position: absolute;
-  inset-inline-start: 0.9rem;
-  inset-block-start: 50%;
-  transform: translateY(-50%);
-  color: var(--simdes-text-light);
-  font-size: 0.86rem;
-  pointer-events: none;
-}
-
-.ledger-search-clear {
-  position: absolute;
-  inset-inline-end: 0.4rem;
-  inset-block-start: 50%;
-  transform: translateY(-50%);
-  inline-size: 30px;
-  block-size: 30px;
-  border: 0;
-  border-radius: var(--radius-xs);
-  background: transparent;
-  color: var(--simdes-text-muted);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-
-.ledger-search-clear.visible {
-  display: inline-flex;
-}
-
-.ledger-search-clear:hover {
-  background-color: var(--simdes-bg);
-  color: var(--simdes-danger);
-}
-
-.ledger-filters-group {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.6rem;
-} */
+/* =========================================
+   SELECT - SMALL (Bootstrap form-select-sm)
+========================================= */
 
 .simdes-select {
+    display: block;
     inline-size: 100%;
-    min-block-size: 40px;
-    padding: 0.5rem 2rem 0.5rem 0.75rem;
-    font-size: 0.8rem;
-    font-weight: 500;
+    min-block-size: calc(1.5em + 0.5rem + 2px);
+
+    padding: 0.25rem 2rem 0.25rem 0.5rem;
+
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.5;
     font-family: var(--font-sans);
+
     color: var(--simdes-text);
     background-color: var(--simdes-surface);
+
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23477568' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3E%3C/svg%3E");
+
     background-repeat: no-repeat;
-    background-position: right 0.75rem center;
-    background-size: 12px 12px;
+    background-position: right 0.65rem center;
+    background-size: 11px 11px;
+
     appearance: none;
+
     border: 1px solid var(--simdes-border);
     border-radius: var(--radius-sm);
+
     cursor: pointer;
+
     transition:
         border-color var(--transition-fast),
         box-shadow var(--transition-fast),
         background-color var(--transition-fast);
 }
+
+/* =========================================
+   SELECT INSIDE FIELD
+========================================= */
+
+.simdes-field .simdes-select {
+    inline-size: 100%;
+    min-block-size: calc(1.5em + 0.5rem + 2px);
+
+    padding: 0.25rem 2rem 0.25rem 0.5rem;
+
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.5;
+}
+
+/* =========================================
+   FOCUS
+========================================= */
 
 .simdes-select:focus {
     outline: none;
@@ -970,13 +1095,9 @@
     box-shadow: 0 0 0 3px rgba(23, 76, 58, 0.1);
 }
 
-/* Samakan ukuran select di dalam field */
-.simdes-field .simdes-select {
-    inline-size: 100%;
-    min-block-size: 40px;
-    padding: 0.5rem 2rem 0.5rem 0.75rem;
-    font-size: 1rem;
-}
+/* =========================================
+   VALIDATION STATES
+========================================= */
 
 .simdes-select:user-invalid,
 .simdes-select.user-invalid-fallback,
@@ -985,10 +1106,31 @@
     background-color: #FFF9F9;
 }
 
+.simdes-select:user-valid,
+.simdes-select.user-valid-fallback {
+    border-color: rgba(30, 111, 80, 0.55);
+}
+
+/* =========================================
+   ERROR MESSAGE
+========================================= */
+
 .simdes-field:has(.simdes-select:user-invalid) .field-error-msg,
-.simdes-field:has(.simdes-select.user-invalid-fallback) .field-error-msg {
+.simdes-field:has(.simdes-select.user-invalid-fallback) .field-error-msg,
+.simdes-field:has(.simdes-select.is-invalid-field) .field-error-msg {
     display: flex;
 }
+
+/* =========================================
+   DISABLED
+========================================= */
+
+.simdes-select:disabled {
+    background-color: var(--simdes-bg);
+    opacity: 0.75;
+    cursor: not-allowed;
+}
+
 /* Accessible Scrollable Table Container */
 .simdes-table-wrapper {
   inline-size: 100%;
@@ -1843,7 +1985,7 @@
   background-color: #F2F5F2;
   border-color: var(--simdes-border);
   color: var(--simdes-deep-green);
-  font-weight: 700;
+  font-weight: 500;
   font-variant-numeric: tabular-nums;
   cursor: default;
 }

@@ -28,7 +28,7 @@
                 <button
                     type="button"
                     id="{{ $toggleId }}"
-                    class="btn-simdes-outline"
+                    class="btn-simdes-outline btn-sm"
                     data-ledger-filter-toggle
                     aria-expanded="false"
                     aria-controls="{{ $filterId }}"

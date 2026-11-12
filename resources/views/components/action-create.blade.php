@@ -51,7 +51,7 @@
                         {{ $slot }}
                     </div>
 
-                    <div class="modal-footer bg-light border-top px-4 py-1"
+                    <div class="modal-footer bg-light border-top py-1"
                         style="border-color:var(--simdes-border) !important;">
 
                         <button type="button" class="btn-simdes-outline" data-bs-dismiss="modal">
@@ -64,7 +64,6 @@
                         </button>
                     </div>
                 </form>
-
             </div>
         </div>
     </div>

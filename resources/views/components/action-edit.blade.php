@@ -43,21 +43,6 @@
     >
         <div class="modal-dialog {{ $modalSize }} modal-dialog-scrollable">
             <div class="modal-content">
-
-                <div class="modal-header">
-                    <h2 class="modal-title" id="{{ $titleId }}">
-                        <i class="fa-solid fa-{{ $icon }} text-simdes-primary me-2" aria-hidden="true"></i>
-                        {{ $modalTitle }}
-                    </h2>
-
-                    <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Tutup"
-                    ></button>
-                </div>
-
                 <form
                     id="{{ $formId }}"
                     action="{{ $href }}"
@@ -71,6 +56,22 @@
                 >
                     @csrf
                     @method('PUT')
+
+                    <div class="modal-header">
+                        <h2 class="modal-title" id="{{ $titleId }}">
+                            <i class="fa-solid fa-{{ $icon }} text-simdes-primary me-2" aria-hidden="true"></i>
+                            {{ $modalTitle }}
+                        </h2>
+
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Tutup"
+                        ></button>
+                    </div>
+
+
 
                     <div class="modal-body p-4">
                         {{ $slot }}

@@ -4,10 +4,10 @@ namespace App\Enums;
 
 enum MaritalStatusList: string
 {
-    case MARRIED = 'menikah';
-    case UNMARRIED = 'belum menikah';
-    case DIVORCED = 'cerai hidup';
-    case WIDOWED = 'cerai mati';
+    case MARRIED = 'Menikah';
+    case UNMARRIED = 'Belum menikah';
+    case DIVORCED = 'Cerai hidup';
+    case WIDOWED = 'Cerai mati';
 
     public function label(): string
     {
