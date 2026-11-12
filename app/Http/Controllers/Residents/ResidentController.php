@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers\Residents;
 
+use App\Http\Controllers\Concerns\HandlesRestore;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Resident\StoreResidentRequest;
+use App\Http\Requests\Resident\UpdateResidentRequest;
 use App\Models\Resident;
 use App\Services\ResidentService;
 use Illuminate\Http\Request;
@@ -19,51 +22,23 @@ class ResidentController extends Controller
         return $this->service->getData($request);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function store(StoreResidentRequest $request): \Illuminate\Http\JsonResponse
     {
-        //
+        return $this->service->getStore($request->validated());
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function update(UpdateResidentRequest $request, Resident $resident): \Illuminate\Http\JsonResponse
     {
-        //
+        return $this->service->getUpdate($resident, $request->validated());
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Resident $resident)
+    public function destroy(Request $request, Resident $resident)
     {
-        //
+        return $this->service->getDestroy($request, $resident);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Resident $resident)
+    public function restore(int $id)
     {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Resident $resident)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Resident $resident)
-    {
-        //
+        return HandlesRestore::restore(Resident::onlyTrashed()->findOrFail($id));
     }
 }

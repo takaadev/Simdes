@@ -12,29 +12,24 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('residents', function (Blueprint $table) {
-            $table->id();            // Identitas Penduduk
+            $table->id();
             $table->string('nama_lengkap', 150);
             $table->string('jenis_kelamin', 2);
             $table->string('nik', 16)->unique();
             $table->string('kk', 16);
-            // Data Kelahiran
-            $table->string('tempat_lahir', 100)->nullable();
-            $table->date('tgl_lahir')->nullable();
-            // Data Pribadi
-            $table->string('status_perkawinan', 30)->nullable();
-            $table->string('agama', 30)->nullable();
-            $table->string('pendidikan', 50)->nullable();
-            $table->string('pekerjaan', 100)->nullable();
+            $table->string('tempat_lahir', 100);
+            $table->date('tgl_lahir');
+            $table->string('status_perkawinan', 30);
+            $table->string('agama', 30);
+            $table->string('pendidikan', 50);
+            $table->string('pekerjaan', 100);
             $table->boolean('dapat_membaca')->default(false);
-            // Kewarganegaraan dan Keluarga
-            $table->string('kewarganegaraan', 10)->default('WNI');
-            $table->string('kebangsaan', 100)->default('Indonesia');
-            $table->string('status_dalam_keluarga', 30)->nullable();
-            // Alamat
-            $table->string('rt', 10)->nullable();
-            $table->string('rw', 10)->nullable();
-            $table->foreignId('dusun_id')->nullable()->constrained('dusuns')->nullOnDelete();
-            // Keterangan
+            $table->string('kewarganegaraan', 10);
+            $table->string('kebangsaan', 100);
+            $table->string('status_dalam_keluarga', 30);
+            $table->string('rt', 10);
+            $table->string('rw', 10);
+            $table->foreignId('dusun_id')->constrained('dusuns')->restrictOnDelete();
             $table->text('catatan')->nullable();
             $table->timestamps();
             $table->softDeletes();

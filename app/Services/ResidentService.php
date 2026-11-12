@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Resident;
-use App\Models\VillageOfficial;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -143,7 +142,14 @@ class ResidentService
                 ])
         );
 
-        $query->latest('created_at');
+        $query->when(
+            in_array($request->input('sort_name'), ['asc', 'desc'], true),
+            fn($query) => $query->orderBy(
+                'nama_lengkap',
+                $request->input('sort_name')
+            ),
+            fn($query) => $query->latest('created_at')
+        );
 
         // Query statistik penduduk.
         $summary = $applyFilters(
@@ -300,60 +306,56 @@ class ResidentService
     public function getStore(array $data): \Illuminate\Http\JsonResponse
     {
         try {
-            $villageOfficial = \DB::transaction(function () use ($data) {
+            $resident = \DB::transaction(function () use ($data) {
                 $data['created_by'] = auth()->id();
 
-                return VillageOfficial::create($data);
+                return Resident::create($data);
             });
 
             return response()->json([
                 'success' => true,
-                'message' => 'Data aparat desa berhasil ditambahkan.',
-                'data' => $villageOfficial,
+                'message' => 'Data penduduk berhasil ditambahkan.',
+                'data' => $resident,
             ], 201);
         } catch (\Throwable $e) {
-            \Log::error('Gagal menambahkan data aparat desa.', [
+            \Log::error('Gagal menambahkan data penduduk.', [
                 'error' => $e->getMessage(),
             ]);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Data aparat desa gagal ditambahkan.',
+                'message' => 'Data penduduk gagal ditambahkan.',
             ], 500);
         }
     }
 
-    public function getUpdate(VillageOfficial $villageOfficial, array $data): \Illuminate\Http\JsonResponse
+    public function getUpdate(Resident $resident, array $data): \Illuminate\Http\JsonResponse
     {
         try {
-            \DB::transaction(function () use ($villageOfficial, $data) {
-                $villageOfficial->update($data);
+            \DB::transaction(function () use ($resident, $data) {
+                $resident->update($data);
             });
-
             return response()->json([
                 'success' => true,
-                'message' => 'Data aparat desa berhasil diperbarui.',
+                'message' => 'Data penduduk berhasil diperbarui.',
             ]);
         } catch (\Throwable $e) {
-            \Log::error('Gagal memperbarui data aparat desa.', [
-                'village_official_id' => $villageOfficial->id,
+            \Log::error('Gagal memperbarui data penduduk.', [
+                'resident_id' => $resident->id,
                 'error' => $e->getMessage(),
             ]);
-
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat memperbarui data aparat desa.',
+                'message' => 'Terjadi kesalahan saat memperbarui data penduduk.',
             ], 500);
         }
     }
 
-    public function getDestroy(Request $request, VillageOfficial $villageOfficial): \Illuminate\Http\JsonResponse
+    public function getDestroy(Request $request, Resident $resident): \Illuminate\Http\JsonResponse
     {
         try {
             $forceDelete = $request->boolean('confirm_delete');
-
-            // Data Trash wajib dikonfirmasi.
-            if ($villageOfficial->trashed() && !$forceDelete) {
+            if ($resident->trashed() && !$forceDelete) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Centang konfirmasi untuk menghapus permanen.',
@@ -366,30 +368,34 @@ class ResidentService
             }
 
             $deleted = \DB::transaction(function () use (
-                $villageOfficial,
+                $resident,
                 $forceDelete
             ) {
                 return $forceDelete
-                    ? $villageOfficial->forceDelete()
-                    : $villageOfficial->delete();
+                    ? $resident->forceDelete()
+                    : $resident->delete();
             });
 
             if (!$deleted) {
-                throw new \RuntimeException('Data aparat desa gagal dihapus.');
+                throw new \RuntimeException('Data penduduk gagal dihapus.');
             }
 
             return response()->json([
                 'success' => true,
                 'message' => $forceDelete
-                    ? 'Data aparat desa berhasil dihapus permanen.'
-                    : 'Data aparat desa berhasil dipindahkan ke sampah.',
+                    ? 'Data penduduk berhasil dihapus permanen.'
+                    : 'Data penduduk berhasil dipindahkan ke sampah.',
             ]);
         } catch (\Throwable $e) {
-            report($e);
+            \Log::error('Gagal menghapus data penduduk.', [
+                'resident_id' => $resident->id,
+                'force_delete' => $forceDelete ?? false,
+                'error' => $e->getMessage(),
+            ]);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menghapus data aparat desa.',
+                'message' => 'Terjadi kesalahan saat menghapus data penduduk.',
             ], 500);
         }
     }

@@ -9,7 +9,10 @@ enum CitizenshipList: string
 
     public function label(): string
     {
-        return $this->value;
+        return match ($this) {
+            self::WNI => 'Warga Negara Indonesia (WNI)',
+            self::WNA => 'Warga Negara Asing (WNA)',
+        };
     }
 
     public static function options(): array

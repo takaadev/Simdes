@@ -1,228 +1,125 @@
-<x-action-edit
-    :id="$data->id"
-    href="{{ route('village-officials.update', $data->id) }}"
-    size="xl"
->
-    <x-fieldset label="A. Identitas Aparat">
+<x-action-edit :id="$data->id" href="{{ route('residents.update', $data->id) }}" size="xl">
+
+    {{-- A. Identitas Penduduk --}}
+    <x-fieldset label="A. Identitas Penduduk">
         <div class="row g-3">
 
             <div class="col-12 col-md-6">
-                <x-input-text
-                    name="nama"
-                    label="Nama Lengkap"
-                    placeholder="Contoh: Arman Saputra, S.AP"
-                    hint="Nama lengkap aparat desa beserta gelar akademik."
-                    value="{{ $data->nama }}"
-                    required
-                />
+                <x-input-text name="nama_lengkap" label="Nama Lengkap" placeholder="Masukkan nama lengkap sesuai KTP"
+                    maxlength="150" value="{{ $data->nama_lengkap }}" required />
+            </div>
+
+            <div class="col-12 col-md-6">
+                <x-input-text name="nik" label="Nomor Induk Kependudukan (NIK)" placeholder="Masukkan 16 digit NIK"
+                    maxlength="16" value="{{ $data->nik }}" required />
+            </div>
+
+            <div class="col-12 col-md-6">
+                <x-input-select name="jenis_kelamin" label="Jenis Kelamin" :options="\App\Enums\GenderList::options()"
+                    placeholder="Pilih Jenis Kelamin" value="{{ $data->jenis_kelamin->value ?? $data->jenis_kelamin }}"
+                    required />
+            </div>
+
+            <div class="col-12 col-md-6">
+                <x-input-text name="kk" label="Nomor Kartu Keluarga" placeholder="Masukkan 16 digit nomor KK"
+                    maxlength="16" value="{{ $data->kk }}" required />
+            </div>
+
+            <div class="col-12 col-md-4">
+                <x-input-text name="tempat_lahir" label="Tempat Lahir" placeholder="Contoh: Bangko" maxlength="100"
+                    value="{{ $data->tempat_lahir }}" required />
+            </div>
+
+            <div class="col-12 col-md-4">
+                <x-input-text type="date" name="tgl_lahir" label="Tanggal Lahir"
+                    value="{{ $data->tgl_lahir?->format('Y-m-d') }}" required />
+            </div>
+
+            <div class="col-12 col-md-4">
+                <x-input-select name="status_perkawinan" label="Status Perkawinan" :options="\App\Enums\MaritalStatusList::options()"
+                    placeholder="Pilih Status Perkawinan"
+                    value="{{ $data->status_perkawinan->value ?? $data->status_perkawinan }}" required />
+            </div>
+
+        </div>
+    </x-fieldset>
+
+    {{-- B. Data Kependudukan --}}
+    <x-fieldset label="B. Data Kependudukan">
+        <div class="row g-3">
+
+            <div class="col-12 col-md-4">
+                <x-input-select name="agama" label="Agama" :options="\App\Enums\ReligionList::options()" placeholder="Pilih Agama"
+                    value="{{ $data->agama->value ?? $data->agama }}" required />
+            </div>
+
+            <div class="col-12 col-md-4">
+                <x-input-select name="pendidikan" label="Pendidikan Terakhir" :options="\App\Enums\EducationList::options()"
+                    placeholder="Pilih Pendidikan" value="{{ $data->pendidikan->value ?? $data->pendidikan }}"
+                    required />
+            </div>
+
+            <div class="col-12 col-md-4">
+                <x-input-select name="pekerjaan" label="Pekerjaan" :options="\App\Enums\OccupationList::options()" placeholder="Pilih Pekerjaan"
+                    value="{{ $data->pekerjaan->value ?? $data->pekerjaan }}" required />
             </div>
 
             <div class="col-12 col-md-3">
-                <x-input-text
-                    name="niap"
-                    label="NIAP"
-                    placeholder="Masukkan NIAP"
-                    hint="Nomor Induk Aparat Pemerintah Desa."
-                    maxlength="16"
-                    value="{{ $data->niap }}"
-                    required
-                />
+                <x-input-select name="kewarganegaraan" label="Kewarganegaraan" :options="\App\Enums\CitizenshipList::options()"
+                    placeholder="Pilih Kewarganegaraan"
+                    value="{{ $data->kewarganegaraan->value ?? $data->kewarganegaraan }}" required />
             </div>
 
             <div class="col-12 col-md-3">
-                <x-input-text
-                    name="nip"
-                    label="NIP"
-                    placeholder="Masukkan NIP"
-                    hint="Kosongkan apabila bukan PNS."
-                    maxlength="16"
-                    value="{{ $data->nip }}"
-                />
+                <x-input-text name="kebangsaan" label="Kebangsaan" placeholder="Contoh: Indonesia" maxlength="100"
+                    value="{{ $data->kebangsaan }}" required />
             </div>
 
-            <div class="col-12 col-md-4">
-                <x-input-select
-                    name="jenis_kelamin"
-                    label="Jenis Kelamin"
-                    :options="\App\Enums\GenderList::options()"
-                    placeholder="Pilih Jenis Kelamin"
-                    value="{{ $data->jenis_kelamin->value ?? $data->jenis_kelamin }}"
-                    required
-                />
+            <div class="col-12 col-md-3">
+                <x-input-select name="status_dalam_keluarga" label="Status dalam Keluarga" :options="\App\Enums\RelationshipList::options()"
+                    placeholder="Pilih Status dalam Keluarga"
+                    value="{{ $data->status_dalam_keluarga->value ?? $data->status_dalam_keluarga }}" required />
             </div>
 
-            <div class="col-12 col-md-4">
-                <x-input-text
-                    name="tempat_lahir"
-                    label="Tempat Lahir"
-                    placeholder="Contoh: Bangko"
-                    value="{{ $data->tempat_lahir }}"
-                    required
-                />
-            </div>
-
-            <div class="col-12 col-md-4">
-                <x-input-text
-                    type="date"
-                    name="tgl_lahir"
-                    label="Tanggal Lahir"
-                    value="{{ $data->tgl_lahir?->format('Y-m-d') }}"
-                    required
-                />
+            <div class="col-12 col-md-3">
+                <x-input-select name="dapat_membaca" value="{{ (string) (int) $data->dapat_membaca }}"
+                    label="Dapat Membaca?" :options="['1' => 'Ya', '0' => 'Tidak']" placeholder="Pilih Status Membaca" required />
             </div>
 
         </div>
     </x-fieldset>
 
-    <x-fieldset label="B. Pendidikan, Kepangkatan, dan Jabatan">
+    {{-- C. Alamat Tempat Tinggal --}}
+    <x-fieldset label="C. Alamat Tempat Tinggal">
         <div class="row g-3">
 
             <div class="col-12 col-md-4">
-                <x-input-select
-                    name="pendidikan"
-                    label="Pendidikan Terakhir"
-                    :options="\App\Enums\EducationList::options()"
-                    placeholder="Pilih Pendidikan"
-                    value="{{ $data->pendidikan->value ?? $data->pendidikan }}"
-                    required
-                />
+                <x-input-select name="dusun_id" label="Dusun" :options="\App\Models\Dusun::query()->orderBy('name')->pluck('name', 'id')->toArray()" placeholder="Pilih Dusun"
+                    value="{{ $data->dusun_id }}" required />
             </div>
 
             <div class="col-12 col-md-4">
-                <x-input-text
-                    name="pangkat_golongan"
-                    label="Pangkat / Golongan"
-                    placeholder="Contoh: Penata Muda (III/a)"
-                    value="{{ $data->pangkat_golongan }}"
-                />
+                <x-input-select name="rt" label="RT" :options="\App\Enums\RtList::options()" placeholder="Pilih RT"
+                    value="{{ $data->rt->value ?? $data->rt }}" required />
             </div>
 
             <div class="col-12 col-md-4">
-                <x-input-select
-                    name="village_position_id"
-                    label="Jabatan"
-                    :options="\App\Models\VillagePosition::query()
-                        ->where('is_active', true)
-                        ->orderBy('kode')
-                        ->pluck('nama', 'id')
-                        ->toArray()"
-                    placeholder="Pilih Jabatan"
-                    value="{{ $data->village_position_id }}"
-                    required
-                />
+                <x-input-select name="rw" label="RW" :options="\App\Enums\RwList::options()" placeholder="Pilih RW"
+                    value="{{ $data->rw->value ?? $data->rw }}" required />
             </div>
 
         </div>
     </x-fieldset>
 
-    <x-fieldset label="C. Keputusan Pengangkatan">
-        <div class="row g-3">
-
-            <div class="col-12 col-md-6">
-                <x-input-text
-                    name="nomor_pengangkatan"
-                    label="Nomor Keputusan Pengangkatan"
-                    placeholder="Contoh: 02/KEP/DS/2026"
-                    value="{{ $data->nomor_pengangkatan }}"
-                    required
-                />
-            </div>
-
-            <div class="col-12 col-md-6">
-                <x-input-text
-                    type="date"
-                    name="tgl_pengangkatan"
-                    label="Tanggal Keputusan Pengangkatan"
-                    value="{{ $data->tgl_pengangkatan?->format('Y-m-d') }}"
-                    required
-                />
-            </div>
-
-        </div>
-    </x-fieldset>
-
-    <x-fieldset label="D. Keputusan Pemberhentian">
+    {{-- D. Keterangan --}}
+    <x-fieldset label="D. Keterangan">
         <div class="row g-3">
 
             <div class="col-12">
-                <span class="text-muted small">
-                    Kosongkan apabila aparat masih aktif menjabat.
-                </span>
-            </div>
-
-            <div class="col-12 col-md-6">
-                <x-input-text
-                    name="nomor_pemberhentian"
-                    label="Nomor Keputusan Pemberhentian"
-                    placeholder="Contoh: 03/KEP/DS/2026"
-                    value="{{ $data->nomor_pemberhentian }}"
-                />
-            </div>
-
-            <div class="col-12 col-md-6">
-                <x-input-text
-                    type="date"
-                    name="tgl_pemberhentian"
-                    label="Tanggal Keputusan Pemberhentian"
-                    value="{{ $data->tgl_pemberhentian?->format('Y-m-d') }}"
-                />
-            </div>
-
-        </div>
-    </x-fieldset>
-
-    <x-fieldset label="E. Status dan Kontak">
-        <div class="row g-3">
-
-            <div class="col-12 col-md-6">
-                <x-input-select
-                    name="status"
-                    label="Status Aparat"
-                    :options="\App\Enums\VillageOfficialStatusList::options()"
-                    placeholder="Pilih Status"
-                    value="{{ $data->status->value ?? $data->status }}"
-                    required
-                />
-            </div>
-
-            <div class="col-12 col-md-6">
-                <x-input-text
-                    type="tel"
-                    name="telpon"
-                    label="Nomor Telepon"
-                    placeholder="Contoh: 081234567890"
-                    maxlength="30"
-                    value="{{ $data->telpon }}"
-                    required
-                />
-            </div>
-
-            <div class="col-12">
-                <x-input-textarea
-                    name="alamat"
-                    label="Alamat"
-                    placeholder="Masukkan alamat lengkap aparat desa..."
-                    value="{{ $data->alamat }}"
-                    :rows="3"
-                    required
-                />
-            </div>
-
-        </div>
-    </x-fieldset>
-
-    <x-fieldset label="F. Keterangan">
-        <div class="row g-3">
-
-            <div class="col-12">
-                <x-input-textarea
-                    name="notes"
-                    label="Catatan"
-                    placeholder="Catatan tambahan terkait aparat desa..."
-                    hint="Informasi tambahan mengenai kepegawaian atau penugasan."
-                    value="{{ $data->notes }}"
-                    :rows="3"
-                />
+                <x-input-textarea name="catatan" label="Catatan"
+                    placeholder="Masukkan keterangan tambahan mengenai penduduk..."
+                    hint="Informasi tambahan yang diperlukan dalam administrasi kependudukan."
+                    value="{{ $data->catatan }}" :rows="3" />
             </div>
 
         </div>
