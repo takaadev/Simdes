@@ -6,9 +6,14 @@ use App\Enums\AgendaCategoryList;
 use App\Enums\AgendaTypeList;
 use App\Models\AgendaEntry;
 use App\Models\AgendaNumberSequence;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use RuntimeException;
+use Throwable;
 use Yajra\DataTables\Facades\DataTables;
 
 class AgendaEntryService
@@ -133,7 +138,7 @@ class AgendaEntryService
                 'i.incoming_deleted_at',
 
                 // Surat Keluar
-               // Surat Keluar
+                // Surat Keluar
                 'o.outgoing_kategori',
                 'o.tanggal_kirim',
                 'o.outgoing_nomor',
@@ -363,16 +368,16 @@ class AgendaEntryService
         ])->render();
     }
 
-    public function getStore(array $data): \Illuminate\Http\JsonResponse
+    public function getStore(array $data): JsonResponse
     {
         $documentPath = null;
 
         try {
-            \DB::transaction(function () use (&$data, &$documentPath) {
+            DB::transaction(function () use (&$data, &$documentPath) {
                 // Upload dokumen surat.
                 if (
                     isset($data['dokumen']) &&
-                    $data['dokumen'] instanceof \Illuminate\Http\UploadedFile
+                    $data['dokumen'] instanceof UploadedFile
                 ) {
                     $documentPath = $data['dokumen']->store(
                         'agenda-documents',
@@ -383,20 +388,20 @@ class AgendaEntryService
                 }
 
                 // Informasi pembuat data.
-                $data['created_by'] = \Auth::id();
+                $data['created_by'] = Auth::id();
 
                 // Simpan agenda surat.
-                \App\Models\AgendaEntry::create($data);
+                AgendaEntry::create($data);
             });
 
             return response()->json([
                 'success' => true,
                 'message' => 'Agenda surat berhasil ditambahkan.',
             ], 201);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             // Hapus dokumen jika proses penyimpanan gagal.
             if ($documentPath) {
-                \Storage::disk('public')->delete($documentPath);
+                Storage::disk('public')->delete($documentPath);
             }
 
             report($e);
@@ -408,13 +413,13 @@ class AgendaEntryService
         }
     }
 
-    public function getUpdate(AgendaEntry $agenda, array $data): \Illuminate\Http\JsonResponse
+    public function getUpdate(AgendaEntry $agenda, array $data): JsonResponse
     {
         $documentPath = null;
         $oldDocumentPath = $agenda->dokumen;
 
         try {
-            \DB::transaction(function () use (
+            DB::transaction(function () use (
                 $agenda,
                 &$data,
                 &$documentPath
@@ -422,7 +427,7 @@ class AgendaEntryService
                 // Upload dokumen baru jika tersedia.
                 if (
                     isset($data['dokumen']) &&
-                    $data['dokumen'] instanceof \Illuminate\Http\UploadedFile
+                    $data['dokumen'] instanceof UploadedFile
                 ) {
                     $documentPath = $data['dokumen']->store(
                         'agenda-documents',
@@ -441,7 +446,7 @@ class AgendaEntryService
 
             // Hapus dokumen lama setelah transaksi berhasil.
             if ($documentPath && $oldDocumentPath) {
-                \Storage::disk('public')->delete($oldDocumentPath);
+                Storage::disk('public')->delete($oldDocumentPath);
             }
 
             return response()->json([
@@ -451,7 +456,7 @@ class AgendaEntryService
         } catch (\Throwable $e) {
             // Hapus dokumen baru jika proses update gagal.
             if ($documentPath) {
-                \Storage::disk('public')->delete($documentPath);
+                Storage::disk('public')->delete($documentPath);
             }
 
             report($e);
@@ -463,7 +468,7 @@ class AgendaEntryService
         }
     }
 
-    public function getDestroy(Request $request, AgendaEntry $agenda): \Illuminate\Http\JsonResponse
+    public function getDestroy(Request $request, AgendaEntry $agenda): JsonResponse
     {
         try {
             $forceDelete = $request->boolean('confirm_delete');
@@ -482,20 +487,17 @@ class AgendaEntryService
             }
 
             $documentPath = $agenda->dokumen;
-
-            $deleted = \DB::transaction(function () use ($agenda, $forceDelete) {
-                return $forceDelete
-                    ? $agenda->forceDelete()
-                    : $agenda->delete();
+            $deleted = DB::transaction(function () use ($agenda, $forceDelete) {
+                return $forceDelete ? $agenda->forceDelete() : $agenda->delete();
             });
 
             if (! $deleted) {
-                throw new \RuntimeException('Data agenda surat gagal dihapus.');
+                throw new RuntimeException('Data agenda surat gagal dihapus.');
             }
 
             // Hapus dokumen setelah force delete berhasil.
             if ($forceDelete && filled($documentPath)) {
-                \Storage::disk('public')->delete($documentPath);
+                Storage::disk('public')->delete($documentPath);
             }
 
             return response()->json([
@@ -504,7 +506,7 @@ class AgendaEntryService
                     ? 'Agenda surat dan dokumennya berhasil dihapus permanen.'
                     : 'Agenda surat berhasil dipindahkan ke sampah.',
             ]);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             report($e);
 
             return response()->json([

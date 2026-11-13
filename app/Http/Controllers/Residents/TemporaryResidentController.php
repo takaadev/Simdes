@@ -6,8 +6,10 @@ use App\Http\Controllers\Concerns\HandlesRestore;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TemporaryResident\StoreTemporaryResidentRequest;
 use App\Http\Requests\TemporaryResident\UpdateTemporaryResidentRequest;
+use App\Http\Requests\TemporaryResident\UpdateTemporaryResidentOutgoingRequest;
 use App\Models\TemporaryResident;
 use App\Services\TemporaryResidentService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class TemporaryResidentController extends Controller
@@ -22,14 +24,19 @@ class TemporaryResidentController extends Controller
         return $this->service->getData($request);
     }
 
-    public function store(StoreTemporaryResidentRequest $request):\Illuminate\Http\JsonResponse
+    public function store(StoreTemporaryResidentRequest $request): JsonResponse
     {
         return $this->service->getStore($request->validated());
     }
 
-    public function update(UpdateTemporaryResidentRequest $request, TemporaryResident $temporary):\Illuminate\Http\JsonResponse
+    public function update(UpdateTemporaryResidentRequest $request, TemporaryResident $temporary): JsonResponse
     {
         return $this->service->getUpdate($temporary, $request->validated());
+    }
+
+    public function outgoingConfirmed(UpdateTemporaryResidentOutgoingRequest $request, $id): JsonResponse
+    {
+        return $this->service->getOutgoingConfirmed($id, $request->validated());
     }
 
     public function destroy(Request $request, TemporaryResident $temporary)

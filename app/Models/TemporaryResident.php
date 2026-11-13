@@ -28,6 +28,7 @@ class TemporaryResident extends Model implements Restorable
             'tgl_lahir' => 'date',
             'tgl_datang' => 'date',
             'tgl_pergi' => 'date',
+            'umur' => 'integer'
         ];
     }
 
@@ -41,8 +42,4 @@ class TemporaryResident extends Model implements Restorable
         return $this->tgl_pergi ? 'Sudah Pergi' : 'Masih Tinggal';
     }
 
-    public function getUmurAttribute(): int
-    {
-        return $this->tgl_lahir->age;
-    }
 }

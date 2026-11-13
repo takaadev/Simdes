@@ -1,9 +1,16 @@
-<x-action-edit :id="$data->id" href="{{ route('temporaryresidents.update', $data->id) }}"
-    icon="{{ $data->tgl_pergi === null ? 'sign-out-alt' : 'check-circle' }}" label="Catat Kepergian" color="btn-outline-warning"
-    modalTitle="Konfirmasi Kepergian Penduduk" submitLabel="Konfirmasi Kepergian" submitLable="Konfirmasi" disabled="{{ $data->tgl_pergi === null ? false : true }}">
+<x-action-edit
+    :id="$data->id"
+    href="{{ route('temporaryresidents.outgoing-confirmed', $data->id) }}"
+    icon="{{ $data->tgl_pergi === null ? 'sign-out-alt' : 'check-circle' }}"
+    label="Catat Kepergian"
+    color="btn-outline-warning"
+    modalTitle="Konfirmasi Kepergian Penduduk"
+    labelSubmit="Konfirmasi Kepergian"
+    disabled="{{ $data->tgl_pergi !== null }}"
+>
     {{-- Informasi Penduduk --}}
     <div class="d-flex align-items-center gap-3 p-3 mb-3 rounded-3 bg-body-tertiary border">
-        <div class="d-flex align-items-center justify-content-center rounded-circle bg-warning-subtle text-warning flex-shrink-0"
+        <div class="d-flex align-items-center justify-content-center rounded-circle bg-warning-subtle text-warning"
             style="width: 48px; height: 48px;">
             <i class="fa-solid fa-person-walking-arrow-right fs-5"></i>
         </div>
@@ -34,7 +41,12 @@
 
     {{-- Form Tanggal --}}
     <x-fieldset label="Informasi Kepergian">
-        <x-input-text type="date" name="tgl_pergi" label="Tanggal Kepergian" required />
+        <x-input-text
+            type="date"
+            name="tgl_pergi"
+            label="Tanggal Kepergian"
+            required
+        />
 
         <div class="form-text mt-2">
             <i class="fa-regular fa-calendar me-1"></i>

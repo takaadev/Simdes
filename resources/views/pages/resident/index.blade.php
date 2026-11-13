@@ -1,27 +1,24 @@
 <x-appcontent>
     @include('pages.resident.comp.widgets')
     @include('pages.resident.comp.filter')
+
     <x-table id="residentTable">
         <tr>
             <th>No.</th>
             <th>Nama Lengkap</th>
-            <th>NIK</th>
-            <th>No. KK</th>
             <th>Jenis Kelamin</th>
+            <th>Status Perkawinan</th>
             <th>Tempat Lahir</th>
             <th>Tanggal Lahir</th>
-            <th>Status Perkawinan</th>
             <th>Agama</th>
             <th>Pendidikan</th>
             <th>Pekerjaan</th>
-            <th>Dapat Membaca</th>
+            <th>Dapat Membaca Huruf</th>
             <th>Kewarganegaraan</th>
-            <th>Kebangsaan</th>
-            <th>Status dalam Keluarga</th>
-            <th>RT</th>
-            <th>RW</th>
-            <th>NO. RUMAH</th>
-            <th>Catatan</th>
+            <th>Kedudukan dalam Keluarga</th>
+            <th>NIK</th>
+            <th>Nomor KK</th>
+            <th>Alamat</th>
             <th>Aksi</th>
         </tr>
     </x-table>
@@ -70,80 +67,66 @@
                     pageLength: 15,
 
                     columns: [
-                        // 1. Nomor urut
+                        // 1. Nomor urut.
                         {
                             data: 'DT_RowIndex',
                             name: 'DT_RowIndex',
                             searchable: false,
-                            orderable: false
+                            orderable: false,
+                            className: 'text-center'
                         },
 
-                        // 2. Nama lengkap
+                        // 2. Nama lengkap.
                         {
                             data: 'nama_lengkap',
                             name: 'nama_lengkap'
                         },
 
-                        // 3. NIK
-                        {
-                            data: 'nik',
-                            name: 'nik',
-                            className: 'text-start'
-                        },
-
-                        // 4. Nomor KK
-                        {
-                            data: 'kk',
-                            name: 'kk',
-                            className: 'text-start'
-                        },
-
-                        // 5. Jenis kelamin
+                        // 3. Jenis kelamin.
                         {
                             data: 'jenis_kelamin',
                             name: 'jenis_kelamin',
                             className: 'text-center'
                         },
 
-                        // 6. Tempat lahir
+                        // 4. Status perkawinan.
+                        {
+                            data: 'status_perkawinan',
+                            name: 'status_perkawinan'
+                        },
+
+                        // 5. Tempat lahir.
                         {
                             data: 'tempat_lahir',
                             name: 'tempat_lahir'
                         },
 
-                        // 7. Tanggal lahir
+                        // 6. Tanggal lahir.
                         {
                             data: 'tgl_lahir',
                             name: 'tgl_lahir',
                             className: 'text-center'
                         },
 
-                        // 8. Status perkawinan
-                        {
-                            data: 'status_perkawinan',
-                            name: 'status_perkawinan',
-                            className: 'text-center'
-                        },
-
-                        // 9. Agama
+                        // 7. Agama.
                         {
                             data: 'agama',
                             name: 'agama'
                         },
 
-                        // 10. Pendidikan
+                        // 8. Pendidikan.
                         {
                             data: 'pendidikan',
                             name: 'pendidikan'
                         },
 
-                        // 11. Pekerjaan
+                        // 9. Pekerjaan.
                         {
                             data: 'pekerjaan',
                             name: 'pekerjaan'
                         },
 
-                        // 12. Dapat membaca
+                        // 10. Dapat membaca huruf.
                         {
                             data: 'dapat_membaca',
                             name: 'dapat_membaca',
@@ -151,54 +134,38 @@
                             className: 'text-center'
                         },
 
-                        // 13. Kewarganegaraan
+                        // 11. Kewarganegaraan.
                         {
                             data: 'kewarganegaraan',
                             name: 'kewarganegaraan'
                         },
 
-                        // 14. Kebangsaan
-                        {
-                            data: 'kebangsaan',
-                            name: 'kebangsaan'
-                        },
-
-                        // 15. Status dalam keluarga
+                        // 12. Kedudukan dalam keluarga.
                         {
                             data: 'status_dalam_keluarga',
                             name: 'status_dalam_keluarga'
                         },
 
-
-                        // 17. RT
+                        // 13. NIK.
                         {
-                            data: 'rt',
-                            name: 'rt',
-                            className: 'text-center'
+                            data: 'nik',
+                            name: 'nik'
                         },
 
-                        // 18. RW
+                        // 14. Nomor KK.
                         {
-                            data: 'rw',
-                            name: 'rw',
-                            className: 'text-center'
+                            data: 'kk',
+                            name: 'kk'
                         },
 
-                        // 16. Dusun
+                        // 15. Alamat beserta RT dan RW.
                         {
-                            data: 'nomor_rumah',
-                            name: 'nomor_rumah',
+                            data: 'alamat',
+                            name: 'alamat',
                             orderable: false
                         },
-                        // 19. Catatan
-                        {
-                            data: 'catatan',
-                            name: 'catatan',
-                            orderable: false,
-                            defaultContent: '-'
-                        },
 
-                        // 20. Aksi
+                        // 16. Aksi.
                         {
                             data: 'action',
                             name: 'action',
@@ -208,7 +175,7 @@
                         }
                     ],
 
-                    // Urutkan berdasarkan nama lengkap
+                    // Urutkan berdasarkan nama lengkap.
                     order: [
                         [1, 'asc']
                     ],
@@ -224,7 +191,7 @@
                         infoEmpty: 'Menampilkan 0 data',
                         infoFiltered: '(difilter dari _MAX_ total data)',
                         lengthMenu: 'Tampilkan _MENU_ data',
-                        search: 'Pencarian:',
+                        search: 'Pencarian:'
                     },
 
                     // =================================================
@@ -236,6 +203,7 @@
                         bottomStart: 'info',
                         bottomEnd: 'paging'
                     },
+
                     lengthMenu: [10, 15, 25, 50, 100, 150, 200],
 
                     // =================================================
@@ -246,7 +214,7 @@
                     }
                 });
 
-                // Wrapper awal
+                // Wrapper awal.
                 wrapTableWithScroll(table.table().node());
             });
         </script>

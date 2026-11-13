@@ -1428,7 +1428,7 @@
 .simdes-fieldset {
   border: 1px solid var(--simdes-border);
   border-radius: var(--radius-md);
-  padding: 1.1rem 1.2rem 0.35rem;
+  padding: 0 1.2rem 0.35rem;
   margin: 0 0 1.15rem;
   background-color: #FCFDFB;
 }

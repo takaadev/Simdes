@@ -2,40 +2,30 @@
 
 namespace App\Models;
 
+use App\Contracts\Restorable;
+use App\Models\Concerns\RestoresSoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class FamilyCard extends Model
+class FamilyCard extends Model implements Restorable
 {
     /** @use HasFactory<\Database\Factories\FamilyCardFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, RestoresSoftDeletes;
 
     protected $guarded = ['id'];
 
     protected function casts(): array
     {
-        return [
-            'issued_date' => 'date',
-        ];
+        return [];
     }
 
-    public function headOfFamily(): BelongsTo
+    /**
+     * Relasi ke seluruh penduduk dalam kartu keluarga.
+     */
+    public function residents(): HasMany
     {
-        return $this->belongsTo(Resident::class, 'head_of_family_id');
-    }
-
-
-    public function members(): HasMany
-    {
-        return $this->hasMany(FamilyCardMember::class);
-    }
-
-    public function activeMembers(): HasMany
-    {
-        return $this->hasMany(FamilyCardMember::class)
-            ->whereNull('left_at');
+        return $this->hasMany(Resident::class, 'family_card_id');
     }
 }

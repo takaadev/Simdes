@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('residents', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('family_card_id')->nullable()->constrained('family_cards')->restrictOnDelete();
             $table->string('nama_lengkap', 150);
             $table->string('jenis_kelamin', 2);
             $table->string('nik', 16)->unique();
@@ -25,15 +26,20 @@ return new class extends Migration
             $table->string('pekerjaan', 100);
             $table->boolean('dapat_membaca')->default(false);
             $table->string('kewarganegaraan', 10);
-            $table->string('kebangsaan', 100);
             $table->string('status_dalam_keluarga', 30);
+            $table->string('kebangsaan', 100);
+            $table->string('gol_darah', 6)->nullable();
+            $table->string('ayah', 150)->nullable();
+            $table->string('ibu', 150)->nullable();
             $table->string('rt', 10)->nullable();
             $table->string('rw', 10)->nullable();
-            $table->string('nomor_rumah', 10)->nullable();
+            $table->text('alamat')->nullable();
+            $table->string('tempat_dikeluarkan', 100)->nullable();
+            $table->date('tgl_dikeluarkan')->nullable();
             $table->text('catatan')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->index('kk');
+            $table->index(['kk', 'status_dalam_keluarga']);
             $table->index(['rt', 'rw']);
         });
     }

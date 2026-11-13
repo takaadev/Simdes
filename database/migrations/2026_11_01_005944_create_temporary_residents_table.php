@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-       Schema::create('temporary_residents', function (Blueprint $table) {
+        Schema::create('temporary_residents', function (Blueprint $table) {
             $table->id();
             $table->string('nama_lengkap', 150);
             $table->string('jenis_kelamin', 2); // Contoh: 'L' atau 'P'
@@ -20,15 +20,15 @@ return new class extends Migration
             $table->date('tgl_lahir');
             $table->unsignedInteger('umur')->default(0);
             $table->string('pekerjaan', 100);
-            $table->string('kewarganegaraan', 10); 
-            $table->string('kebangsaan', 100)->nullable(); 
+            $table->string('kewarganegaraan', 10);
+            $table->string('kebangsaan', 100)->nullable();
             $table->string('keturunan', 50)->nullable();
             $table->string('datang_dari', 150);
             $table->string('tujuan_kedatangan', 255);
-            $table->text('alamat_tujuan'); 
+            $table->string('alamat_tujuan');
             $table->date('tgl_datang');
             $table->date('tgl_pergi')->nullable();
-            $table->text('catatan')->nullable();
+            $table->string('catatan', 255)->nullable();
             $table->foreignId('recorded_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
             $table->softDeletes();

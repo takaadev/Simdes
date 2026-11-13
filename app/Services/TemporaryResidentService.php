@@ -2,14 +2,14 @@
 
 namespace App\Services;
 
-use App\Http\Requests\Resident\ImportExcelResidentRequest;
-use App\Imports\ResidentImport;
-use App\Models\Resident;
 use App\Models\TemporaryResident;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Log;
+use RuntimeException;
 use Yajra\DataTables\Facades\DataTables;
+use Throwable;
 
 class TemporaryResidentService
 {
@@ -234,59 +234,118 @@ class TemporaryResidentService
         ])->render();
     }
 
-    public function getStore(array $data): \Illuminate\Http\JsonResponse
+    public function getStore(array $data): JsonResponse
     {
         try {
-            $resident = \DB::transaction(function () use ($data) {
+            $temporaryResident = DB::transaction(function () use ($data) {
                 $data['created_by'] = auth()->id();
-
-                return Resident::create($data);
+                return TemporaryResident::create($data);
             });
 
             return response()->json([
                 'success' => true,
-                'message' => 'Data penduduk berhasil ditambahkan.',
-                'data' => $resident,
+                'message' => 'Data penduduk sementara berhasil ditambahkan.',
+                'data' => $temporaryResident,
             ], 201);
-        } catch (\Throwable $e) {
-            \Log::error('Gagal menambahkan data penduduk.', [
+        } catch (Throwable $e) {
+            Log::error('Gagal menambahkan data penduduk sementara.', [
                 'error' => $e->getMessage(),
             ]);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Data penduduk gagal ditambahkan.',
+                'message' => 'Data penduduk sementara gagal ditambahkan.',
             ], 500);
         }
     }
 
-    public function getUpdate(Resident $resident, array $data): \Illuminate\Http\JsonResponse
+    public function getUpdate(TemporaryResident $temporary, array $data): JsonResponse
     {
         try {
-            \DB::transaction(function () use ($resident, $data) {
-                $resident->update($data);
+            DB::transaction(function () use ($temporary, $data) {
+                $temporary->update($data);
             });
+
             return response()->json([
                 'success' => true,
-                'message' => 'Data penduduk berhasil diperbarui.',
+                'message' => 'Data penduduk sementara berhasil diperbarui.',
             ]);
-        } catch (\Throwable $e) {
-            \Log::error('Gagal memperbarui data penduduk.', [
-                'resident_id' => $resident->id,
+        } catch (Throwable $e) {
+            Log::error('Gagal memperbarui data penduduk sementara.', [
+                'temporary_resident_id' => $temporary->id,
                 'error' => $e->getMessage(),
             ]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat memperbarui data penduduk.',
+                'message' => 'Terjadi kesalahan saat memperbarui data penduduk sementara.',
             ], 500);
         }
     }
 
-    public function getDestroy(Request $request, Resident $resident): \Illuminate\Http\JsonResponse
+    public function getOutgoingConfirmed($id, array $data): JsonResponse
+    {
+        try {
+            $temporary = TemporaryResident::findOrFail($id);
+            if ($temporary->tgl_pergi !== null) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Penduduk ini sudah tercatat meninggalkan desa.',
+                ], 422);
+            }
+
+            DB::transaction(function () use ($temporary, $data) {
+                // Isi tanggal kepergian secara langsung.
+                $temporary->tgl_pergi = $data['tgl_pergi'];
+
+                // Simpan perubahan ke database.
+                if (! $temporary->save()) {
+                    throw new RuntimeException(
+                        'Data kepergian penduduk gagal disimpan.'
+                    );
+                }
+
+                // Pastikan perubahan benar-benar tersimpan.
+                $temporary->refresh();
+
+                if (
+                    $temporary->tgl_pergi === null ||
+                    $temporary->tgl_pergi->format('Y-m-d') !== $data['tgl_pergi']
+                ) {
+                    throw new RuntimeException(
+                        'Tanggal kepergian tidak berhasil diperbarui.'
+                    );
+                }
+            });
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Kepergian penduduk berhasil dikonfirmasi.',
+                'data' => [
+                    'id' => $temporary->id,
+                    'tgl_pergi' => $temporary->tgl_pergi->format('Y-m-d'),
+                ],
+            ]);
+        } catch (Throwable $e) {
+            Log::error('Gagal mencatat kepergian penduduk sementara.', [
+                'temporary_resident_id' => $temporary->id,
+                'tgl_pergi' => $data['tgl_pergi'] ?? null,
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat mencatat kepergian penduduk.',
+            ], 500);
+        }
+    }
+
+    public function getDestroy(Request $request, TemporaryResident $temporary): JsonResponse
     {
         try {
             $forceDelete = $request->boolean('confirm_delete');
-            if ($resident->trashed() && !$forceDelete) {
+
+            if ($temporary->trashed() && !$forceDelete) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Centang konfirmasi untuk menghapus permanen.',
@@ -298,90 +357,28 @@ class TemporaryResidentService
                 ], 422);
             }
 
-            $deleted = \DB::transaction(function () use (
-                $resident,
-                $forceDelete
-            ) {
-                return $forceDelete
-                    ? $resident->forceDelete()
-                    : $resident->delete();
+            $deleted = DB::transaction(function () use ($temporary, $forceDelete) {
+                return $forceDelete ? $temporary->forceDelete() : $temporary->delete();
             });
 
             if (!$deleted) {
-                throw new \RuntimeException('Data penduduk gagal dihapus.');
+                throw new RuntimeException('Data penduduk sementara gagal dihapus.');
             }
 
             return response()->json([
                 'success' => true,
-                'message' => $forceDelete
-                    ? 'Data penduduk berhasil dihapus permanen.'
-                    : 'Data penduduk berhasil dipindahkan ke sampah.',
+                'message' => $forceDelete ? 'Data penduduk sementara berhasil dihapus permanen.' : 'Data penduduk sementara berhasil dipindahkan ke sampah.',
             ]);
-        } catch (\Throwable $e) {
-            \Log::error('Gagal menghapus data penduduk.', [
-                'resident_id' => $resident->id,
+        } catch (Throwable $e) {
+            Log::error('Gagal menghapus data penduduk sementara.', [
+                'temporary_resident_id' => $temporary->id,
                 'force_delete' => $forceDelete ?? false,
                 'error' => $e->getMessage(),
             ]);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menghapus data penduduk.',
-            ], 500);
-        }
-    }
-
-    public function getImportExcel(ImportExcelResidentRequest $request): \Illuminate\Http\JsonResponse
-    {
-        try {
-            $import = new ResidentImport();
-            Excel::import($import, $request->file('file'));
-            $errors = $import->getErrors();
-            // Batalkan seluruh proses jika ditemukan kesalahan validasi.
-            if (!empty($errors)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Import dibatalkan. Terdapat ' . count($errors) . ' kesalahan pada data Excel.',
-                    'total_errors' => count($errors),
-                    'errors' => $errors,
-                ], 422);
-            }
-
-            $rows = $import->getValidRows();
-
-            // Pastikan terdapat data yang dapat diimport.
-            if (empty($rows)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Tidak ada data penduduk yang dapat diimport.',
-                ], 422);
-            }
-
-            // Simpan seluruh data dalam satu transaksi.
-            DB::transaction(function () use ($rows) {
-                foreach ($rows as $row) {
-                    Resident::forceCreate($row);
-                }
-            });
-
-            return response()->json([
-                'success' => true,
-                'message' => count($rows) . ' data penduduk berhasil diimport.',
-                'total_imported' => count($rows),
-            ]);
-        } catch (\Throwable $e) {
-            report($e);
-
-            logger()->error('Import Excel Penduduk Gagal', [
-                'exception' => get_class($e),
-                'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-            ]);
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Import gagal. Tidak ada data yang berhasil disimpan.',
+                'message' => 'Terjadi kesalahan saat menghapus data penduduk sementara.',
             ], 500);
         }
     }

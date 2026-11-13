@@ -24,7 +24,7 @@
     $errorMessage = $error ?? $errors->first($name);
 @endphp
 
-<div class="simdes-field mb-2">
+<div class="simdes-field mb-1">
     <label for="{{ $id }}" class="simdes-label mb-0">
         @if ($number)
             {{ $number }}.
