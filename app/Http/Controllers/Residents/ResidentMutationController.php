@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Residents;
 
 use App\Http\Controllers\Concerns\HandlesRestore;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ResidentMutation\StoreMutationToResidentRequest;
 use App\Http\Requests\ResidentMutation\StoreResidentMutationRequest;
 use App\Http\Requests\ResidentMutation\UpdateResidentMutationRequest;
 use App\Models\ResidentMutation;
@@ -40,6 +41,11 @@ class ResidentMutationController extends Controller
     public function restore(int $id)
     {
         return HandlesRestore::restore(ResidentMutation::onlyTrashed()->findOrFail($id));
+    }
+
+    public function mutationToResident(StoreMutationToResidentRequest $request): \Illuminate\Http\JsonResponse
+    {
+        return $this->service->getMutationToResident($request->validated());
     }
 
     // public function importexcel(ImportExcelResidentRequest $request)

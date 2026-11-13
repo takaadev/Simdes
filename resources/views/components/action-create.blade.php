@@ -6,6 +6,7 @@
     'modalTitle' => 'Tambah Data',
     'size' => 'md',
     'color' => 'btn-simdes-primary',
+    'submitLable' => 'Simpan',
 ])
 
 @php
@@ -60,7 +61,7 @@
 
                         <button type="submit" id="{{ $submitId }}" class="btn-simdes-primary">
                             <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i>
-                            <span>Simpan</span>
+                            <span>{{ $submitLable ?? 'Simpan' }}</span>
                         </button>
                     </div>
                 </form>

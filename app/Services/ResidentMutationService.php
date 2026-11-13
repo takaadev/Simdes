@@ -14,9 +14,6 @@ use Yajra\DataTables\Facades\DataTables;
 class ResidentMutationService
 {
 
-
-
-
     public function getData(Request $request)
     {
         // Filter data mutasi penduduk.
@@ -276,7 +273,6 @@ class ResidentMutationService
             ->toJson();
     }
 
-
     private function formatDate($date): string
     {
         return $date
@@ -389,6 +385,11 @@ class ResidentMutationService
                 'message' => 'Terjadi kesalahan saat menghapus data mutasi penduduk.',
             ], 500);
         }
+    }
+
+    public function getMutationToResident(array $data): \Illuminate\Http\JsonResponse
+    {
+
     }
 
     public function getImportExcel(ImportExcelResidentRequest $request): \Illuminate\Http\JsonResponse
