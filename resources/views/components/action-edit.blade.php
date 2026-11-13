@@ -1,4 +1,3 @@
-
 @props([
     'label' => 'Ubah',
     'icon' => 'pen-to-square',
@@ -6,7 +5,9 @@
     'href' => '',
     'modalTitle' => 'Ubah Data',
     'size' => 'md',
+    'submitLable' => 'Simpan Perubahan',
     'id',
+    'disabled' => false,
 ])
 
 @php
@@ -17,43 +18,22 @@
     $titleId = $componentId . '-title';
     $submitId = $componentId . '-submit';
 
-    $modalSize = in_array($size, ['sm', 'lg', 'xl', 'fullscreen'])
-        ? 'modal-' . $size
-        : '';
+    $modalSize = in_array($size, ['sm', 'lg', 'xl', 'fullscreen']) ? 'modal-' . $size : '';
 @endphp
 
 @if ($type === 'button')
-    <button
-        type="button"
-        id="{{ $buttonId }}"
-        class="btn-row-action"
-        data-simdes-modal-open="{{ $modalId }}"
-        title="{{ $label }}"
-        aria-label="{{ $label }}"
-    >
+    <button type="button" id="{{ $buttonId }}" class="btn-row-action" {{ $disabled ? 'disabled' : '' }}
+        data-simdes-modal-open="{{ $modalId }}" title="{{ $label }}" aria-label="{{ $label }}">
         <i class="fa-solid fa-{{ $icon }}" aria-hidden="true"></i>
     </button>
 
-    <div
-        class="modal fade simdes-modal"
-        id="{{ $modalId }}"
-        tabindex="-1"
-        aria-labelledby="{{ $titleId }}"
-        aria-hidden="true"
-    >
+    <div class="modal fade simdes-modal" id="{{ $modalId }}" tabindex="-1" aria-labelledby="{{ $titleId }}"
+        aria-hidden="true">
         <div class="modal-dialog {{ $modalSize }} modal-dialog-scrollable">
             <div class="modal-content">
-                <form
-                    id="{{ $formId }}"
-                    action="{{ $href }}"
-                    method="POST"
-                    enctype="multipart/form-data"
-                    novalidate
-                    data-simdes-ajax-form
-                    data-simdes-form-type="edit"
-                    data-simdes-submit-label="Simpan Perubahan"
-                    data-simdes-submit-icon="floppy-disk"
-                >
+                <form id="{{ $formId }}" action="{{ $href }}" method="POST"
+                    enctype="multipart/form-data" novalidate data-simdes-ajax-form data-simdes-form-type="edit"
+                    data-simdes-submit-label="Simpan Perubahan" data-simdes-submit-icon="floppy-disk">
                     @csrf
                     @method('PUT')
 
@@ -63,12 +43,7 @@
                             {{ $modalTitle }}
                         </h2>
 
-                        <button
-                            type="button"
-                            class="btn-close"
-                            data-bs-dismiss="modal"
-                            aria-label="Tutup"
-                        ></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
                     </div>
 
 
@@ -80,21 +55,13 @@
                     <div class="modal-footer bg-light border-top px-4 py-1"
                         style="border-color:var(--simdes-border) !important;">
 
-                        <button
-                            type="button"
-                            class="btn-simdes-outline"
-                            data-bs-dismiss="modal"
-                        >
+                        <button type="button" class="btn-simdes-outline" data-bs-dismiss="modal">
                             Batal
                         </button>
 
-                        <button
-                            type="submit"
-                            id="{{ $submitId }}"
-                            class="btn-simdes-primary"
-                        >
+                        <button type="submit" id="{{ $submitId }}" class="btn-simdes-primary">
                             <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i>
-                            <span>Simpan Perubahan</span>
+                            <span>{{ $submitLable ?? 'Simpan Perubahan' }} </span>
                         </button>
                     </div>
                 </form>
@@ -103,12 +70,8 @@
         </div>
     </div>
 @else
-    <a
-        href="{{ $href ?: '#' }}"
-        class="btn-row-action"
-        title="{{ $label }}"
-        aria-label="{{ $label }}"
-    >
+    <a href="{{ $href ?: '#' }}" class="btn-row-action" title="{{ $label }}"
+        aria-label="{{ $label }}">
         <i class="fa-solid fa-{{ $icon }}" aria-hidden="true"></i>
         <span>{{ $label }}</span>
     </a>

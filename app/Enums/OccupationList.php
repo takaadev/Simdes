@@ -8,7 +8,7 @@ enum OccupationList: string
     case HOUSEWIFE = 'Mengurus Rumah Tangga';
     case STUDENT = 'Pelajar/Mahasiswa';
     case CIVIL_SERVANT = 'Pegawai Negeri Sipil (PNS)';
-    case PPPK = 'Pegawai Pemerintah dengan Perjanjian Kerja (PPPK)';
+    case PPPK = 'PPPK';
     case TNI = 'TNI';
     case POLRI = 'Kepolisian RI';
     case PRIVATE_EMPLOYEE = 'Karyawan Swasta';

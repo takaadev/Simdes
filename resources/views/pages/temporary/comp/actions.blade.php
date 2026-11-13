@@ -1,5 +1,6 @@
 <x-actions-table>
     @if ($row->deleted_at === null)
+        @include('pages.temporary.outgoing-confirmed', ['data' => $row])
         @include('pages.temporary.show', ['data' => $row])
         @include('pages.temporary.edit', ['data' => $row])
     @else

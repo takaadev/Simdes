@@ -1,19 +1,21 @@
 <x-appcontent>
-    @include('pages.resident.comp.widgets')
-    @include('pages.resident.comp.filter')
+    @include('pages.temporary.comp.widgets')
+    @include('pages.temporary.comp.filter')
+
     <x-table id="temporaryResidentTable">
-         <tr>
+        <tr>
             <th rowspan="2">No.</th>
             <th rowspan="2">NAMA LENGKAP</th>
             <th rowspan="2">JENIS KELAMIN</th>
             <th rowspan="2">NO. IDENTITAS</th>
             <th colspan="3">TEMPAT, TANGGAL LAHIR &amp; UMUR</th>
+            <th rowspan="2">PEKERJAAN</th>
             <th colspan="3">KEWARGANEGARAAN</th>
-
-            <th rowspan="2"></th>
             <th rowspan="2">DATANG DARI</th>
-            <th colspan="2">PENAMBAHAN</th>
-            <th colspan="4">PENGURANGAN</th>
+            <th rowspan="2">TUJUAN</th>
+            <th rowspan="2">DATANG TANGGAL</th>
+            <th rowspan="2">STATUS</th>
+            <th rowspan="2">PERGI TANGGAL</th>
             <th rowspan="2">KETERANGAN</th>
             <th rowspan="2">AKSI</th>
         </tr>
@@ -23,20 +25,10 @@
             <th>TANGGAL</th>
             <th>UMUR</th>
 
+            {{-- Kewarganegaraan --}}
             <th>WARGA</th>
             <th>KEBANGSAAN</th>
             <th>KETURUNAN</th>
-
-
-            {{-- Penambahan --}}
-            <th>DATANG DARI</th>
-            <th>TANGGAL</th>
-
-            {{-- Pengurangan --}}
-            <th>PINDAH KE</th>
-            <th>TANGGAL</th>
-            <th>MENINGGAL</th>
-            <th>TANGGAL</th>
         </tr>
     </x-table>
 
@@ -44,16 +36,22 @@
         <script>
             $(document).ready(function() {
                 const tableElement = $('#temporaryResidentTable');
+
                 if (!tableElement.length) return;
+
                 // =====================================================
                 // WRAPPER HORIZONTAL SCROLL
                 // =====================================================
                 function wrapTableWithScroll(tableNode) {
                     if (!tableNode) return;
+
                     const parent = tableNode.parentElement;
+
                     if (parent && !parent.classList.contains('wide-scroll-ledger')) {
                         const scrollWrapper = document.createElement('div');
+
                         scrollWrapper.className = 'wide-scroll-ledger';
+
                         parent.insertBefore(scrollWrapper, tableNode);
                         scrollWrapper.appendChild(tableNode);
                     }
@@ -68,18 +66,22 @@
                     scrollX: false,
                     autoWidth: false,
                     responsive: false,
+
                     ajax: {
                         url: @json(route('temporaryresidents.index')),
                         type: 'GET'
                     },
+
                     pageLength: 15,
+
                     columns: [
                         // 1. Nomor urut
                         {
                             data: 'DT_RowIndex',
                             name: 'DT_RowIndex',
                             searchable: false,
-                            orderable: false
+                            orderable: false,
+                            className: 'text-center'
                         },
 
                         // 2. Nama lengkap
@@ -95,11 +97,10 @@
                             className: 'text-center'
                         },
 
-                        // 4. Nomor identitas (NIK / Paspor)
+                        // 4. Nomor identitas
                         {
                             data: 'nomor_identitas',
                             name: 'nomor_identitas',
-                            className: 'text-start'
                         },
 
                         // 5. Tempat lahir
@@ -115,10 +116,10 @@
                             className: 'text-center'
                         },
 
-                        // 7. Umur (Kolom virtual)
+                        // 7. Umur
                         {
                             data: 'umur',
-                            name: 'tgl_lahir',
+                            name: 'umur',
                             searchable: false,
                             className: 'text-center'
                         },
@@ -160,35 +161,25 @@
                             name: 'tujuan_kedatangan'
                         },
 
-                        // 14. Alamat tujuan
-                        {
-                            data: 'alamat_tujuan',
-                            name: 'alamat_tujuan'
-                        },
-
-                        // 15. Tanggal datang
+                        // 14. Tanggal datang
                         {
                             data: 'tgl_datang',
                             name: 'tgl_datang',
                             className: 'text-center'
                         },
-
-                        // 16. Tanggal pergi
+                        {
+                            data: 'status_tinggal',
+                            name: 'status_tinggal',
+                            className: 'text-center'
+                        },
+                        // 15. Tanggal pergi
                         {
                             data: 'tgl_pergi',
                             name: 'tgl_pergi',
                             className: 'text-center'
                         },
 
-                        // 17. Status tinggal (Kolom virtual badge)
-                        {
-                            data: 'status_tinggal',
-                            name: 'tgl_pergi',
-                            searchable: false,
-                            className: 'text-center'
-                        },
-
-                        // 18. Catatan
+                        // 16. Keterangan
                         {
                             data: 'catatan',
                             name: 'catatan',
@@ -196,7 +187,7 @@
                             defaultContent: '-'
                         },
 
-                        // 19. Aksi
+                        // 17. Aksi
                         {
                             data: 'action',
                             name: 'action',
@@ -222,7 +213,7 @@
                         infoEmpty: 'Menampilkan 0 data',
                         infoFiltered: '(difilter dari _MAX_ total data)',
                         lengthMenu: 'Tampilkan _MENU_ data',
-                        search: 'Pencarian:',
+                        search: 'Pencarian:'
                     },
 
                     // =================================================
@@ -234,6 +225,7 @@
                         bottomStart: 'info',
                         bottomEnd: 'paging'
                     },
+
                     lengthMenu: [10, 15, 25, 50, 100, 150, 200],
 
                     // =================================================

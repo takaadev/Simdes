@@ -1,27 +1,27 @@
-<x-action-create href="{{ route('residents.store') }}" size="xl">
-
+<x-action-create href="{{ route('temporaryresidents.store') }}" size="lg" modalTitle="Tambah Penduduk Sementara"
+    submitLabel="Simpan Data">
     {{-- A. Identitas Penduduk --}}
     <x-fieldset label="A. Identitas Penduduk">
         <div class="row g-3">
 
-            <div class="col-12 col-md-6">
-                <x-input-text name="nama_lengkap" label="Nama Lengkap" placeholder="Masukkan nama lengkap sesuai KTP"
+            <div class="col-12 col-md-4">
+                <x-input-text name="nama_lengkap" label="Nama Lengkap" placeholder="Masukkan nama lengkap "
                     maxlength="150" required />
             </div>
 
-            <div class="col-12 col-md-6">
-                <x-input-text name="nik" label="Nomor Induk Kependudukan (NIK)" placeholder="Masukkan 16 digit NIK"
-                    maxlength="16" required />
+            <div class="col-12 col-md-4">
+                <x-input-text name="nomor_identitas" label="Nomor Identitas (KTP / Paspor)"
+                    placeholder="Masukkan nomor identitas" maxlength="30" required />
             </div>
 
-            <div class="col-12 col-md-6">
+            <div class="col-12 col-md-4">
                 <x-input-select name="jenis_kelamin" label="Jenis Kelamin" :options="\App\Enums\GenderList::options()"
                     placeholder="Pilih Jenis Kelamin" required />
             </div>
 
-            <div class="col-12 col-md-6">
-                <x-input-text name="kk" label="Nomor Kartu Keluarga" placeholder="Masukkan 16 digit nomor KK"
-                    maxlength="16" required />
+            <div class="col-12 col-md-4">
+                <x-input-select name="pekerjaan" label="Pekerjaan" placeholder="Masukkan pekerjaan" :options="\App\Enums\OccupationList::options()"
+                    required />
             </div>
 
             <div class="col-12 col-md-4">
@@ -33,70 +33,56 @@
                 <x-input-text type="date" name="tgl_lahir" label="Tanggal Lahir" required />
             </div>
 
-            <div class="col-12 col-md-4">
-                <x-input-select name="status_perkawinan" label="Status Perkawinan" :options="\App\Enums\MaritalStatusList::options()"
-                    placeholder="Pilih Status Perkawinan" required />
+            <div class="col-12 col-md-2">
+                <x-input-text type="number" name="umur" label="Umur (Tahun)" min="0" max="150"
+                    required />
             </div>
 
         </div>
     </x-fieldset>
 
-    {{-- B. Data Kependudukan --}}
-    <x-fieldset label="B. Data Kependudukan">
+    {{-- B. Kewarganegaraan --}}
+    <x-fieldset label="B. Kewarganegaraan">
         <div class="row g-3">
 
             <div class="col-12 col-md-4">
-                <x-input-select name="agama" label="Agama" :options="\App\Enums\ReligionList::options()" placeholder="Pilih Agama" required />
-            </div>
-
-            <div class="col-12 col-md-4">
-                <x-input-select name="pendidikan" label="Pendidikan Terakhir" :options="\App\Enums\EducationList::options()"
-                    placeholder="Pilih Pendidikan" required />
-            </div>
-
-            <div class="col-12 col-md-4">
-                <x-input-select name="pekerjaan" label="Pekerjaan" :options="\App\Enums\OccupationList::options()" placeholder="Pilih Pekerjaan"
-                    required />
-            </div>
-
-            <div class="col-12 col-md-3">
                 <x-input-select name="kewarganegaraan" label="Kewarganegaraan" :options="\App\Enums\CitizenshipList::options()"
                     placeholder="Pilih Kewarganegaraan" required />
             </div>
 
-            <div class="col-12 col-md-3">
-                <x-input-text name="kebangsaan" label="Kebangsaan" placeholder="Contoh: Indonesia" maxlength="100"
-                    required />
+            <div class="col-12 col-md-4">
+                <x-input-text name="kebangsaan" label="Kebangsaan" placeholder="Contoh: Indonesia" maxlength="100" />
             </div>
 
-            <div class="col-12 col-md-3">
-                <x-input-select name="status_dalam_keluarga" label="Status dalam Keluarga" :options="\App\Enums\RelationshipList::options()"
-                    placeholder="Pilih Status dalam Keluarga" required />
-            </div>
-
-            <div class="col-12 col-md-3">
-                <x-input-select name="dapat_membaca" label="Dapat Membaca?" :options="['1' => 'Ya', '0' => 'Tidak']"
-                    placeholder="Pilih Status Membaca" required />
+            <div class="col-12 col-md-4">
+                <x-input-text name="keturunan" label="Keturunan" placeholder="Masukkan keturunan" maxlength="50" />
             </div>
 
         </div>
     </x-fieldset>
 
-    {{-- C. Alamat Tempat Tinggal --}}
-    <x-fieldset label="C. Alamat Tempat Tinggal">
+    {{-- C. Informasi Kedatangan --}}
+    <x-fieldset label="C. Informasi Kedatangan">
         <div class="row g-3">
 
-            <div class="col-12 col-md-4">
-                <x-input-select name="rt" label="RT" :options="\App\Enums\RtList::options()" placeholder="Pilih RT" />
+            <div class="col-12 col-md-6">
+                <x-input-text name="datang_dari" label="Datang dari" placeholder="Masukkan daerah asal" maxlength="150"
+                    required />
             </div>
 
-            <div class="col-12 col-md-4">
-                <x-input-select name="rw" label="RW" :options="\App\Enums\RwList::options()" placeholder="Pilih RW" />
+            <div class="col-12 col-md-6">
+                <x-input-text type="date" name="tgl_datang" label="Tanggal Kedatangan" required />
             </div>
 
-            <div class="col-12 col-md-4">
-                <x-input-text name="nomor_rumah" label="Nomor Rumah" placeholder="Contoh: 001 atau A12"
-                    maxlength="10" />
+            <div class="col-12">
+                <x-input-text name="tujuan_kedatangan" label="Tujuan Kedatangan"
+                    placeholder="Contoh: Bekerja, berkunjung, urusan keluarga" maxlength="255" required />
+            </div>
+
+            <div class="col-12">
+                <x-input-textarea name="alamat_tujuan" label="Alamat Tujuan"
+                    placeholder="Masukkan alamat tempat tinggal sementara di wilayah desa..." :rows="3"
+                    required />
             </div>
 
         </div>
@@ -108,11 +94,26 @@
 
             <div class="col-12">
                 <x-input-textarea name="catatan" label="Catatan"
-                    placeholder="Masukkan keterangan tambahan mengenai penduduk..."
-                    hint="Informasi tambahan yang diperlukan dalam administrasi kependudukan." :rows="3" />
+                    placeholder="Masukkan keterangan tambahan mengenai penduduk sementara..."
+                    hint="Informasi tambahan yang diperlukan dalam administrasi penduduk sementara."
+                    :rows="3" />
             </div>
 
         </div>
     </x-fieldset>
 
+    {{-- Informasi Status --}}
+    <div class="alert alert-info border-0 rounded-3 mb-0">
+        <div class="d-flex align-items-start gap-2">
+            <i class="fa-solid fa-circle-info mt-1"></i>
+            <div>
+                <div class="fw-semibold mb-1">Informasi Penduduk Sementara</div>
+                <small>
+                    Penduduk yang baru ditambahkan akan tercatat sebagai
+                    <strong>Masih Tinggal</strong>. Tanggal kepergian dapat
+                    dicatat kemudian melalui fitur Konfirmasi Kepergian.
+                </small>
+            </div>
+        </div>
+    </div>
 </x-action-create>
