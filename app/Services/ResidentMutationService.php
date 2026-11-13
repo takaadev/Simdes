@@ -2,12 +2,15 @@
 
 namespace App\Services;
 
+use App\Enums\MutationTypeList;
 use App\Http\Requests\Resident\ImportExcelResidentRequest;
 use App\Imports\ResidentImport;
 use App\Models\Resident;
 use App\Models\ResidentMutation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -290,8 +293,8 @@ class ResidentMutationService
     public function getStore(array $data): \Illuminate\Http\JsonResponse
     {
         try {
-            $mutation = \DB::transaction(function () use ($data) {
-                $data['recorded_by'] = auth()->id();
+            $mutation = DB::transaction(function () use ($data) {
+                $data['recorded_by'] = Auth::id();
 
                 return ResidentMutation::create($data);
             });
@@ -302,7 +305,7 @@ class ResidentMutationService
                 'data' => $mutation,
             ], 201);
         } catch (\Throwable $e) {
-            \Log::error('Gagal menambahkan data mutasi penduduk.', [
+            Log::error('Gagal menambahkan data mutasi penduduk.', [
                 'error' => $e->getMessage(),
             ]);
 
@@ -316,7 +319,7 @@ class ResidentMutationService
     public function getUpdate(ResidentMutation $mutation, array $data): \Illuminate\Http\JsonResponse
     {
         try {
-            \DB::transaction(function () use ($mutation, $data) {
+            DB::transaction(function () use ($mutation, $data) {
                 $mutation->update($data);
             });
 
@@ -325,7 +328,7 @@ class ResidentMutationService
                 'message' => 'Data mutasi penduduk berhasil diperbarui.',
             ]);
         } catch (\Throwable $e) {
-            \Log::error('Gagal memperbarui data mutasi penduduk.', [
+            Log::error('Gagal memperbarui data mutasi penduduk.', [
                 'mutation_id' => $mutation->id,
                 'error' => $e->getMessage(),
             ]);
@@ -354,7 +357,7 @@ class ResidentMutationService
                 ], 422);
             }
 
-            $deleted = \DB::transaction(function () use (
+            $deleted = DB::transaction(function () use (
                 $mutation,
                 $forceDelete
             ) {
@@ -374,7 +377,7 @@ class ResidentMutationService
                     : 'Data mutasi penduduk berhasil dipindahkan ke sampah.',
             ]);
         } catch (\Throwable $e) {
-            \Log::error('Gagal menghapus data mutasi penduduk.', [
+            Log::error('Gagal menghapus data mutasi penduduk.', [
                 'mutation_id' => $mutation->id,
                 'force_delete' => $forceDelete ?? false,
                 'error' => $e->getMessage(),
@@ -389,7 +392,69 @@ class ResidentMutationService
 
     public function getMutationToResident(array $data): \Illuminate\Http\JsonResponse
     {
+        try {
+            return DB::transaction(function () use ($data) {
 
+                $mutation = ResidentMutation::query()
+                    ->whereKey($data['mutation_id'])
+                    ->where('tipe_mutasi', MutationTypeList::ADD->value)
+                    ->whereNull('resident_id')
+                    ->lockForUpdate()
+                    ->first();
+
+                if (!$mutation) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Data mutasi tidak ditemukan atau sudah dipindahkan ke Buku Induk Penduduk.',
+                    ], 422);
+                }
+
+                $residentData = [
+                    'nama_lengkap' => $mutation->nama_lengkap,
+                    'jenis_kelamin' => $mutation->jenis_kelamin->value,
+                    'tempat_lahir' => $mutation->tempat_lahir,
+                    'tgl_lahir' => $mutation->tgl_lahir,
+                    'kewarganegaraan' => $mutation->kewarganegaraan->value,
+                    'kebangsaan' => $mutation->kebangsaan,
+
+                    'nik' => $data['nik'],
+                    'kk' => $data['kk'],
+                    'status_perkawinan' => $data['status_perkawinan'],
+                    'agama' => $data['agama'],
+                    'pendidikan' => $data['pendidikan'],
+                    'pekerjaan' => $data['pekerjaan'],
+                    'status_dalam_keluarga' => $data['status_dalam_keluarga'],
+                    'dapat_membaca' => $data['dapat_membaca'],
+                    'rt' => $data['rt'] ?? null,
+                    'rw' => $data['rw'] ?? null,
+                    'nomor_rumah' => $data['nomor_rumah'] ?? null,
+                    'catatan' => $data['catatan'] ?? $mutation->catatan,
+                ];
+
+                $resident = Resident::create($residentData);
+
+                $mutation->update([
+                    'resident_id' => $resident->id,
+                ]);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Data mutasi berhasil dipindahkan ke Buku Induk Penduduk.',
+                    'data' => [
+                        'id' => $resident->id,
+                        'nama_lengkap' => $resident->nama_lengkap,
+                        'nik' => $resident->nik,
+                    ],
+                ], 201);
+            });
+        } catch (\Throwable $e) {
+            report($e);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat memindahkan data mutasi ke Buku Induk Penduduk.',
+            ], 500);
+        }
     }
 
     public function getImportExcel(ImportExcelResidentRequest $request): \Illuminate\Http\JsonResponse

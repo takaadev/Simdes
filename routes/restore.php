@@ -10,6 +10,7 @@ use App\Http\Controllers\Generals\VillageRegulationController;
 use App\Http\Controllers\Generals\VillageTreasuryLandController;
 use App\Http\Controllers\Residents\ResidentController;
 use App\Http\Controllers\Residents\ResidentMutationController;
+use App\Http\Controllers\Residents\TemporaryResidentController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -27,8 +28,8 @@ Route::prefix('admpenduduk')->group(function () {
     Route::post('residents/import-excel', [ResidentController::class, 'importexcel'])->name('residents.importexcel');
     Route::patch('mutations/{id}/restore', [ResidentMutationController::class, 'restore'])->name('mutations.restore');
     Route::post('mutations/add-resident', [ResidentMutationController::class, 'mutationToResident'])->name('mutations.to-resident');
+    Route::patch('temporaryresidents/{id}/restore', [TemporaryResidentController::class, 'restore'])->name('temporaryresidents.restore');
 });
-
 Route::prefix('arsip')->group(function () {
     Route::patch('agenda/{id}/restore', [AgendaEntryController::class, 'restore'])->name('agendas.restore');
     Route::post('agendas/generate-number', [AgendaEntryController::class, 'generateNumber'])->name('agendas.generate-number');

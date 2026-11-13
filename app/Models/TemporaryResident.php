@@ -2,27 +2,32 @@
 
 namespace App\Models;
 
+use App\Contracts\Restorable;
+use App\Enums\CitizenshipList;
 use App\Enums\GenderList;
+use App\Enums\OccupationList;
+use App\Models\Concerns\RestoresSoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class TemporaryResident extends Model
+class TemporaryResident extends Model implements Restorable
 {
     /** @use HasFactory<\Database\Factories\TemporaryResidentFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, RestoresSoftDeletes;
 
     protected $guarded = ['id'];
 
     protected function casts(): array
     {
         return [
-            'gender' => GenderList::class,
-            'birth_date' => 'date',
-            'arrival_date' => 'date',
-            'departure_date' => 'date',
-            'age' => 'integer',
+            'jenis_kelamin' => GenderList::class,
+            'kewarganegaraan' => CitizenshipList::class,
+            'pekerjaan' => OccupationList::class,
+            'tgl_lahir' => 'date',
+            'tgl_datang' => 'date',
+            'tgl_pergi' => 'date',
         ];
     }
 
@@ -33,6 +38,11 @@ class TemporaryResident extends Model
 
     public function getStayStatusAttribute(): string
     {
-        return $this->departure_date ? 'Sudah Pergi' : 'Masih Tinggal';
+        return $this->tgl_pergi ? 'Sudah Pergi' : 'Masih Tinggal';
+    }
+
+    public function getUmurAttribute(): int
+    {
+        return $this->tgl_lahir->age;
     }
 }

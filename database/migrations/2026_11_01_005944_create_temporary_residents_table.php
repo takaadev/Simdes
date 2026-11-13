@@ -11,30 +11,29 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('temporary_residents', function (Blueprint $table) {
+       Schema::create('temporary_residents', function (Blueprint $table) {
             $table->id();
-            $table->string('registration_number', 30)->unique();
-            $table->string('full_name', 150);
-            $table->string('gender', 2);
-            $table->string('nationality', 100)->nullable();
-            $table->string('ethnicity', 100)->nullable();
-            $table->string('birth_place', 100)->nullable();
-            $table->date('birth_date')->nullable();
-            $table->unsignedTinyInteger('age')->nullable();
-            $table->string('occupation', 100)->nullable();
-            $table->string('citizenship', 10)->nullable();
-            $table->text('origin_address')->nullable();
-            $table->text('visit_purpose')->nullable();
-            $table->string('destination_name', 150)->nullable();
-            $table->text('destination_address')->nullable();
-            $table->date('arrival_date');
-            $table->date('departure_date')->nullable();
-            $table->text('notes')->nullable();
+            $table->string('nama_lengkap', 150);
+            $table->string('jenis_kelamin', 2); // Contoh: 'L' atau 'P'
+            $table->string('nomor_identitas', 30)->nullable(); // Diperbesar untuk antisipasi nomor paspor WNA
+            $table->string('tempat_lahir', 100);
+            $table->date('tgl_lahir');
+            $table->unsignedInteger('umur')->default(0);
+            $table->string('pekerjaan', 100);
+            $table->string('kewarganegaraan', 10); 
+            $table->string('kebangsaan', 100)->nullable(); 
+            $table->string('keturunan', 50)->nullable();
+            $table->string('datang_dari', 150);
+            $table->string('tujuan_kedatangan', 255);
+            $table->text('alamat_tujuan'); 
+            $table->date('tgl_datang');
+            $table->date('tgl_pergi')->nullable();
+            $table->text('catatan')->nullable();
             $table->foreignId('recorded_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
             $table->softDeletes();
-            $table->index(['arrival_date', 'departure_date']);
-            $table->index('full_name');
+            $table->index(['tgl_datang', 'tgl_pergi']);
+            $table->index('nama_lengkap');
         });
     }
 

@@ -75,7 +75,7 @@ class DatabaseSeeder extends Seeder
         // FamilyCard::factory(15)->create();
         // FamilyCardMember::factory(30)->create();
         ResidentMutation::factory(50)->create();
-        // TemporaryResident::factory(10)->create();
+        TemporaryResident::factory(20)->create();
 
         /*
         |--------------------------------------------------------------------------

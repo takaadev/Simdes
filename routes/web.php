@@ -11,6 +11,7 @@ use App\Http\Controllers\Generals\VillageRegulationController;
 use App\Http\Controllers\Generals\VillageTreasuryLandController;
 use App\Http\Controllers\Residents\ResidentController;
 use App\Http\Controllers\Residents\ResidentMutationController;
+use App\Http\Controllers\Residents\TemporaryResidentController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -52,6 +53,26 @@ Route::prefix('admumum')->group(function () {
         ->except(['create', 'edit', 'show'])->withTrashed(['update', 'destroy']);
 });
 
+Route::prefix('admpenduduk')->group(function () {
+    Route::resource('buku-induk-penduduk', ResidentController::class)
+        ->names('residents')
+        ->parameters(['buku-induk-penduduk' => 'resident'])
+        ->except(['create', 'edit', 'show'])
+        ->withTrashed(['update', 'destroy']);
+
+    Route::resource('buku-mutasi-penduduk', ResidentMutationController::class)
+        ->names('mutations')
+        ->parameters(['buku-mutasi-penduduk' => 'mutation'])
+        ->except(['create', 'edit', 'show'])
+        ->withTrashed(['update', 'destroy']);
+
+    Route::resource('buku-penduduk-sementara', TemporaryResidentController::class)
+        ->names('temporaryresidents')
+        ->parameters(['buku-penduduk-sementara' => 'temporary'])
+        ->except(['create', 'edit', 'show'])
+        ->withTrashed(['update', 'destroy']);
+});
+
 Route::prefix('arsip')->group(function () {
     Route::resource('agenda', AgendaEntryController::class)
         ->names('agendas')
@@ -66,16 +87,3 @@ Route::prefix('arsip')->group(function () {
         ->withTrashed(['update', 'destroy']);
 });
 
-Route::prefix('admpenduduk')->group(function () {
-    Route::resource('buku-induk-penduduk', ResidentController::class)
-        ->names('residents')
-        ->parameters(['buku-induk-penduduk' => 'resident'])
-        ->except(['create', 'edit', 'show'])
-        ->withTrashed(['update', 'destroy']);
-
-    Route::resource('buku-mutasi-penduduk', ResidentMutationController::class)
-        ->names('mutations')
-        ->parameters(['buku-mutasi-penduduk' => 'mutation'])
-        ->except(['create', 'edit', 'show'])
-        ->withTrashed(['update', 'destroy']);
-});

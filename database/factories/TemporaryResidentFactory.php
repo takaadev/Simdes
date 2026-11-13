@@ -2,9 +2,12 @@
 
 namespace Database\Factories;
 
+use App\Enums\CitizenshipList;
 use App\Enums\GenderList;
+use App\Enums\OccupationList;
 use App\Models\TemporaryResident;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,62 +19,55 @@ class TemporaryResidentFactory extends Factory
 
     public function definition(): array
     {
-        $arrivalDate = fake()->dateTimeBetween('-6 months', 'now');
+        $tglDatang = fake('id_ID')->dateTimeBetween('-6 months', 'now');
+        $tglLahir = fake('id_ID')->dateTimeBetween('-70 years', '-18 years');
 
-        $birthDate = fake()->dateTimeBetween('-70 years', '-18 years');
+        // Mayoritas WNI, sebagian kecil WNA
+        $kewarganegaraan = fake()->randomElement([
+            CitizenshipList::WNI,
+            CitizenshipList::WNI,
+            CitizenshipList::WNI,
+            CitizenshipList::WNA,
+        ]);
 
         return [
-            'registration_number' => fake()->unique()->numerify('PS-####-####'),
-
-            'full_name' => fake()->name(),
-
-            'gender' => fake()->randomElement(GenderList::cases()),
-
-            'nationality' => fake()->country(),
-            'ethnicity' => fake()->randomElement([
+            'nama_lengkap' => fake('id_ID')->name(),
+            'jenis_kelamin' => fake()->randomElement(GenderList::cases())->value,
+            'nomor_identitas' => $kewarganegaraan === CitizenshipList::WNI
+                ? fake('id_ID')->nik()
+                : fake()->bothify('??#######'),
+            'tempat_lahir' => fake('id_ID')->city(),
+            'tgl_lahir' => $tglLahir->format('Y-m-d'),
+             'umur' => Carbon::parse($tglLahir)->age,
+            'pekerjaan' => fake()->randomElement(OccupationList::cases())->value,
+            'kewarganegaraan' => $kewarganegaraan->value,
+            'kebangsaan' => $kewarganegaraan === CitizenshipList::WNI
+                ? 'Indonesia'
+                : fake()->country(),
+            'keturunan' => fake()->randomElement([
                 'Melayu',
                 'Jawa',
                 'Minangkabau',
                 'Batak',
                 'Sunda',
+                'Tionghoa',
+                'Arab',
                 'Lainnya',
             ]),
-
-            'birth_place' => fake()->city(),
-            'birth_date' => $birthDate->format('Y-m-d'),
-            'age' => $birthDate->diff(new \DateTime())->y,
-
-            'occupation' => fake()->randomElement([
-                'Wiraswasta',
-                'Karyawan Swasta',
-                'Petani',
-                'Pelajar/Mahasiswa',
-                'PNS',
-                'Lainnya',
-            ]),
-
-            'citizenship' => 'WNI',
-
-            'origin_address' => fake()->address(),
-            'visit_purpose' => fake()->randomElement([
+            'datang_dari' => fake('id_ID')->city(),
+            'tujuan_kedatangan' => fake()->randomElement([
                 'Bekerja',
                 'Mengunjungi keluarga',
                 'Keperluan keluarga',
                 'Urusan pekerjaan',
                 'Keperluan lainnya',
             ]),
-
-            'destination_name' => fake()->name(),
-            'destination_address' => fake()->address(),
-
-            'arrival_date' => $arrivalDate->format('Y-m-d'),
-
-            'departure_date' => fake()->optional(0.5)
-                ->dateTimeBetween($arrivalDate, 'now')
+            'alamat_tujuan' => fake('id_ID')->address(),
+            'tgl_datang' => $tglDatang->format('Y-m-d'),
+            'tgl_pergi' => fake()->optional(0.5)
+                ->dateTimeBetween($tglDatang, 'now')
                 ?->format('Y-m-d'),
-
-            'notes' => fake()->optional()->sentence(),
-
+            'catatan' => fake('id_ID')->optional()->sentence(),
             'recorded_by' => User::factory(),
         ];
     }
@@ -79,7 +75,7 @@ class TemporaryResidentFactory extends Factory
     public function stillStaying(): static
     {
         return $this->state(fn() => [
-            'departure_date' => null,
+            'tgl_pergi' => null,
         ]);
     }
 
@@ -87,8 +83,8 @@ class TemporaryResidentFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'departure_date' => fake()
-                    ->dateTimeBetween($attributes['arrival_date'], 'now')
+                'tgl_pergi' => fake()
+                    ->dateTimeBetween($attributes['tgl_datang'], 'now')
                     ->format('Y-m-d'),
             ];
         });
