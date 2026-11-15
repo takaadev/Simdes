@@ -1,4 +1,4 @@
-<x-action-create href="{{ route('village-assets.store') }}" size="xl">
+<x-action-create href="{{ route('village-assets.store') }}" size="lg">
 
     {{-- A. Identitas Barang --}}
     <x-fieldset label="A. Identitas Barang">

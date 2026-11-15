@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\AgendaEntry;
 use App\Models\AppSetting;
-use App\Models\Dusun;
 use App\Models\ExpeditionEntry;
 use App\Models\FamilyCard;
 use App\Models\FamilyCardMember;
@@ -69,10 +68,12 @@ class DatabaseSeeder extends Seeder
         | Population
         |--------------------------------------------------------------------------
         */
+        // $this->call([
+        //     ResidentSeeder::class,
+        // ]);
 
-
-        FamilyCard::factory(20)->create();
-        Resident::factory(100)->create();
+        FamilyCard::factory(50)->create();
+        Resident::factory(200)->create();
         // FamilyCardMember::factory(30)->create();
         ResidentMutation::factory(50)->create();
         TemporaryResident::factory(20)->create();

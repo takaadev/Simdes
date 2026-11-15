@@ -18,7 +18,21 @@ class StoreResidentMutationRequest extends FormRequest
 
     public function rules(): array
     {
+        $isAdd = $this->input('tipe_mutasi') === MutationTypeList::ADD->value;
+        $isMinus = $this->input('tipe_mutasi') === MutationTypeList::MINUS->value;
+
         return [
+            'nomor_identitas' => [
+                Rule::requiredIf($isAdd || $isMinus),
+                'nullable',
+                'string',
+                'max:30',
+                ...($isMinus ? [
+                    Rule::exists('residents', 'nik')
+                        ->whereNull('deleted_at'),
+                ] : []),
+            ],
+
             'nama_lengkap' => [
                 'required',
                 'string',
@@ -76,6 +90,20 @@ class StoreResidentMutationRequest extends FormRequest
                 'max:255',
             ],
 
+            'rt_tujuan' => [
+                Rule::requiredIf($isAdd),
+                'nullable',
+                'string',
+                'max:10',
+            ],
+
+            'rw_tujuan' => [
+                Rule::requiredIf($isAdd),
+                'nullable',
+                'string',
+                'max:10',
+            ],
+
             'catatan' => [
                 'nullable',
                 'string',
@@ -86,6 +114,10 @@ class StoreResidentMutationRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'nomor_identitas.required' => 'Nomor identitas wajib diisi.',
+            'nomor_identitas.exists' => 'Nomor identitas tidak ditemukan dalam data penduduk aktif.',
+            'nomor_identitas.max' => 'Nomor identitas maksimal 30 karakter.',
+
             'nama_lengkap.required' => 'Nama lengkap wajib diisi.',
             'nama_lengkap.max' => 'Nama lengkap maksimal 150 karakter.',
 
@@ -117,12 +149,19 @@ class StoreResidentMutationRequest extends FormRequest
 
             'tujuan_mutasi.required_unless' => 'Asal atau tujuan mutasi wajib diisi untuk penduduk masuk dan keluar.',
             'tujuan_mutasi.max' => 'Asal atau tujuan mutasi maksimal 255 karakter.',
+
+            'rt_tujuan.required' => 'RT tujuan wajib dipilih untuk mutasi penambahan.',
+            'rt_tujuan.max' => 'RT tujuan maksimal 10 karakter.',
+
+            'rw_tujuan.required' => 'RW tujuan wajib dipilih untuk mutasi penambahan.',
+            'rw_tujuan.max' => 'RW tujuan maksimal 10 karakter.',
         ];
     }
 
     public function attributes(): array
     {
         return [
+            'nomor_identitas' => 'nomor identitas',
             'nama_lengkap' => 'nama lengkap',
             'tempat_lahir' => 'tempat lahir',
             'tgl_lahir' => 'tanggal lahir',
@@ -133,6 +172,8 @@ class StoreResidentMutationRequest extends FormRequest
             'kategori_mutasi' => 'kategori mutasi',
             'tgl_mutasi' => 'tanggal mutasi',
             'tujuan_mutasi' => 'asal atau tujuan mutasi',
+            'rt_tujuan' => 'RT tujuan',
+            'rw_tujuan' => 'RW tujuan',
             'catatan' => 'catatan',
         ];
     }

@@ -8,6 +8,7 @@ use App\Http\Controllers\Generals\VillageOfficialController;
 use App\Http\Controllers\Generals\VillagePublicationController;
 use App\Http\Controllers\Generals\VillageRegulationController;
 use App\Http\Controllers\Generals\VillageTreasuryLandController;
+use App\Http\Controllers\Residents\FamilyCardController;
 use App\Http\Controllers\Residents\ResidentController;
 use App\Http\Controllers\Residents\ResidentMutationController;
 use App\Http\Controllers\Residents\TemporaryResidentController;
@@ -30,6 +31,8 @@ Route::prefix('admpenduduk')->group(function () {
     Route::post('mutations/add-resident', [ResidentMutationController::class, 'mutationToResident'])->name('mutations.to-resident');
     Route::patch('temporaryresidents/{id}/restore', [TemporaryResidentController::class, 'restore'])->name('temporaryresidents.restore');
     Route::put('temporaryresidents/{id}/outgoing', [TemporaryResidentController::class, 'outgoingConfirmed'])->name('temporaryresidents.outgoing-confirmed');
+    Route::patch('familycards/{id}/restore', [FamilyCardController::class, 'restore'])->name('familycards.restore');
+    Route::post('familycards/mutation', [FamilyCardController::class, 'mutation'])->name('familycards.mutation');
 });
 Route::prefix('arsip')->group(function () {
     Route::patch('agenda/{id}/restore', [AgendaEntryController::class, 'restore'])->name('agendas.restore');

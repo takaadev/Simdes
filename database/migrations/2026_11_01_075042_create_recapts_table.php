@@ -13,16 +13,12 @@ return new class extends Migration
     {
         Schema::create('recapts', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 150);
-            $table->string('period_type', 20);
-            $table->date('period_start');
-            $table->date('period_end');
-            $table->date('snapshot_date');
-            $table->text('notes')->nullable();
+            $table->string('tahun', 20);
+            $table->date('bulan');
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
-            $table->index(['period_type', 'period_start', 'period_end'], 'recapt_id');
-            $table->index('snapshot_date');
+            $table->softDeletes();
+            $table->unique(['tahun', 'bulan']);
         });
     }
 

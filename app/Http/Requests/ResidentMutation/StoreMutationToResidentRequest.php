@@ -10,11 +10,57 @@ use App\Enums\ReligionList;
 use App\Enums\RtList;
 use App\Enums\RwList;
 use App\Enums\MutationTypeList;
+use App\Models\FamilyCard;
+use App\Models\ResidentMutation;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class StoreMutationToResidentRequest extends FormRequest
 {
+    /**
+     * Ambil data mutasi yang dipilih.
+     */
+    protected function selectedMutation(): ?ResidentMutation
+    {
+        if (!$this->filled('mutation_id')) {
+            return null;
+        }
+
+        return ResidentMutation::query()
+            ->where('tipe_mutasi', MutationTypeList::ADD->value)
+            ->whereNull('resident_id')
+            ->find($this->input('mutation_id'));
+    }
+
+    /**
+     * Persiapkan data sebelum validasi.
+     */
+    protected function prepareForValidation(): void
+    {
+        $mutation = $this->selectedMutation();
+
+        // Jika nomor identitas pada mutasi tersedia,
+        // gunakan sebagai NIK apabila NIK belum diisi.
+        if ($mutation && blank($this->input('nik')) && filled($mutation->nomor_identitas)) {
+            $this->merge([
+                'nik' => $mutation->nomor_identitas,
+            ]);
+        }
+
+        // Jika nomor KK belum terdaftar, otomatis jadikan
+        // penduduk sebagai Kepala Keluarga.
+        if (
+            $this->filled('kk') &&
+            !FamilyCard::withTrashed()
+                ->where('nomor_kk', $this->input('kk'))
+                ->exists()
+        ) {
+            $this->merge([
+                'status_dalam_keluarga' => RelationshipList::HEAD->value,
+            ]);
+        }
+    }
+
     public function authorize(): bool
     {
         return true;
@@ -68,6 +114,12 @@ class StoreMutationToResidentRequest extends FormRequest
             'status_dalam_keluarga' => [
                 'required',
                 Rule::enum(RelationshipList::class),
+
+                // Satu KK hanya boleh memiliki satu Kepala Keluarga.
+                Rule::unique('residents', 'kk')
+                    ->where('status_dalam_keluarga', RelationshipList::HEAD->value)
+                    ->withoutTrashed()
+                    ->ignore(null),
             ],
 
             'dapat_membaca' => [
@@ -84,11 +136,10 @@ class StoreMutationToResidentRequest extends FormRequest
                 'nullable',
                 Rule::enum(RwList::class),
             ],
-
-            'nomor_rumah' => [
+            'alamat' => [
                 'nullable',
                 'string',
-                'max:10',
+                'max:65535',
             ],
 
             'catatan' => [
@@ -103,9 +154,9 @@ class StoreMutationToResidentRequest extends FormRequest
         return [
             'mutation_id.required' => 'Data mutasi penduduk wajib dipilih.',
             'mutation_id.integer' => 'Data mutasi penduduk tidak valid.',
-            'mutation_id.exists' => 'Data mutasi tidak ditemukan, bukan mutasi masuk, atau sudah masuk Buku Induk Penduduk.',
+            'mutation_id.exists' => 'Data mutasi tidak ditemukan, bukan mutasi penambahan, atau sudah masuk Buku Induk Penduduk.',
 
-            'nik.required' => 'NIK wajib diisi.',
+            'nik.required' => 'NIK wajib diisi apabila nomor identitas pada data mutasi kosong.',
             'nik.digits' => 'NIK harus terdiri dari 16 digit angka.',
             'nik.unique' => 'NIK sudah terdaftar dalam Buku Induk Penduduk.',
 
@@ -126,14 +177,16 @@ class StoreMutationToResidentRequest extends FormRequest
 
             'status_dalam_keluarga.required' => 'Status dalam keluarga wajib dipilih.',
             'status_dalam_keluarga.enum' => 'Status dalam keluarga yang dipilih tidak valid.',
+            'status_dalam_keluarga.unique' => 'Nomor KK tersebut sudah memiliki Kepala Keluarga.',
 
             'dapat_membaca.required' => 'Kemampuan membaca wajib dipilih.',
             'dapat_membaca.boolean' => 'Pilihan kemampuan membaca tidak valid.',
 
             'rt.enum' => 'RT yang dipilih tidak valid.',
             'rw.enum' => 'RW yang dipilih tidak valid.',
+            'alamat.string' => 'Alamat harus berupa teks.',
+            'alamat.max' => 'Alamat terlalu panjang.',
 
-            'nomor_rumah.max' => 'Nomor rumah maksimal 10 karakter.',
         ];
     }
 
@@ -151,7 +204,7 @@ class StoreMutationToResidentRequest extends FormRequest
             'dapat_membaca' => 'kemampuan membaca',
             'rt' => 'RT',
             'rw' => 'RW',
-            'nomor_rumah' => 'nomor rumah',
+            'alamat' => 'alamat',
             'catatan' => 'catatan',
         ];
     }

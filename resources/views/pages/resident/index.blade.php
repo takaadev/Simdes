@@ -15,10 +15,10 @@
             <th>Pekerjaan</th>
             <th>Dapat Membaca Huruf</th>
             <th>Kewarganegaraan</th>
+            <th>Alamat</th>
             <th>Kedudukan dalam Keluarga</th>
             <th>NIK</th>
             <th>Nomor KK</th>
-            <th>Alamat</th>
             <th>Aksi</th>
         </tr>
     </x-table>
@@ -140,10 +140,17 @@
                             name: 'kewarganegaraan'
                         },
 
+                        {
+                            data: 'alamat',
+                            name: 'alamat',
+                            orderable: false
+                        },
+
                         // 12. Kedudukan dalam keluarga.
                         {
                             data: 'status_dalam_keluarga',
-                            name: 'status_dalam_keluarga'
+                            name: 'status_dalam_keluarga',
+                            className:'text-center'
                         },
 
                         // 13. NIK.
@@ -156,13 +163,6 @@
                         {
                             data: 'kk',
                             name: 'kk'
-                        },
-
-                        // 15. Alamat beserta RT dan RW.
-                        {
-                            data: 'alamat',
-                            name: 'alamat',
-                            orderable: false
                         },
 
                         // 16. Aksi.

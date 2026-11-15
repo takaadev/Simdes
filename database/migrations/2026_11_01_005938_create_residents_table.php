@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('residents', function (Blueprint $table) {
@@ -36,6 +33,7 @@ return new class extends Migration
             $table->text('alamat')->nullable();
             $table->string('tempat_dikeluarkan', 100)->nullable();
             $table->date('tgl_dikeluarkan')->nullable();
+            $table->date('tgl_mulai_tinggal')->nullable();
             $table->text('catatan')->nullable();
             $table->timestamps();
             $table->softDeletes();
@@ -44,9 +42,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('residents');

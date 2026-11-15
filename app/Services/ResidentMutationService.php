@@ -3,15 +3,19 @@
 namespace App\Services;
 
 use App\Enums\MutationTypeList;
+use App\Enums\RelationshipList;
 use App\Http\Requests\Resident\ImportExcelResidentRequest;
 use App\Imports\ResidentImport;
+use App\Models\FamilyCard;
 use App\Models\Resident;
 use App\Models\ResidentMutation;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
+use RuntimeException;
 use Yajra\DataTables\Facades\DataTables;
 
 class ResidentMutationService
@@ -75,6 +79,7 @@ class ResidentMutationService
             ResidentMutation::query()->select([
                 'id',
                 'nama_lengkap',
+                'nomor_identitas',
                 'tempat_lahir',
                 'tgl_lahir',
                 'jenis_kelamin',
@@ -86,6 +91,8 @@ class ResidentMutationService
                 'tujuan_mutasi',
                 'catatan',
                 'resident_id',
+                'rt_tujuan',
+                'rw_tujuan',
                 'recorded_by',
                 'created_at',
                 'updated_at',
@@ -290,7 +297,7 @@ class ResidentMutationService
         ])->render();
     }
 
-    public function getStore(array $data): \Illuminate\Http\JsonResponse
+    public function getStore(array $data): JsonResponse
     {
         try {
             $mutation = DB::transaction(function () use ($data) {
@@ -316,7 +323,7 @@ class ResidentMutationService
         }
     }
 
-    public function getUpdate(ResidentMutation $mutation, array $data): \Illuminate\Http\JsonResponse
+    public function getUpdate(ResidentMutation $mutation, array $data): JsonResponse
     {
         try {
             DB::transaction(function () use ($mutation, $data) {
@@ -340,7 +347,7 @@ class ResidentMutationService
         }
     }
 
-    public function getDestroy(Request $request, ResidentMutation $mutation): \Illuminate\Http\JsonResponse
+    public function getDestroy(Request $request, ResidentMutation $mutation): JsonResponse
     {
         try {
             $forceDelete = $request->boolean('confirm_delete');
@@ -390,11 +397,12 @@ class ResidentMutationService
         }
     }
 
-    public function getMutationToResident(array $data): \Illuminate\Http\JsonResponse
+    public function getMutationToResident(array $data): JsonResponse
     {
         try {
             return DB::transaction(function () use ($data) {
 
+                // 1. Ambil dan kunci data mutasi.
                 $mutation = ResidentMutation::query()
                     ->whereKey($data['mutation_id'])
                     ->where('tipe_mutasi', MutationTypeList::ADD->value)
@@ -409,41 +417,117 @@ class ResidentMutationService
                     ], 422);
                 }
 
+                // 2. Tentukan NIK.
+                // Gunakan nomor_identitas mutasi jika tersedia.
+                $nik = filled($mutation->nomor_identitas)
+                    ? $mutation->nomor_identitas
+                    : ($data['nik'] ?? null);
+
+                if (blank($nik)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'NIK wajib diisi karena nomor identitas pada data mutasi kosong.',
+                    ], 422);
+                }
+
+                // 3. Ambil nilai enum Kepala Keluarga berdasarkan label.
+                $headValue = array_search(
+                    'Kepala Keluarga',
+                    RelationshipList::options(),
+                    true
+                );
+
+                if ($headValue === false) {
+                    throw new RuntimeException(
+                        'Opsi Kepala Keluarga tidak ditemukan pada RelationshipList.'
+                    );
+                }
+
+                // 4. Cari KK berdasarkan nomor KK.
+                // withTrashed digunakan agar nomor KK yang pernah dihapus
+                // tidak dibuat ulang dengan nomor yang sama.
+                $familyCard = FamilyCard::withTrashed()
+                    ->where('nomor_kk', $data['kk'])
+                    ->lockForUpdate()
+                    ->first();
+
+                $isNewFamilyCard = !$familyCard;
+
+                if ($isNewFamilyCard) {
+                    // 5. Jika KK belum ada, buat KK baru.
+                    $familyCard = FamilyCard::create([
+                        'nomor_kk' => $data['kk'],
+                    ]);
+
+                    // KK baru otomatis menjadikan penduduk sebagai Kepala Keluarga.
+                    $statusDalamKeluarga = $headValue;
+                } else {
+                    // Pulihkan KK jika sebelumnya dihapus sementara.
+                    if ($familyCard->trashed()) {
+                        $familyCard->restore();
+                    }
+
+                    // 6. Periksa apakah KK sudah memiliki Kepala Keluarga.
+                    $hasHead = $familyCard->residents()
+                        ->where('status_dalam_keluarga', $headValue)
+                        ->exists();
+
+                    $requestedRelationship = $data['status_dalam_keluarga'];
+
+                    if ($requestedRelationship === $headValue && $hasHead) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'KK tersebut sudah memiliki Kepala Keluarga. Silakan pilih hubungan keluarga yang lain.',
+                        ], 422);
+                    }
+
+                    $statusDalamKeluarga = $requestedRelationship;
+                }
+
+                // 7. Siapkan data penduduk.
                 $residentData = [
+                    'family_card_id' => $familyCard->id,
                     'nama_lengkap' => $mutation->nama_lengkap,
-                    'jenis_kelamin' => $mutation->jenis_kelamin->value,
+                    'jenis_kelamin' => $mutation->jenis_kelamin->value ?? $mutation->jenis_kelamin,
                     'tempat_lahir' => $mutation->tempat_lahir,
                     'tgl_lahir' => $mutation->tgl_lahir,
-                    'kewarganegaraan' => $mutation->kewarganegaraan->value,
+                    'kewarganegaraan' => $mutation->kewarganegaraan->value ?? $mutation->kewarganegaraan,
                     'kebangsaan' => $mutation->kebangsaan,
 
-                    'nik' => $data['nik'],
-                    'kk' => $data['kk'],
+                    'nik' => $nik,
+                    'kk' => $familyCard->nomor_kk,
                     'status_perkawinan' => $data['status_perkawinan'],
                     'agama' => $data['agama'],
                     'pendidikan' => $data['pendidikan'],
                     'pekerjaan' => $data['pekerjaan'],
-                    'status_dalam_keluarga' => $data['status_dalam_keluarga'],
+                    'status_dalam_keluarga' => $statusDalamKeluarga,
                     'dapat_membaca' => $data['dapat_membaca'],
-                    'rt' => $data['rt'] ?? null,
-                    'rw' => $data['rw'] ?? null,
-                    'nomor_rumah' => $data['nomor_rumah'] ?? null,
+                    'rt' => $data['rt'] ?? $mutation->rt_tujuan ?? null,
+                    'rw' => $data['rw'] ?? $mutation->rw_tujuan ?? null,
+                    'alamat' => $data['alamat'],
                     'catatan' => $data['catatan'] ?? $mutation->catatan,
                 ];
 
+                // 8. Simpan penduduk.
                 $resident = Resident::create($residentData);
 
+                // 9. Tandai mutasi sudah dipindahkan ke BIP.
                 $mutation->update([
                     'resident_id' => $resident->id,
                 ]);
 
                 return response()->json([
                     'success' => true,
-                    'message' => 'Data mutasi berhasil dipindahkan ke Buku Induk Penduduk.',
+                    'message' => $isNewFamilyCard
+                        ? 'Data penduduk berhasil ditambahkan. KK baru berhasil dibuat dan penduduk otomatis menjadi Kepala Keluarga.'
+                        : 'Data mutasi berhasil dipindahkan ke Buku Induk Penduduk.',
                     'data' => [
                         'id' => $resident->id,
                         'nama_lengkap' => $resident->nama_lengkap,
                         'nik' => $resident->nik,
+                        'kk' => $familyCard->nomor_kk,
+                        'status_dalam_keluarga' => $statusDalamKeluarga,
+                        'family_card_id' => $familyCard->id,
                     ],
                 ], 201);
             });

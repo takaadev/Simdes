@@ -1,20 +1,26 @@
 <x-action-show :id="$data->id" modalTitle="Detail Mutasi Penduduk" size="xl">
-
-    {{-- A. Identitas Penduduk --}}
     <x-fieldset label="A. Identitas Penduduk">
         <div class="row g-3">
 
             <div class="col-12 col-md-6">
-                <x-input-text name="nama_lengkap" label="Nama Lengkap" value="{{ $data->nama_lengkap }}" disabled />
+                <x-input-text name="nama_lengkap" label="Nama Lengkap"
+                    value="{{ $data->nama_lengkap }}" disabled />
             </div>
 
             <div class="col-12 col-md-6">
-                <x-input-select name="jenis_kelamin" label="Jenis Kelamin" :options="\App\Enums\GenderList::options()"
+                <x-input-text name="nomor_identitas" label="Nomor Identitas (KTP/Paspor)"
+                    value="{{ $data->nomor_identitas }}" disabled />
+            </div>
+
+            <div class="col-12 col-md-4">
+                <x-input-select name="jenis_kelamin" label="Jenis Kelamin"
+                    :options="\App\Enums\GenderList::options()"
                     value="{{ $data->jenis_kelamin->value ?? $data->jenis_kelamin }}" disabled />
             </div>
 
             <div class="col-12 col-md-4">
-                <x-input-text name="tempat_lahir" label="Tempat Lahir" value="{{ $data->tempat_lahir }}" disabled />
+                <x-input-text name="tempat_lahir" label="Tempat Lahir"
+                    value="{{ $data->tempat_lahir }}" disabled />
             </div>
 
             <div class="col-12 col-md-4">
@@ -22,13 +28,15 @@
                     value="{{ $data->tgl_lahir?->format('Y-m-d') }}" disabled />
             </div>
 
-            <div class="col-12 col-md-4">
-                <x-input-select name="kewarganegaraan" label="Kewarganegaraan" :options="\App\Enums\CitizenshipList::options()"
+            <div class="col-12 col-md-6">
+                <x-input-select name="kewarganegaraan" label="Kewarganegaraan"
+                    :options="\App\Enums\CitizenshipList::options()"
                     value="{{ $data->kewarganegaraan->value ?? $data->kewarganegaraan }}" disabled />
             </div>
 
-            <div class="col-12">
-                <x-input-text name="kebangsaan" label="Kebangsaan" value="{{ $data->kebangsaan }}" disabled />
+            <div class="col-12 col-md-6">
+                <x-input-text name="kebangsaan" label="Kebangsaan"
+                    value="{{ $data->kebangsaan }}" disabled />
             </div>
 
         </div>
@@ -39,12 +47,14 @@
         <div class="row g-3">
 
             <div class="col-12 col-md-6">
-                <x-input-select name="tipe_mutasi" label="Tipe Mutasi" :options="\App\Enums\MutationTypeList::options()"
+                <x-input-select name="tipe_mutasi" label="Tipe Mutasi"
+                    :options="\App\Enums\MutationTypeList::options()"
                     value="{{ $data->tipe_mutasi->value ?? $data->tipe_mutasi }}" disabled />
             </div>
 
             <div class="col-12 col-md-6">
-                <x-input-select name="kategori_mutasi" label="Kategori Mutasi" :options="\App\Enums\MutationCategoryList::options()"
+                <x-input-select name="kategori_mutasi" label="Kategori Mutasi"
+                    :options="\App\Enums\MutationCategoryList::options()"
                     value="{{ $data->kategori_mutasi->value ?? $data->kategori_mutasi }}" disabled />
             </div>
 
@@ -54,8 +64,20 @@
             </div>
 
             <div class="col-12 col-md-6">
-                <x-input-text name="tujuan_mutasi" label="Asal / Tujuan Mutasi" value="{{ $data->tujuan_mutasi }}"
-                    disabled />
+                <x-input-text name="tujuan_mutasi" label="Asal / Tujuan Mutasi"
+                    value="{{ $data->tujuan_mutasi }}" disabled />
+            </div>
+
+            <div class="col-12 col-md-6">
+                <x-input-select name="rw_tujuan" label="RW Tujuan"
+                    :options="\App\Enums\RwList::options()"
+                    value="{{ $data->rw_tujuan->value ?? $data->rw_tujuan }}" disabled />
+            </div>
+
+            <div class="col-12 col-md-6">
+                <x-input-select name="rt_tujuan" label="RT Tujuan"
+                    :options="\App\Enums\RtList::options()"
+                    value="{{ $data->rt_tujuan->value ?? $data->rt_tujuan }}" disabled />
             </div>
 
         </div>
@@ -67,8 +89,8 @@
 
             <div class="col-12">
                 <x-input-textarea name="catatan" label="Catatan"
-                    placeholder="Keterangan tambahan mengenai mutasi penduduk..." value="{{ $data->catatan }}"
-                    rows="3" disabled />
+                    placeholder="Keterangan tambahan mengenai mutasi penduduk..."
+                    value="{{ $data->catatan }}" rows="3" disabled />
             </div>
 
         </div>

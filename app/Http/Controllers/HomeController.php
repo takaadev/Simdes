@@ -6,6 +6,6 @@ class HomeController extends Controller
 {
     public function __invoke()
     {
-        return view('dashboard.index');
+        return view('pages.dashboard.index');
     }
 }

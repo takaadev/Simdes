@@ -1,5 +1,4 @@
 <x-appcontent>
-    <x-app-heading />
     <div id="dashboardPageRoot">
         <section class="dashboard-welcome" aria-label="Sapaan Pengguna">
             <div class="welcome-content">
@@ -8,8 +7,7 @@
                         <i class="fa-regular fa-calendar" aria-hidden="true"></i>
                         <span id="dashboardCurrentDate">Sabtu, 31 Oktober 2026</span>
                     </div>
-                    <h2 class="welcome-title" id="dashboardGreetingTitle">Selamat Pagi, Budi Santoso,
-                        S.AP</h2>
+                    <h2 class="welcome-title" id="dashboardGreetingTitle">Selamat Pagi, MURTAKI, S.Kom</h2>
                     <p class="welcome-desc">
                         Seluruh buku administrasi Desa Tiaro berada dalam pemantauan berkala. Terdapat
                         <strong>3 pemberitahuan administrasi terbaru</strong> yang siap ditinjau hari

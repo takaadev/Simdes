@@ -489,6 +489,7 @@
   padding: 1.35rem;
   flex: 1 1 auto;
 }
+
 /* KPI Stat Card */
 .stat-card {
   border-radius: var(--radius-md);
@@ -593,15 +594,11 @@
    Forms & Interaction-Aware Validation
    -------------------------------------------------------------------------- */
 /* =========================================
-   FORM FIELD
-========================================= */
-
-/* =========================================
    FIELD
 ========================================= */
 
 .simdes-field {
-    margin-block-end: 0.75rem;
+  margin-block-end: 0.75rem;
 }
 
 /* =========================================
@@ -609,11 +606,11 @@
 ========================================= */
 
 .simdes-label {
-    display: inline-block;
-    margin-block-end: 0.25rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--simdes-text);
+  display: inline-block;
+  margin-block-end: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--simdes-text);
 }
 
 /* =========================================
@@ -621,10 +618,10 @@
 ========================================= */
 
 .simdes-field-hint {
-    display: block;
-    margin-block-end: 0.25rem;
-    font-size: 0.7rem;
-    color: var(--simdes-text-muted);
+  display: block;
+  margin-block-end: 0.25rem;
+  font-size: 0.7rem;
+  color: var(--simdes-text-muted);
 }
 
 /* =========================================
@@ -632,18 +629,18 @@
 ========================================= */
 
 .simdes-input-wrap {
-    position: relative;
-    display: flex;
-    align-items: center;
+  position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .simdes-input-icon {
-    position: absolute;
-    inset-inline-start: 0.65rem;
-    font-size: 0.7rem;
-    color: var(--simdes-text-light);
-    pointer-events: none;
-    transition: color var(--transition-fast);
+  position: absolute;
+  inset-inline-start: 0.65rem;
+  font-size: 0.7rem;
+  color: var(--simdes-text-light);
+  pointer-events: none;
+  transition: color var(--transition-fast);
 }
 
 /* =========================================
@@ -651,27 +648,22 @@
 ========================================= */
 
 .simdes-input {
-    display: block;
-    inline-size: 100%;
-    min-block-size: calc(1.5em + 0.5rem + 2px);
-
-    padding: 0.25rem 0.5rem;
-
-    font-size: 0.875rem;
-    font-weight: 400;
-    line-height: 1.5;
-    font-family: var(--font-sans);
-
-    color: var(--simdes-text);
-    background-color: var(--simdes-surface);
-
-    border: 1px solid var(--simdes-border);
-    border-radius: var(--radius-sm);
-
-    transition:
-        border-color var(--transition-fast),
-        box-shadow var(--transition-fast),
-        background-color var(--transition-fast);
+  display: block;
+  inline-size: 100%;
+  min-block-size: calc(1.5em + 0.5rem + 2px);
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.5;
+  font-family: var(--font-sans);
+  color: var(--simdes-text);
+  background-color: var(--simdes-surface);
+  border: 1px solid var(--simdes-border);
+  border-radius: var(--radius-sm);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background-color var(--transition-fast);
 }
 
 /* =========================================
@@ -679,11 +671,11 @@
 ========================================= */
 
 .simdes-input.has-start-icon {
-    padding-inline-start: 2.1rem;
+  padding-inline-start: 2.1rem;
 }
 
 .simdes-input.has-end-btn {
-    padding-inline-end: 2.5rem;
+  padding-inline-end: 2.5rem;
 }
 
 /* =========================================
@@ -691,8 +683,8 @@
 ========================================= */
 
 .simdes-input::placeholder {
-    color: #93A39B;
-    opacity: 1;
+  color: #93A39B;
+  opacity: 1;
 }
 
 /* =========================================
@@ -700,13 +692,13 @@
 ========================================= */
 
 .simdes-input:focus {
-    outline: none;
-    border-color: var(--simdes-primary);
-    box-shadow: 0 0 0 3px rgba(23, 76, 58, 0.1);
+  outline: none;
+  border-color: var(--simdes-primary);
+  box-shadow: 0 0 0 3px rgba(23, 76, 58, 0.1);
 }
 
 .simdes-input-wrap:focus-within .simdes-input-icon {
-    color: var(--simdes-primary);
+  color: var(--simdes-primary);
 }
 
 /* =========================================
@@ -715,9 +707,9 @@
 
 .simdes-input:disabled,
 .simdes-input[readonly] {
-    background-color: var(--simdes-bg);
-    opacity: 0.75;
-    cursor: not-allowed;
+  background-color: var(--simdes-bg);
+  opacity: 0.75;
+  cursor: not-allowed;
 }
 
 /* =========================================
@@ -725,46 +717,46 @@
 ========================================= */
 
 @media (max-width: 575.98px) {
-    .simdes-field {
-        margin-block-end: 0.65rem;
-    }
+  .simdes-field {
+    margin-block-end: 0.65rem;
+  }
 
-    .simdes-label {
-        font-size: 0.75rem;
-    }
+  .simdes-label {
+    font-size: 0.75rem;
+  }
 
-    .simdes-field-hint {
-        font-size: 0.7rem;
-    }
+  .simdes-field-hint {
+    font-size: 0.7rem;
+  }
 }
-
 
 /* =========================================
    PASSWORD SHOW / HIDE
 ========================================= */
 
 .password-toggle-btn {
-    position: absolute;
-    inset-inline-end: 0.25rem;
-    inline-size: 36px;
-    block-size: 36px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    border: 0;
-    border-radius: var(--radius-xs);
-    background: transparent;
-    color: var(--simdes-text-muted);
-    cursor: pointer;
-    transition:
-        color var(--transition-fast),
-        background-color var(--transition-fast);
+  position: absolute;
+  inset-inline-end: 0.25rem;
+  inline-size: 30px;
+  block-size: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-size: 0.8rem;
+  border: 0;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--simdes-text-muted);
+  cursor: pointer;
+  transition:
+    color var(--transition-fast),
+    background-color var(--transition-fast);
 }
 
 .password-toggle-btn:hover {
-    color: var(--simdes-primary);
-    background-color: var(--simdes-bg);
+  color: var(--simdes-primary);
+  background-color: var(--simdes-bg);
 }
 
 /* =========================================
@@ -772,62 +764,11 @@
 ========================================= */
 
 .simdes-checkbox {
-    inline-size: 1rem;
-    block-size: 1rem;
-    accent-color: var(--simdes-primary);
-    cursor: pointer;
-}
-
-
-/* =========================================
-   PASSWORD SHOW / HIDE
-========================================= */
-
-.password-toggle-btn {
-    position: absolute;
-    inset-inline-end: 0.25rem;
-
-    inline-size: 30px;
-    block-size: 30px;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 0;
-
-    font-size: 0.8rem;
-
-    border: 0;
-    border-radius: var(--radius-xs);
-
-    background: transparent;
-    color: var(--simdes-text-muted);
-
-    cursor: pointer;
-
-    transition:
-        color var(--transition-fast),
-        background-color var(--transition-fast);
-}
-
-.password-toggle-btn:hover {
-    color: var(--simdes-primary);
-    background-color: var(--simdes-bg);
-}
-
-/* =========================================
-   CHECKBOX
-========================================= */
-
-.simdes-checkbox {
-    inline-size: 0.875rem;
-    block-size: 0.875rem;
-
-    flex-shrink: 0;
-
-    accent-color: var(--simdes-primary);
-    cursor: pointer;
+  inline-size: 0.875rem;
+  block-size: 0.875rem;
+  flex-shrink: 0;
+  accent-color: var(--simdes-primary);
+  cursor: pointer;
 }
 
 /* =========================================
@@ -837,13 +778,13 @@
 .simdes-input:user-invalid,
 .simdes-input.user-invalid-fallback,
 .simdes-input.is-invalid-field {
-    border-color: var(--simdes-danger);
-    background-color: #FFF9F9;
+  border-color: var(--simdes-danger);
+  background-color: #FFF9F9;
 }
 
 .simdes-input:user-valid,
 .simdes-input.user-valid-fallback {
-    border-color: rgba(30, 111, 80, 0.55);
+  border-color: rgba(30, 111, 80, 0.55);
 }
 
 /* =========================================
@@ -851,23 +792,20 @@
 ========================================= */
 
 .field-error-msg {
-    display: none;
-    align-items: center;
-
-    gap: 0.3rem;
-    margin-block-start: 0.25rem;
-
-    font-size: 0.7rem;
-    line-height: 1.4;
-    font-weight: 500;
-
-    color: var(--simdes-danger);
+  display: none;
+  align-items: center;
+  gap: 0.3rem;
+  margin-block-start: 0.25rem;
+  font-size: 0.7rem;
+  line-height: 1.4;
+  font-weight: 500;
+  color: var(--simdes-danger);
 }
 
 .simdes-field:has(.simdes-input:user-invalid) .field-error-msg,
 .simdes-field:has(.simdes-input.user-invalid-fallback) .field-error-msg,
 .simdes-field.has-error .field-error-msg {
-    display: flex;
+  display: flex;
 }
 
 /* =========================================
@@ -875,73 +813,71 @@
 ========================================= */
 
 @media (max-width: 575.98px) {
-    .password-toggle-btn {
-        inline-size: 28px;
-        block-size: 28px;
-        font-size: 0.75rem;
-    }
+  .password-toggle-btn {
+    inline-size: 28px;
+    block-size: 28px;
+    font-size: 0.75rem;
+  }
 
-    .simdes-checkbox {
-        inline-size: 0.875rem;
-        block-size: 0.875rem;
-    }
+  .simdes-checkbox {
+    inline-size: 0.875rem;
+    block-size: 0.875rem;
+  }
 
-    .field-error-msg {
-        font-size: 0.7rem;
-    }
+  .field-error-msg {
+    font-size: 0.7rem;
+  }
 }
 
 /* Modals & Toasts */
 
 .simdes-modal .modal-content {
-    display: flex;
-    flex-direction: column;
-    /* height: 100%; */
-    max-height: 100%;
-    border: 1px solid var(--simdes-border);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-lg);
-    overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+  border: 1px solid var(--simdes-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
 }
 
 .simdes-modal .modal-content > form {
-    display: flex;
-    flex-direction: column;
-    flex: 1 1 auto;
-    height: 100%;
-    min-height: 0;
-    overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .simdes-modal .modal-header {
-    flex-shrink: 0;
-    background-color: var(--simdes-bg);
-    border-block-end: 1px solid var(--simdes-border);
-    padding: 1.1rem 1.35rem;
+  flex-shrink: 0;
+  background-color: var(--simdes-bg);
+  border-block-end: 1px solid var(--simdes-border);
+  padding: 1.1rem 1.35rem;
 }
 
 .simdes-modal .modal-footer {
-    flex-shrink: 0;
-    background-color: var(--simdes-bg);
-    border-block-end: 1px solid var(--simdes-border);
-    padding: 1.1rem 1.35rem;
+  flex-shrink: 0;
+  background-color: var(--simdes-bg);
+  border-block-end: 1px solid var(--simdes-border);
+  padding: 1.1rem 1.35rem;
 }
 
 .simdes-modal .modal-title {
-    font-size: 1.02rem;
-    font-weight: 700;
-    color: var(--simdes-deep-green);
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--simdes-deep-green);
 }
 
 .simdes-modal .modal-body {
-    flex: 1 1 0%;
-    height: 0;
-    min-height: 0;
-    max-height: none;
-    overflow-x: hidden;
-    overflow-y: auto;
+  flex: 1 1 0%;
+  height: 0;
+  min-height: 0;
+  max-height: none;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
-
 
 .simdes-toast-container {
   position: fixed;
@@ -1011,7 +947,6 @@
   box-shadow: var(--shadow-xs);
 }
 
-
 /* ==========================================================================
    Administrative Book Ledger Components (Tables, Filters, Modals & Print)
    ========================================================================== */
@@ -1037,37 +972,28 @@
 ========================================= */
 
 .simdes-select {
-    display: block;
-    inline-size: 100%;
-    min-block-size: calc(1.5em + 0.5rem + 2px);
-
-    padding: 0.25rem 2rem 0.25rem 0.5rem;
-
-    font-size: 0.875rem;
-    font-weight: 400;
-    line-height: 1.5;
-    font-family: var(--font-sans);
-
-    color: var(--simdes-text);
-    background-color: var(--simdes-surface);
-
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23477568' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3E%3C/svg%3E");
-
-    background-repeat: no-repeat;
-    background-position: right 0.65rem center;
-    background-size: 11px 11px;
-
-    appearance: none;
-
-    border: 1px solid var(--simdes-border);
-    border-radius: var(--radius-sm);
-
-    cursor: pointer;
-
-    transition:
-        border-color var(--transition-fast),
-        box-shadow var(--transition-fast),
-        background-color var(--transition-fast);
+  display: block;
+  inline-size: 100%;
+  min-block-size: calc(1.5em + 0.5rem + 2px);
+  padding: 0.25rem 2rem 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.5;
+  font-family: var(--font-sans);
+  color: var(--simdes-text);
+  background-color: var(--simdes-surface);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23477568' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.65rem center;
+  background-size: 11px 11px;
+  appearance: none;
+  border: 1px solid var(--simdes-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background-color var(--transition-fast);
 }
 
 /* =========================================
@@ -1075,14 +1001,12 @@
 ========================================= */
 
 .simdes-field .simdes-select {
-    inline-size: 100%;
-    min-block-size: calc(1.5em + 0.5rem + 2px);
-
-    padding: 0.25rem 2rem 0.25rem 0.5rem;
-
-    font-size: 0.875rem;
-    font-weight: 400;
-    line-height: 1.5;
+  inline-size: 100%;
+  min-block-size: calc(1.5em + 0.5rem + 2px);
+  padding: 0.25rem 2rem 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.5;
 }
 
 /* =========================================
@@ -1090,9 +1014,9 @@
 ========================================= */
 
 .simdes-select:focus {
-    outline: none;
-    border-color: var(--simdes-primary);
-    box-shadow: 0 0 0 3px rgba(23, 76, 58, 0.1);
+  outline: none;
+  border-color: var(--simdes-primary);
+  box-shadow: 0 0 0 3px rgba(23, 76, 58, 0.1);
 }
 
 /* =========================================
@@ -1102,13 +1026,13 @@
 .simdes-select:user-invalid,
 .simdes-select.user-invalid-fallback,
 .simdes-select.is-invalid-field {
-    border-color: var(--simdes-danger);
-    background-color: #FFF9F9;
+  border-color: var(--simdes-danger);
+  background-color: #FFF9F9;
 }
 
 .simdes-select:user-valid,
 .simdes-select.user-valid-fallback {
-    border-color: rgba(30, 111, 80, 0.55);
+  border-color: rgba(30, 111, 80, 0.55);
 }
 
 /* =========================================
@@ -1118,7 +1042,7 @@
 .simdes-field:has(.simdes-select:user-invalid) .field-error-msg,
 .simdes-field:has(.simdes-select.user-invalid-fallback) .field-error-msg,
 .simdes-field:has(.simdes-select.is-invalid-field) .field-error-msg {
-    display: flex;
+  display: flex;
 }
 
 /* =========================================
@@ -1126,18 +1050,40 @@
 ========================================= */
 
 .simdes-select:disabled {
-    background-color: var(--simdes-bg);
-    opacity: 0.75;
-    cursor: not-allowed;
+  background-color: var(--simdes-bg);
+  opacity: 0.75;
+  cursor: not-allowed;
 }
 
+/* ==========================================================================
+   Global Sticky Table Architecture (All SIMDES Tables, Bootstrap 5 & DataTables)
+   ========================================================================== */
+
 /* Accessible Scrollable Table Container */
-.simdes-table-wrapper {
+.simdes-table-wrapper,
+.table-responsive.simdes-table-wrapper,
+.simdes-table-wrapper.wide-scroll-ledger {
+  position: relative;
   inline-size: 100%;
   max-inline-size: 100%;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
+  max-block-size: min(680px, 74dvh);
+  overflow: auto;
+  overscroll-behavior: contain;
   scrollbar-gutter: stable;
+}
+
+/* Compatibility when DataTables wraps the table inside its own scroll container */
+.simdes-table-wrapper:has(.dataTables_scrollBody),
+.simdes-table-wrapper:has(.dt-scroll-body) {
+  max-block-size: none;
+  overflow: visible;
+}
+
+.dataTables_wrapper .dataTables_scrollBody,
+.dt-container .dt-scroll-body {
+  max-block-size: min(680px, 74dvh);
+  overflow: auto !important;
+  overscroll-behavior: contain;
 }
 
 .simdes-table-wrapper:focus-visible {
@@ -1145,11 +1091,16 @@
   outline-offset: -2px;
 }
 
-.simdes-ledger-table {
+/* Base Table Reset & Sticky Variables */
+.simdes-ledger-table,
+table.dataTable.simdes-ledger-table {
+  --simdes-th-row-1-h: 42px;
+  --simdes-th-row-2-h: 40px;
+  --simdes-th-row-3-h: 38px;
   inline-size: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  margin: 0;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  margin: 0 !important;
 }
 
 /* Horizontal scroll only when needed on smaller viewports */
@@ -1159,14 +1110,23 @@
   }
 }
 
-.simdes-ledger-table thead {
+/* Sticky THEAD & TH Global Mechanism (Works for 1-row, 2-row, 3-row, 4-row & rowspan/colspan) */
+.simdes-ledger-table thead,
+.table-responsive > .table thead,
+table.dataTable thead {
   position: sticky;
   inset-block-start: 0;
-  z-index: 2;
+  z-index: 10;
 }
 
-.simdes-ledger-table thead th {
+.simdes-ledger-table thead th,
+.table-responsive > .table thead th,
+table.dataTable thead th {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 10;
   background-color: #EFF3EE;
+  background-clip: padding-box;
   color: var(--simdes-deep-green);
   font-size: 0.735rem;
   font-weight: 800;
@@ -1178,6 +1138,50 @@
   white-space: normal;
   border-block-end: 2px solid #CED9D1;
   border-inline-end: 1px solid var(--simdes-border);
+}
+
+/* Multi-Row Header Top Offsets (Row 1, Row 2, Row 3, Row 4) */
+.simdes-ledger-table thead tr:nth-child(1) > th,
+.table-responsive > .table thead tr:nth-child(1) > th,
+table.dataTable thead tr:nth-child(1) > th {
+  inset-block-start: 0;
+  z-index: 13;
+}
+
+.simdes-ledger-table thead tr:nth-child(2) > th,
+.table-responsive > .table thead tr:nth-child(2) > th,
+table.dataTable thead tr:nth-child(2) > th {
+  inset-block-start: var(--simdes-th-row-1-h);
+  z-index: 12;
+}
+
+.simdes-ledger-table thead tr:nth-child(3) > th,
+.table-responsive > .table thead tr:nth-child(3) > th,
+table.dataTable thead tr:nth-child(3) > th {
+  inset-block-start: calc(var(--simdes-th-row-1-h) + var(--simdes-th-row-2-h));
+  z-index: 11;
+}
+
+.simdes-ledger-table thead tr:nth-child(4) > th,
+.table-responsive > .table thead tr:nth-child(4) > th,
+table.dataTable thead tr:nth-child(4) > th {
+  inset-block-start: calc(var(--simdes-th-row-1-h) + var(--simdes-th-row-2-h) + var(--simdes-th-row-3-h));
+  z-index: 10;
+}
+
+/* Ensure cells with rowspan stay anchored to their starting row and sit above adjacent sub-rows */
+.simdes-ledger-table thead tr:nth-child(1) > th[rowspan],
+.table-responsive > .table thead tr:nth-child(1) > th[rowspan],
+table.dataTable thead tr:nth-child(1) > th[rowspan] {
+  inset-block-start: 0;
+  z-index: 14;
+}
+
+.simdes-ledger-table thead tr:nth-child(2) > th[rowspan],
+.table-responsive > .table thead tr:nth-child(2) > th[rowspan],
+table.dataTable thead tr:nth-child(2) > th[rowspan] {
+  inset-block-start: var(--simdes-th-row-1-h);
+  z-index: 13;
 }
 
 .simdes-ledger-table thead th:last-child {
@@ -1220,14 +1224,13 @@
 
 .simdes-ledger-table tbody td {
   padding: 0.9rem 0.9rem;
-  vertical-align:middle;
+  vertical-align: middle;
   font-size: 0.85rem;
-  /* line-height: 1.55; */
   color: var(--simdes-text);
   border-block-end: 1px solid var(--simdes-border);
   border-inline-end: 1px solid rgba(228, 233, 227, 0.65);
   background-color: var(--simdes-surface);
-  /* overflow-wrap: break-word; */
+  background-clip: padding-box;
 }
 
 .simdes-ledger-table tbody td:last-child {
@@ -1570,6 +1573,7 @@
   }
 
   .simdes-table-wrapper {
+    max-block-size: none !important;
     overflow: visible !important;
   }
 
@@ -1586,6 +1590,7 @@
 
   .simdes-ledger-table thead th,
   .simdes-ledger-table tbody td {
+    position: static !important;
     border: 1px solid #222222 !important;
     background-color: #FFFFFF !important;
     color: #000000 !important;
@@ -1605,13 +1610,6 @@
    Multi-Level Grouped Header Ledger Table (Format A.3 & Wide Books)
    ========================================================================== */
 
-.simdes-table-wrapper.wide-scroll-ledger {
-  max-block-size: min(680px, 74dvh);
-  overflow: auto;
-  overscroll-behavior: contain;
-  scrollbar-gutter: stable;
-}
-
 .simdes-ledger-table.table-multi-header {
   min-inline-size: 1680px;
 }
@@ -1620,18 +1618,8 @@
   min-inline-size: 1320px;
 }
 
-.simdes-ledger-table.table-multi-header thead {
-  position: sticky;
-  inset-block-start: 0;
-  z-index: 5;
-}
-
 .simdes-ledger-table.table-multi-header thead th {
   text-align: center;
-  /* vertical-align: middle; */
-  /* padding: 0.62rem 0.68rem; */
-  /* font-size: 0.72rem; */
-  /* line-height: 1.35; */
   border-block-end: 1px solid #CFD9D2;
   border-inline-end: 1px solid #D7E0DA;
   background-color: #EFF3EE;
@@ -1641,8 +1629,15 @@
   border-inline-end: 1px solid #D7E0DA;
 }
 
+/* Bottom border reinforcement for bottom-most header cells (all row counts & rowspans) */
+.simdes-ledger-table thead tr:last-child th,
+.simdes-ledger-table thead tr:first-child th[rowspan="2"]:not(:has(~ tr:nth-child(3))),
+.simdes-ledger-table.table-multi-header-2row thead tr:first-child th[rowspan="2"],
+.simdes-ledger-table.table-multi-header-2row thead tr:nth-child(2) th,
 .simdes-ledger-table.table-multi-header thead tr:first-child th[rowspan="3"],
+.simdes-ledger-table.table-multi-header thead tr:first-child th[rowspan="4"],
 .simdes-ledger-table.table-multi-header thead tr:nth-child(2) th[rowspan="2"],
+.simdes-ledger-table.table-multi-header thead tr:nth-child(2) th[rowspan="3"],
 .simdes-ledger-table.table-multi-header thead tr:nth-child(3) th {
   border-block-end: 2px solid #BCCAC1;
 }
@@ -1666,17 +1661,37 @@
 
 /* Sticky First Column on Desktop/Tablet Landscape for Wide Multi-Column Tables */
 @media (min-width: 768px) {
-  .simdes-ledger-table thead th.sticky-col-first {
+  .simdes-ledger-table thead th.sticky-col-first,
+  .simdes-ledger-table thead tr:nth-child(1) > th.sticky-col-first {
     position: sticky;
+    inset-block-start: 0;
     inset-inline-start: 0;
-    z-index: 6;
+    z-index: 20 !important;
     background-color: #E5ECE7;
+  }
+
+  .simdes-ledger-table thead tr:nth-child(2) > th.sticky-col-first {
+    inset-block-start: var(--simdes-th-row-1-h);
+    inset-inline-start: 0;
+    z-index: 19 !important;
+  }
+
+  .simdes-ledger-table thead tr:nth-child(3) > th.sticky-col-first {
+    inset-block-start: calc(var(--simdes-th-row-1-h) + var(--simdes-th-row-2-h));
+    inset-inline-start: 0;
+    z-index: 18 !important;
+  }
+
+  .simdes-ledger-table thead tr:nth-child(4) > th.sticky-col-first {
+    inset-block-start: calc(var(--simdes-th-row-1-h) + var(--simdes-th-row-2-h) + var(--simdes-th-row-3-h));
+    inset-inline-start: 0;
+    z-index: 17 !important;
   }
 
   .simdes-ledger-table tbody td.sticky-col-first {
     position: sticky;
     inset-inline-start: 0;
-    z-index: 3;
+    z-index: 4;
     background-color: var(--simdes-surface);
     box-shadow: 2px 0 4px rgba(16, 56, 45, 0.04);
   }
@@ -1703,7 +1718,6 @@
   border-inline-end: 1px dashed rgba(217, 174, 82, 0.5) !important;
   text-transform: none !important;
   font-weight: 600;
-  /* min-inline-size: 92px; */
 }
 
 .simdes-ledger-table thead th.th-placeholder-col.last-placeholder-col {
@@ -1784,7 +1798,6 @@
   font-weight: 700;
   letter-spacing: 0.01em;
   line-height: 1.4;
-  /* padding: 0.85rem 0.95rem; */
 }
 
 .simdes-ledger-table.table-wide-13col thead th {
@@ -1944,6 +1957,8 @@
 }
 
 .simdes-ledger-table.table-multi-header.table-multi-header-16col {
+  --simdes-th-row-1-h: 38px;
+  --simdes-th-row-2-h: 36px;
   min-inline-size: 2220px;
 }
 
@@ -1956,11 +1971,6 @@
 .simdes-ledger-table.table-multi-header.table-multi-header-16col tbody td {
   font-size: 0.845rem;
   padding: 0.86rem 0.85rem;
-}
-
-.simdes-ledger-table.table-multi-header-2row thead tr:first-child th[rowspan="2"],
-.simdes-ledger-table.table-multi-header-2row thead tr:nth-child(2) th {
-  border-block-end: 2px solid #BCCAC1;
 }
 
 .simdes-ledger-table.table-multi-header thead th.th-group-diundangkan,
@@ -2192,11 +2202,18 @@
   font-size: 0.8rem;
 }
 
+.import-preview-table thead {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 10;
+}
+
 .import-preview-table thead th {
   position: sticky;
   inset-block-start: 0;
-  z-index: 2;
+  z-index: 10;
   background-color: #EFF3EE;
+  background-clip: padding-box;
   color: var(--simdes-deep-green);
   font-size: 0.71rem;
   font-weight: 800;
@@ -2288,6 +2305,8 @@
 }
 
 .simdes-ledger-table.table-multi-header.table-multi-header-13col {
+  --simdes-th-row-1-h: 38px;
+  --simdes-th-row-2-h: 36px;
   min-inline-size: 1860px;
 }
 
@@ -2299,7 +2318,7 @@
 
 .simdes-ledger-table.table-multi-header.table-multi-header-13col tbody td {
   font-size: 0.845rem;
-  padding: 0.86rem 0.85rem;
+  /* padding: 0.86rem 0.85rem; */
 }
 
 .simdes-ledger-table.table-multi-header thead th.th-group-penambahan {
@@ -2332,6 +2351,7 @@
   }
 
   .table-responsive.simdes-table-wrapper {
+    max-block-size: none !important;
     overflow: visible !important;
   }
 
@@ -2353,7 +2373,22 @@
    Header dibangun dari konfigurasi (assets/js/buku-rekapitulasi-jumlah-penduduk.js)
    ========================================================================== */
 
+   /* DataTables Processing Indicator */
+.dataTables_processing {
+    position: absolute !important;
+    z-index: 9999 !important;
+}
+
+/* DataTables versi Bootstrap 5 */
+div.dt-processing {
+    position: absolute !important;
+    z-index: 9999 !important;
+}
+
 .simdes-ledger-table.table-multi-header.table-multi-header-33col {
+  --simdes-th-row-1-h: 34px;
+  --simdes-th-row-2-h: 34px;
+  --simdes-th-row-3-h: 34px;
   min-inline-size: 3040px;
 }
 
@@ -2366,7 +2401,7 @@
 
 .simdes-ledger-table.table-multi-header.table-multi-header-33col tbody td {
   font-size: 0.845rem;
-  padding: 0.78rem 0.55rem;
+  /* padding: 0.78rem 0.55rem; */
 }
 
 .simdes-ledger-table.table-multi-header thead th.th-leaf-num {

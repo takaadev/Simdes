@@ -14,6 +14,7 @@ use App\Models\Concerns\RestoresSoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -37,7 +38,7 @@ class Resident extends Model implements Restorable
             'dapat_membaca' => 'boolean',
             'kewarganegaraan' => CitizenshipList::class,
             'gol_darah' => BloodList::class,
-            'tgl_mulai_tinggal' => 'date'
+            'tgl_mulai_tinggal' => 'date',
         ];
     }
 
@@ -55,5 +56,13 @@ class Resident extends Model implements Restorable
     public function mutation(): HasOne
     {
         return $this->hasOne(ResidentMutation::class);
+    }
+
+    /**
+     * Relasi ke seluruh riwayat mutasi KK.
+     */
+    public function familyCardMutations(): HasMany
+    {
+        return $this->hasMany(FamilyCardMutation::class);
     }
 }

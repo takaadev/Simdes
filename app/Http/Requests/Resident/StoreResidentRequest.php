@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Resident;
 
+use App\Enums\BloodList;
 use App\Enums\CitizenshipList;
 use App\Enums\EducationList;
 use App\Enums\GenderList;
@@ -41,11 +42,7 @@ class StoreResidentRequest extends FormRequest
             'nik' => [
                 'required',
                 'digits:16',
-                Rule::unique('residents', 'nik'),
-            ],
-            'jenis_kelamin' => [
-                'required',
-                Rule::enum(GenderList::class),
+                Rule::unique('residents', 'nik')->withoutTrashed(),
             ],
             'kk' => [
                 'required',
@@ -60,6 +57,10 @@ class StoreResidentRequest extends FormRequest
                     : []
                 ),
             ],
+            'jenis_kelamin' => [
+                'required',
+                Rule::enum(GenderList::class),
+            ],
             'tempat_lahir' => [
                 'required',
                 'string',
@@ -68,7 +69,7 @@ class StoreResidentRequest extends FormRequest
             'tgl_lahir' => [
                 'required',
                 'date',
-                'before:today',
+                'before_or_equal:today',
             ],
             'status_perkawinan' => [
                 'required',
@@ -105,6 +106,20 @@ class StoreResidentRequest extends FormRequest
                 'required',
                 Rule::enum(RelationshipList::class),
             ],
+            'gol_darah' => [
+                'nullable',
+                Rule::enum(BloodList::class),
+            ],
+            'ayah' => [
+                'nullable',
+                'string',
+                'max:150',
+            ],
+            'ibu' => [
+                'nullable',
+                'string',
+                'max:150',
+            ],
 
             // C. Alamat Tempat Tinggal
             'rt' => [
@@ -115,13 +130,28 @@ class StoreResidentRequest extends FormRequest
                 'nullable',
                 Rule::enum(RwList::class),
             ],
-            'nomor_rumah' => [
+            'alamat' => [
                 'nullable',
                 'string',
-                'max:10',
             ],
 
-            // D. Keterangan
+            // D. Data Administrasi
+            'tempat_dikeluarkan' => [
+                'nullable',
+                'string',
+                'max:100',
+            ],
+            'tgl_dikeluarkan' => [
+                'nullable',
+                'date',
+            ],
+            'tgl_mulai_tinggal' => [
+                'nullable',
+                'date',
+                'before_or_equal:today',
+            ],
+
+            // E. Keterangan
             'catatan' => [
                 'nullable',
                 'string',
@@ -144,12 +174,12 @@ class StoreResidentRequest extends FormRequest
             'nik.digits' => ':attribute harus terdiri dari :digits digit.',
             'nik.unique' => ':attribute sudah terdaftar.',
 
-            'jenis_kelamin.required' => ':attribute wajib dipilih.',
-            'jenis_kelamin.enum' => 'Pilihan :attribute tidak valid.',
-
             'kk.required' => ':attribute wajib diisi.',
             'kk.digits' => ':attribute harus terdiri dari :digits digit.',
             'kk.unique' => 'Nomor KK ini sudah memiliki Kepala Keluarga.',
+
+            'jenis_kelamin.required' => ':attribute wajib dipilih.',
+            'jenis_kelamin.enum' => 'Pilihan :attribute tidak valid.',
 
             'tempat_lahir.required' => ':attribute wajib diisi.',
             'tempat_lahir.string' => ':attribute harus berupa teks.',
@@ -157,7 +187,7 @@ class StoreResidentRequest extends FormRequest
 
             'tgl_lahir.required' => ':attribute wajib diisi.',
             'tgl_lahir.date' => ':attribute harus berupa tanggal yang valid.',
-            'tgl_lahir.before' => ':attribute harus sebelum hari ini.',
+            'tgl_lahir.before_or_equal' => ':attribute tidak boleh melebihi hari ini.',
 
             'status_perkawinan.required' => ':attribute wajib dipilih.',
             'status_perkawinan.enum' => 'Pilihan :attribute tidak valid.',
@@ -185,14 +215,30 @@ class StoreResidentRequest extends FormRequest
             'status_dalam_keluarga.required' => ':attribute wajib dipilih.',
             'status_dalam_keluarga.enum' => 'Pilihan :attribute tidak valid.',
 
+            'gol_darah.enum' => 'Pilihan :attribute tidak valid.',
+
+            'ayah.string' => ':attribute harus berupa teks.',
+            'ayah.max' => ':attribute maksimal :max karakter.',
+
+            'ibu.string' => ':attribute harus berupa teks.',
+            'ibu.max' => ':attribute maksimal :max karakter.',
+
             // C. Alamat Tempat Tinggal
             'rt.enum' => 'Pilihan :attribute tidak valid.',
             'rw.enum' => 'Pilihan :attribute tidak valid.',
 
-            'nomor_rumah.string' => ':attribute harus berupa teks.',
-            'nomor_rumah.max' => ':attribute maksimal :max karakter.',
+            'alamat.string' => ':attribute harus berupa teks.',
 
-            // D. Keterangan
+            // D. Data Administrasi
+            'tempat_dikeluarkan.string' => ':attribute harus berupa teks.',
+            'tempat_dikeluarkan.max' => ':attribute maksimal :max karakter.',
+
+            'tgl_dikeluarkan.date' => ':attribute harus berupa tanggal yang valid.',
+
+            'tgl_mulai_tinggal.date' => ':attribute harus berupa tanggal yang valid.',
+            'tgl_mulai_tinggal.before_or_equal' => ':attribute tidak boleh melebihi hari ini.',
+
+            // E. Keterangan
             'catatan.string' => ':attribute harus berupa teks.',
         ];
     }
@@ -206,8 +252,8 @@ class StoreResidentRequest extends FormRequest
             // A. Identitas Penduduk
             'nama_lengkap' => 'nama lengkap',
             'nik' => 'NIK',
-            'jenis_kelamin' => 'jenis kelamin',
             'kk' => 'nomor kartu keluarga',
+            'jenis_kelamin' => 'jenis kelamin',
             'tempat_lahir' => 'tempat lahir',
             'tgl_lahir' => 'tanggal lahir',
             'status_perkawinan' => 'status perkawinan',
@@ -220,13 +266,21 @@ class StoreResidentRequest extends FormRequest
             'kewarganegaraan' => 'kewarganegaraan',
             'kebangsaan' => 'kebangsaan',
             'status_dalam_keluarga' => 'status dalam keluarga',
+            'gol_darah' => 'golongan darah',
+            'ayah' => 'nama ayah',
+            'ibu' => 'nama ibu',
 
             // C. Alamat Tempat Tinggal
             'rt' => 'RT',
             'rw' => 'RW',
-            'nomor_rumah' => 'nomor rumah',
+            'alamat' => 'alamat lengkap',
 
-            // D. Keterangan
+            // D. Data Administrasi
+            'tempat_dikeluarkan' => 'tempat dikeluarkan KTP',
+            'tgl_dikeluarkan' => 'tanggal dikeluarkan KTP',
+            'tgl_mulai_tinggal' => 'tanggal mulai tinggal di desa',
+
+            // E. Keterangan
             'catatan' => 'catatan',
         ];
     }

@@ -1,4 +1,4 @@
-<x-action-show :id="$data->id" modalTitle="Detail Inventaris dan Kekayaan Desa" size="xl">
+<x-action-show :id="$data->id" modalTitle="Detail Inventaris dan Kekayaan Desa" size="lg">
 
     {{-- A. Identitas Barang --}}
     <x-fieldset label="A. Identitas Barang">

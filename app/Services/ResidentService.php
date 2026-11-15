@@ -4,10 +4,15 @@ namespace App\Services;
 
 use App\Http\Requests\Resident\ImportExcelResidentRequest;
 use App\Imports\ResidentImport;
+use App\Models\FamilyCard;
 use App\Models\Resident;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
+use RuntimeException;
+use Throwable;
 use Yajra\DataTables\Facades\DataTables;
 
 class ResidentService
@@ -47,22 +52,31 @@ class ResidentService
         $query = $applyFilters(
             Resident::query()->select([
                 'id',
+                'family_card_id',
                 'nama_lengkap',
                 'jenis_kelamin',
-                'status_perkawinan',
+                'nik',
+                'kk',
                 'tempat_lahir',
                 'tgl_lahir',
+                'status_perkawinan',
                 'agama',
                 'pendidikan',
                 'pekerjaan',
                 'dapat_membaca',
                 'kewarganegaraan',
                 'status_dalam_keluarga',
-                'nik',
-                'kk',
-                'alamat',
+                'kebangsaan',
+                'gol_darah',
+                'ayah',
+                'ibu',
                 'rt',
                 'rw',
+                'alamat',
+                'tempat_dikeluarkan',
+                'tgl_dikeluarkan',
+                'tgl_mulai_tinggal',
+                'catatan',
                 'created_at',
                 'updated_at',
                 'deleted_at',
@@ -207,12 +221,25 @@ class ResidentService
         ])->render();
     }
 
-    public function getStore(array $data): \Illuminate\Http\JsonResponse
+    public function getStore(array $data): JsonResponse
     {
         try {
-            $resident = \DB::transaction(function () use ($data) {
-                $data['created_by'] = auth()->id();
+            $resident = DB::transaction(function () use ($data) {
 
+                // 1. Cari atau buat data Kartu Keluarga
+                $familyCard = FamilyCard::withTrashed()->firstOrCreate([
+                    'nomor_kk' => $data['kk'],
+                ]);
+
+                // 2. Pulihkan data KK jika sebelumnya di-soft-delete
+                if ($familyCard->trashed()) {
+                    $familyCard->restore();
+                }
+
+                // 3. Hubungkan penduduk dengan Kartu Keluarga
+                $data['family_card_id'] = $familyCard->id;
+
+                // 4. Simpan data penduduk
                 return Resident::create($data);
             });
 
@@ -222,7 +249,7 @@ class ResidentService
                 'data' => $resident,
             ], 201);
         } catch (\Throwable $e) {
-            \Log::error('Gagal menambahkan data penduduk.', [
+            Log::error('Gagal menambahkan data penduduk.', [
                 'error' => $e->getMessage(),
             ]);
 
@@ -233,21 +260,31 @@ class ResidentService
         }
     }
 
-    public function getUpdate(Resident $resident, array $data): \Illuminate\Http\JsonResponse
+    public function getUpdate(Resident $resident, array $data): JsonResponse
     {
         try {
-            \DB::transaction(function () use ($resident, $data) {
+            DB::transaction(function () use ($resident, $data) {
+                $familyCard = FamilyCard::withTrashed()
+                    ->firstOrCreate([
+                        'nomor_kk' => $data['kk'],
+                    ]);
+                if ($familyCard->trashed()) {
+                    $familyCard->restore();
+                }
+                $data['family_card_id'] = $familyCard->id;
                 $resident->update($data);
             });
+
             return response()->json([
                 'success' => true,
                 'message' => 'Data penduduk berhasil diperbarui.',
             ]);
-        } catch (\Throwable $e) {
-            \Log::error('Gagal memperbarui data penduduk.', [
+        } catch (Throwable $e) {
+            Log::error('Gagal memperbarui data penduduk.', [
                 'resident_id' => $resident->id,
                 'error' => $e->getMessage(),
             ]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan saat memperbarui data penduduk.',
@@ -255,7 +292,7 @@ class ResidentService
         }
     }
 
-    public function getDestroy(Request $request, Resident $resident): \Illuminate\Http\JsonResponse
+    public function getDestroy(Request $request, Resident $resident): JsonResponse
     {
         try {
             $forceDelete = $request->boolean('confirm_delete');
@@ -271,7 +308,7 @@ class ResidentService
                 ], 422);
             }
 
-            $deleted = \DB::transaction(function () use (
+            $deleted = DB::transaction(function () use (
                 $resident,
                 $forceDelete
             ) {
@@ -281,7 +318,7 @@ class ResidentService
             });
 
             if (!$deleted) {
-                throw new \RuntimeException('Data penduduk gagal dihapus.');
+                throw new RuntimeException('Data penduduk gagal dihapus.');
             }
 
             return response()->json([
@@ -304,7 +341,7 @@ class ResidentService
         }
     }
 
-    public function getImportExcel(ImportExcelResidentRequest $request): \Illuminate\Http\JsonResponse
+    public function getImportExcel(ImportExcelResidentRequest $request): JsonResponse
     {
         try {
             $import = new ResidentImport();

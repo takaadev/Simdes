@@ -8,10 +8,10 @@ use App\Enums\EducationList;
 use App\Enums\GenderList;
 use App\Enums\MaritalStatusList;
 use App\Enums\OccupationList;
+use App\Enums\RelationshipList;
 use App\Enums\ReligionList;
 use App\Enums\RtList;
 use App\Enums\RwList;
-use App\Models\FamilyCard;
 use App\Models\Resident;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -26,7 +26,7 @@ class ResidentFactory extends Factory
     {
         return [
             // A. Identitas Kartu Keluarga
-            'family_card_id' => FamilyCard::factory(),
+            'family_card_id' => fake()->numberBetween(1, 50),
 
             // B. Identitas Penduduk
             'nama_lengkap' => fake()->name(),
@@ -55,7 +55,9 @@ class ResidentFactory extends Factory
             'kewarganegaraan' => fake()->randomElement(
                 array_column(CitizenshipList::cases(), 'value')
             ),
-            'status_dalam_keluarga' => 'Anak',
+            'status_dalam_keluarga' => fake()->randomElement(
+                array_column(RelationshipList::cases(), 'value')
+            ),
             'kebangsaan' => 'Indonesia',
             'gol_darah' => fake()->randomElement(
                 array_column(BloodList::cases(), 'value')
@@ -73,11 +75,10 @@ class ResidentFactory extends Factory
                 array_column(RwList::cases(), 'value')
             ),
             'alamat' => fake()->streetAddress(),
-
             // F. Data Penerbitan E-KTP
             'tempat_dikeluarkan' => fake()->city(),
             'tgl_dikeluarkan' => fake()->optional()->date(),
-
+            'tgl_mulai_tinggal' => fake()->optional()->date(),
             // G. Keterangan
             'catatan' => fake()->optional()->sentence(),
         ];

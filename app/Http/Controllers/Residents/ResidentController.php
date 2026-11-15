@@ -9,6 +9,7 @@ use App\Http\Requests\Resident\StoreResidentRequest;
 use App\Http\Requests\Resident\UpdateResidentRequest;
 use App\Models\Resident;
 use App\Services\ResidentService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ResidentController extends Controller
@@ -23,12 +24,12 @@ class ResidentController extends Controller
         return $this->service->getData($request);
     }
 
-    public function store(StoreResidentRequest $request): \Illuminate\Http\JsonResponse
+    public function store(StoreResidentRequest $request): JsonResponse
     {
         return $this->service->getStore($request->validated());
     }
 
-    public function update(UpdateResidentRequest $request, Resident $resident): \Illuminate\Http\JsonResponse
+    public function update(UpdateResidentRequest $request, Resident $resident): JsonResponse
     {
         return $this->service->getUpdate($resident, $request->validated());
     }

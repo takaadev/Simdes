@@ -28,4 +28,20 @@ class FamilyCard extends Model implements Restorable
     {
         return $this->hasMany(Resident::class, 'family_card_id');
     }
+
+    /**
+     * Riwayat mutasi penduduk yang keluar dari KK.
+     */
+    public function mutationsAsal(): HasMany
+    {
+        return $this->hasMany(FamilyCardMutation::class, 'kk_asal');
+    }
+
+    /**
+     * Riwayat mutasi penduduk yang masuk ke KK.
+     */
+    public function mutationsTujuan(): HasMany
+    {
+        return $this->hasMany(FamilyCardMutation::class, 'kk_tujuan');
+    }
 }

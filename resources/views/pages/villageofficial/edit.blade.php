@@ -1,7 +1,7 @@
 <x-action-edit
     :id="$data->id"
     href="{{ route('village-officials.update', $data->id) }}"
-    size="xl"
+    size="lg"
 >
 
     {{-- A. Identitas Aparat --}}

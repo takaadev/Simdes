@@ -17,15 +17,10 @@
             <th rowspan="2">AKSI</th>
         </tr>
         <tr>
-            {{-- Identitas --}}
             <th>TEMPAT</th>
             <th>TANGGAL</th>
-
-            {{-- Penambahan --}}
             <th>DATANG DARI</th>
             <th>TANGGAL</th>
-
-            {{-- Pengurangan --}}
             <th>PINDAH KE</th>
             <th>TANGGAL</th>
             <th>MENINGGAL</th>

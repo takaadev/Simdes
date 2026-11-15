@@ -11,7 +11,7 @@
 
   const DEFAULT_USER = {
     username: 'sekdes.tiaro',
-    fullName: 'Budi Santoso, S.AP',
+    fullName: 'MURTAKI, S.Kom',
     role: 'Sekretaris Desa',
     nipd: '19880412 201503 1 002',
     unit: 'Sekretariat Pemerintah Desa Tiaro',

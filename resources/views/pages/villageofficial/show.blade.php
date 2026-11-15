@@ -1,7 +1,7 @@
 <x-action-show
     :id="$data->id"
     modalTitle="Detail Aparat Pemerintah Desa"
-    size="xl"
+    size="lg"
 >
 
     {{-- A. Identitas Aparat --}}

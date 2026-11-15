@@ -1,4 +1,4 @@
-<x-action-edit :id="$data->id" href="{{ route('village-assets.update', $data->id) }}" size="xl">
+<x-action-edit :id="$data->id" href="{{ route('village-assets.update', $data->id) }}" size="lg">
 
     {{-- A. Identitas Barang --}}
     <x-fieldset label="A. Identitas Barang">

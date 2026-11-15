@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Archieves\AgendaEntryController;
 use App\Http\Controllers\Archieves\ExpeditionEntryController;
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Generals\VillageAssetController;
 use App\Http\Controllers\Generals\VillageDecreeController;
@@ -9,6 +10,8 @@ use App\Http\Controllers\Generals\VillageOfficialController;
 use App\Http\Controllers\Generals\VillagePublicationController;
 use App\Http\Controllers\Generals\VillageRegulationController;
 use App\Http\Controllers\Generals\VillageTreasuryLandController;
+use App\Http\Controllers\Residents\FamilyCardController;
+use App\Http\Controllers\Residents\RecaptResidentController;
 use App\Http\Controllers\Residents\ResidentController;
 use App\Http\Controllers\Residents\ResidentMutationController;
 use App\Http\Controllers\Residents\TemporaryResidentController;
@@ -18,7 +21,10 @@ Route::get('/', function () {
     return redirect()->route('dashboard');
 });
 
-
+Route::prefix('login')->middleware('guest')->group(function () {
+    Route::get('/', LoginController::class)->name('login');
+    Route::post('/auth', [LoginController::class, 'login'])->name('login.auth');
+});
 Route::get('/dashboard', HomeController::class)->name('dashboard');
 
 Route::prefix('admumum')->group(function () {
@@ -60,6 +66,12 @@ Route::prefix('admpenduduk')->group(function () {
         ->except(['create', 'edit', 'show'])
         ->withTrashed(['update', 'destroy']);
 
+    Route::resource('buku-rekapitulasi-penduduk', RecaptResidentController::class)
+        ->names('recapts')
+        ->parameters(['buku-rekapitulasi-penduduk' => 'recapt'])
+        ->except(['create', 'edit', 'show'])
+        ->withTrashed(['update', 'destroy']);
+
     Route::resource('buku-mutasi-penduduk', ResidentMutationController::class)
         ->names('mutations')
         ->parameters(['buku-mutasi-penduduk' => 'mutation'])
@@ -69,6 +81,12 @@ Route::prefix('admpenduduk')->group(function () {
     Route::resource('buku-penduduk-sementara', TemporaryResidentController::class)
         ->names('temporaryresidents')
         ->parameters(['buku-penduduk-sementara' => 'temporary'])
+        ->except(['create', 'edit', 'show'])
+        ->withTrashed(['update', 'destroy']);
+
+    Route::resource('buku-ktp-dan-kk', FamilyCardController::class)
+        ->names('familycards')
+        ->parameters(['buku-ktp-dan-kk' => 'familycard'])
         ->except(['create', 'edit', 'show'])
         ->withTrashed(['update', 'destroy']);
 });
@@ -86,4 +104,3 @@ Route::prefix('arsip')->group(function () {
         ->except(['create', 'edit', 'show'])
         ->withTrashed(['update', 'destroy']);
 });
-

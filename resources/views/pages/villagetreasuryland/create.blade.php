@@ -1,4 +1,4 @@
-<x-action-create href="{{ route('village-treasury-lands.store') }}" size="fullscreen">
+<x-action-create href="{{ route('village-treasury-lands.store') }}" size="xl">
 
     {{-- A. Identitas Tanah --}}
     <x-fieldset label="A. Identitas Tanah">

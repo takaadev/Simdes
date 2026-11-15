@@ -4,7 +4,7 @@
     {{-- A. Data Mutasi Penduduk --}}
     <x-fieldset label="A. Data Mutasi Penduduk">
         <div class="col-12">
-            <x-input-select name="mutation_id" label="Pilih Data Mutasi" :options="\App\Support\MutationToResidentOptions::options()" placeholder="Pilih Data Mutasi"
+            <x-input-select2 name="mutation_id" label="Pilih Data Mutasi" :options="\App\Support\MutationToResidentOptions::options()" placeholder="Pilih Data Mutasi"
                 required />
         </div>
     </x-fieldset>
@@ -57,16 +57,16 @@
     <x-fieldset label="C. Alamat Tempat Tinggal">
         <div class="row g-3">
 
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-md-3">
                 <x-input-select name="rt" label="RT" :options="\App\Enums\RtList::options()" placeholder="Pilih RT" />
             </div>
 
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-md-3">
                 <x-input-select name="rw" label="RW" :options="\App\Enums\RwList::options()" placeholder="Pilih RW" />
             </div>
 
-            <div class="col-12 col-md-4">
-                <x-input-text name="nomor_rumah" label="Nomor Rumah" placeholder="Contoh: 001 atau A12"
+            <div class="col-12 col-md-6">
+                <x-input-text name="alamat" label="Alamat" placeholder="Contoh: Alamat lengkap"
                     maxlength="10" />
             </div>
 

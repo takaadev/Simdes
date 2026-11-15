@@ -70,7 +70,7 @@
     {
       category: 'umum',
       title: 'Pengundangan Peraturan Desa Nomor 04 Tahun 2026 pada Buku Lembaran Desa dan Berita Desa',
-      actor: 'Budi Santoso, S.AP (Sekretaris Desa)',
+      actor: 'MURTAKI, S.Kom (Sekretaris Desa)',
       time: 'Kemarin, 15:40 WITA',
       tag: 'Adm. Umum',
       icon: 'fa-scale-balanced',
