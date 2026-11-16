@@ -2,7 +2,7 @@
     <x-fieldset label="A. Informasi Peraturan">
         <div class="row g-3">
             <div class="col-12">
-                <x-input-select name="regulation_id" label="Daftar Peraturan yang Belum Diundangkan" :options="\App\Support\PublicationRegulationOptions::options()"
+                <x-input-select2 name="regulation_id" label="Daftar Peraturan yang Belum Diundangkan" :options="\App\Support\PublicationRegulationOptions::options()"
                     placeholder="-- Pilih Peraturan Desa --" required />
             </div>
         </div>

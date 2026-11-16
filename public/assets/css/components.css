@@ -1847,8 +1847,8 @@ table.dataTable thead tr:nth-child(2) > th[rowspan] {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  min-block-size: 48px;
-  padding: 0.65rem 0.9rem;
+  min-block-size: calc(1.5em + 0.5rem + 2px);
+  padding: 0.25rem 2rem 0.25rem 0.5rem;
   border: 1.5px solid var(--simdes-border);
   border-radius: var(--radius-sm);
   background-color: var(--simdes-surface);

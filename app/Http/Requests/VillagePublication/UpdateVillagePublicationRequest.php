@@ -21,16 +21,6 @@ class UpdateVillagePublicationRequest extends FormRequest
             : $publication;
 
         return [
-            // A. Informasi Peraturan
-            'regulation_id' => [
-                'required',
-                'integer',
-                Rule::exists('village_regulations', 'id')
-                    ->where('status', RegulationStatusList::DRAFT->value),
-                Rule::unique('village_publications', 'regulation_id')
-                    ->ignore($publicationId),
-            ],
-
             // B. Pengundangan dan Berita Desa
             'nomor_diundang' => [
                 'nullable',
@@ -85,7 +75,6 @@ class UpdateVillagePublicationRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'regulation_id' => 'peraturan desa',
             'nomor_diundang' => 'nomor pengundangan',
             'tgl_diundang' => 'tanggal diundangkan',
             'nomor_berita' => 'nomor berita desa',

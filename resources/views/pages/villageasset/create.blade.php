@@ -27,18 +27,18 @@
             </div>
 
             <div class="col-12 col-md-6 col-lg">
-                <x-input-text type="number" name="asal_pemerintah" label="Bantuan Pemerintah"
+                <x-input-text type="number" name="asal_pemerintah" label="Pemerintah"
                     min="0" step="1" value="0" />
             </div>
 
             <div class="col-12 col-md-6 col-lg">
-                <x-input-text type="number" name="asal_provinsi" label="Bantuan Provinsi"
+                <x-input-text type="number" name="asal_provinsi" label="Provinsi"
                     min="0" step="1"
                     value="0" />
             </div>
 
             <div class="col-12 col-md-6 col-lg">
-                <x-input-text type="number" name="asal_kabupaten" label="Bantuan Kabupaten/Kota"
+                <x-input-text type="number" name="asal_kabupaten" label="Kabupaten/Kota"
                     min="0" step="1"
                     value="0" />
             </div>

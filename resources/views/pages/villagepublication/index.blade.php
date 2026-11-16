@@ -22,7 +22,6 @@
             <th scope="colgroup" colspan="2" class="text-center">
                 BERITA
             </th>
-            <th scope="col" rowspan="2" class="text-center">KETERANGAN</th>
             <th scope="col" rowspan="2" class="text-center">Status</th>
             <th scope="col" rowspan="2" class="text-center">Aksi</th>
 
@@ -144,13 +143,6 @@
                         {
                             data: 'tgl_berita',
                             name: 'tgl_berita',
-                            defaultContent: '-'
-                        },
-
-                        // 10. Keterangan
-                        {
-                            data: 'catatan',
-                            name: 'catatan',
                             defaultContent: '-'
                         },
 

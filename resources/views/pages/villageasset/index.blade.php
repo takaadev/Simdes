@@ -3,44 +3,44 @@
     @include('pages.villageasset.comp.filter')
     <x-table id="villageAssetsTable">
         <tr>
-            <th rowspan="3" scope="col" style="width:58px;">No.</th>
-            <th rowspan="3" scope="col" style="min-width:230px;" class="text-center">
+            <th rowspan="3">No.</th>
+            <th rowspan="3">
                 Jenis Barang/Bangunan
             </th>
-            <th colspan="5" class="text-center">Asal Barang/Bangunan</th>
-            <th colspan="2" class="text-center">Kondisi Awal Tahun</th>
-            <th colspan="4" class="text-center">Penghapusan Barang dan Bangunan</th>
-            <th colspan="2" class="text-center">Kondisi Akhir Tahun</th>
-            <th rowspan="3" scope="col" style="min-width:185px;" class="text-center">Keterangan</th>
-            <th rowspan="3" scope="col" style="min-width:150px;" class="text-center">
+            <th colspan="5">Asal Barang/Bangunan</th>
+            <th colspan="2">Kondisi Awal Tahun</th>
+            <th colspan="4">Penghapusan Barang dan Bangunan</th>
+            <th colspan="2">Kondisi Akhir Tahun</th>
+            <th rowspan="3">Keterangan</th>
+            <th rowspan="3">
                 Dokumen
             </th>
-            <th rowspan="3" scope="col" style="min-width:100px;" class="text-center">
+            <th rowspan="3">
                 Aksi
             </th>
         </tr>
         <tr>
             <!-- Asal Barang/Bangunan Subheaders -->
-            <th rowspan="2" style="min-width:86px;">Dibeli Sendiri</th>
-            <th colspan="3" class="text-center">Bantuan</th>
-            <th rowspan="2" style="min-width:86px;">Sumbangan</th>
+            <th rowspan="2">DBS</th>
+            <th colspan="3">Bantuan</th>
+            <th rowspan="2">SBG</th>
             <!-- Keadaan Awal Tahun Subheaders -->
-            <th rowspan="2" scope="col" style="min-width:74px;" class="text-center">Baik</th>
-            <th rowspan="2" scope="col" style="min-width:74px;" class="text-center">Rusak</th>
+            <th rowspan="2">BK</th>
+            <th rowspan="2">RK</th>
             <!-- Penghapusan Barang dan Bangunan Subheaders -->
-            <th rowspan="2" scope="col" style="min-width:74px;">Rusak</th>
-            <th rowspan="2" scope="col" style="min-width:74px;">Dijual</th>
-            <th rowspan="2" scope="col" style="min-width:96px;">Disumbangkan</th>
-            <th rowspan="2" scope="col">Tanggal Penghapusan</th>
+            <th rowspan="2">RK</th>
+            <th rowspan="2">DJL</th>
+            <th rowspan="2">DSB</th>
+            <th rowspan="2">Tanggal Penghapusan</th>
             <!-- Keadaan Akhir Tahun Subheaders -->
-            <th rowspan="2" scope="col" style="min-width:74px;" class="text-center">Baik</th>
-            <th rowspan="2" scope="col" style="min-width:74px;" class="text-center">Rusak</th>
+            <th rowspan="2">BK</th>
+            <th rowspan="2">RK</th>
         </tr>
         <tr>
             <!-- Rincian Keterangan Asal Bantuan -->
-            <th scope="col" style="min-width:86px;">Pemerintah</th>
-            <th scope="col" style="min-width:78px;">Provinsi</th>
-            <th scope="col" style="min-width:108px;">Kabupaten/Kota</th>
+            <th>PRH</th>
+            <th>Pro</th>
+            <th>Kab</th>
         </tr>
     </x-table>
 
@@ -94,7 +94,8 @@
                             data: 'DT_RowIndex',
                             name: 'DT_RowIndex',
                             searchable: false,
-                            orderable: false
+                            orderable: false,
+                            className: "text-center"
                         },
 
                         // 2. Jenis Barang/Bangunan

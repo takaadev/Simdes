@@ -4,7 +4,6 @@ namespace App\Http\Requests\FamilyCard;
 
 use App\Models\FamilyCard;
 use App\Models\Resident;
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
 

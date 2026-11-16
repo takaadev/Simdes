@@ -65,12 +65,12 @@ class StoreVillageTreasuryLandRequest extends FormRequest
 
             // D. Kelengkapan Tanah
             'patok_tanah' => [
-                'required',
+                // 'required',
                 'boolean',
             ],
 
             'papan_nama' => [
-                'required',
+                // 'required',
                 'boolean',
             ],
 

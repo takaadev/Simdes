@@ -1,4 +1,3 @@
-
 @props([
     'name',
     'label',
@@ -13,9 +12,11 @@
 ])
 
 @php
-    $id = $id ?? 'radio-' . \Illuminate\Support\Str::slug($name);
-    $hintId = $id . 'Hint';
-    $errorId = $id . 'Error';
+    // Tambahkan suffix unik agar ID tidak bentrok antara modal Create & Edit di halaman yang sama
+    $uniqueSuffix = \Illuminate\Support\Str::random(6);
+    $baseId = $id ?? 'radio-' . \Illuminate\Support\Str::slug($name) . '-' . $uniqueSuffix;
+    $hintId = $baseId . 'Hint';
+    $errorId = $baseId . 'Error';
 
     $selectedValue = old($name, $value);
     $errorMessage = $error ?? $errors->first($name);
@@ -24,7 +25,7 @@
 @endphp
 
 <div class="simdes-field mb-2">
-    <span class="simdes-label" id="{{ $id }}Label">
+    <span class="simdes-label" id="{{ $baseId }}Label">
         @if ($number)
             {{ $number }}.
         @endif
@@ -42,45 +43,30 @@
         </span>
     @endif
 
-    <div
-        class="simdes-radio-group {{ $hasError ? 'is-invalid' : '' }}"
-        role="radiogroup"
-        aria-labelledby="{{ $id }}Label"
-        @if ($required) aria-required="true" @endif
-        @if ($hint || $hasError)
-            aria-describedby="{{ implode(' ', array_filter([
-                $hint ? $hintId : null,
-                $hasError ? $errorId : null,
-            ])) }}"
-        @endif
-        {{ $attributes }}
-    >
-        @foreach ($options as $option)
+    <div class="simdes-radio-group {{ $hasError ? 'is-invalid' : '' }}" role="radiogroup"
+        aria-labelledby="{{ $baseId }}Label" @if ($required) aria-required="true" @endif
+        @if ($hint || $hasError) aria-describedby="{{ implode(' ', array_filter([$hint ? $hintId : null, $hasError ? $errorId : null])) }}" @endif
+        {{ $attributes }}>
+        @foreach ($options as $index => $option)
             @php
                 $optionValue = is_array($option) ? $option['value'] : $option;
                 $optionLabel = is_array($option) ? $option['label'] : $option;
-                $optionIcon = is_array($option) ? ($option['icon'] ?? null) : null;
+                $optionIcon = is_array($option) ? $option['icon'] ?? null : null;
 
-                $optionId = $id . '-' . \Illuminate\Support\Str::slug($optionValue);
-                $isChecked = (string) $selectedValue === (string) $optionValue;
+                $optionId = $baseId . '-' . \Illuminate\Support\Str::slug((string) $optionValue) . '-' . $index;
+                $isChecked =
+                    !is_null($selectedValue) &&
+                    $selectedValue !== '' &&
+                    (string) $selectedValue === (string) $optionValue;
             @endphp
 
             <div class="simdes-radio-option">
-                <input
-                    type="radio"
-                    id="{{ $optionId }}"
-                    name="{{ $name }}"
-                    value="{{ $optionValue }}"
-                    class="simdes-radio-input"
-                    @checked($isChecked)
-                    @required($required)
+                <input type="radio" id="{{ $optionId }}" name="{{ $name }}" value="{{ $optionValue }}"
+                    class="simdes-radio-input" @checked($isChecked) @required($required)
                     @disabled($disabled)
-                    @if ($hasError)
-                        aria-describedby="{{ $errorId }}"
-                    @endif
-                >
+                    @if ($hasError) aria-describedby="{{ $errorId }}" @endif>
 
-                <label for="{{ $optionId }}" class="simdes-radio-pill">
+                <label for="{{ $optionId }}" class="simdes-radio-pill" style="cursor: pointer;">
                     @if ($optionIcon)
                         <i class="{{ $optionIcon }}" aria-hidden="true"></i>
                     @endif
@@ -91,12 +77,8 @@
         @endforeach
     </div>
 
-    <div
-        id="{{ $errorId }}"
-        class="field-error-msg"
-        role="status"
-        @if (!$hasError) hidden @endif
-    >
+    <div id="{{ $errorId }}" class="field-error-msg" role="status"
+        @if (!$hasError) hidden @endif>
         <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
 
         <span class="field-error-text">

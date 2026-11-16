@@ -37,7 +37,7 @@ class VillageTreasuryLandController extends Controller
         return $this->service->getUpdate($villageTreasuryLand, $request->validated());
     }
 
-    public function destroy(VillageTreasuryLand $villageTreasuryLand)
+    public function destroy(Request $request, VillageTreasuryLand $villageTreasuryLand)
     {
         return $this->service->getDestroy($request, $villageTreasuryLand);
     }
