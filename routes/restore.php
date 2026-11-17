@@ -28,6 +28,8 @@ Route::prefix('admpenduduk')->group(function () {
     Route::patch('residents/{id}/restore', [ResidentController::class, 'restore'])->name('residents.restore');
     Route::post('residents/import-excel', [ResidentController::class, 'importexcel'])->name('residents.importexcel');
     Route::patch('mutations/{id}/restore', [ResidentMutationController::class, 'restore'])->name('mutations.restore');
+    Route::post('mutations/outgoing', [ResidentMutationController::class, 'mutationOutgoing'])->name('mutations.outgoing');
+    Route::post('mutations/incoming', [ResidentMutationController::class, 'mutationIncoming'])->name('mutations.incoming');
     Route::post('mutations/add-resident', [ResidentMutationController::class, 'mutationToResident'])->name('mutations.to-resident');
     Route::patch('temporaryresidents/{id}/restore', [TemporaryResidentController::class, 'restore'])->name('temporaryresidents.restore');
     Route::put('temporaryresidents/{id}/outgoing', [TemporaryResidentController::class, 'outgoingConfirmed'])->name('temporaryresidents.outgoing-confirmed');

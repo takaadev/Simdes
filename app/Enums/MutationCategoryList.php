@@ -19,18 +19,24 @@ enum MutationCategoryList: string
         };
     }
 
-    public static function options(): array
+    /**
+     * Mengambil opsi kategori mutasi.
+     *
+     * @param string|null $only Kategori yang ingin ditampilkan.
+     */
+    public static function options(?string $only = null): array
     {
-        return array_column(
-            array_map(
-                fn(self $item) => [
-                    'value' => $item->value,
-                    'label' => $item->label(),
-                ],
-                self::cases()
-            ),
-            'label',
-            'value'
-        );
+        $allowed = $only !== null
+            ? array_map('trim', explode(',', strtoupper($only)))
+            : null;
+
+        return collect(self::cases())
+            ->filter(fn (self $item) =>
+                $allowed === null || in_array($item->name, $allowed, true)
+            )
+            ->mapWithKeys(fn (self $item) => [
+                $item->value => $item->label(),
+            ])
+            ->toArray();
     }
 }

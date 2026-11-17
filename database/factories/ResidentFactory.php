@@ -26,7 +26,7 @@ class ResidentFactory extends Factory
     {
         return [
             // A. Identitas Kartu Keluarga
-            'family_card_id' => fake()->numberBetween(1, 50),
+            'family_card_id' => null,
 
             // B. Identitas Penduduk
             'nama_lengkap' => fake()->name(),
@@ -36,7 +36,9 @@ class ResidentFactory extends Factory
             'nik' => fake()->unique()->numerify('################'),
             'kk' => fake()->numerify('################'),
             'tempat_lahir' => fake()->city(),
-            'tgl_lahir' => fake()->dateTimeBetween('-80 years', '-1 day')->format('Y-m-d'),
+            'tgl_lahir' => fake()
+                ->dateTimeBetween('-80 years', '-1 day')
+                ->format('Y-m-d'),
 
             // C. Data Kependudukan
             'status_perkawinan' => fake()->randomElement(
@@ -75,12 +77,37 @@ class ResidentFactory extends Factory
                 array_column(RwList::cases(), 'value')
             ),
             'alamat' => fake()->streetAddress(),
+
             // F. Data Penerbitan E-KTP
             'tempat_dikeluarkan' => fake()->city(),
             'tgl_dikeluarkan' => fake()->optional()->date(),
             'tgl_mulai_tinggal' => fake()->optional()->date(),
-            // G. Keterangan
+
+            // G. Status Penduduk
+            'is_aktif' => true,
+
+            // H. Keterangan
             'catatan' => fake()->optional()->sentence(),
         ];
+    }
+
+    /**
+     * Penduduk aktif.
+     */
+    public function active(): static
+    {
+        return $this->state(fn () => [
+            'is_aktif' => true,
+        ]);
+    }
+
+    /**
+     * Penduduk tidak aktif.
+     */
+    public function inactive(): static
+    {
+        return $this->state(fn () => [
+            'is_aktif' => false,
+        ]);
     }
 }

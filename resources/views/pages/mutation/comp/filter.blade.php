@@ -34,7 +34,9 @@
         </button>
 
         {{-- <x-action-import-excel href="{{ route('mutations.importexcel') }}" /> --}}
+        @include('pages.mutation.create-mutation-incoming')
+        @include('pages.mutation.create-mutation-outgoing')
         @include('pages.mutation.add-resident')
-        @include('pages.mutation.create')
+        {{-- @include('pages.mutation.create') --}}
     </x-slot:actions>
 </x-filters>

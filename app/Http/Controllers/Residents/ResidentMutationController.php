@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Residents;
 
 use App\Http\Controllers\Concerns\HandlesRestore;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ResidentMutation\StoreMutationOutgoingRequest;
 use App\Http\Requests\ResidentMutation\StoreMutationToResidentRequest;
 use App\Http\Requests\ResidentMutation\StoreResidentMutationRequest;
 use App\Http\Requests\ResidentMutation\UpdateResidentMutationRequest;
@@ -23,6 +24,10 @@ class ResidentMutationController extends Controller
         return $this->service->getData($request);
     }
 
+    public function mutationOutgoing(StoreMutationOutgoingRequest $request){
+
+    }
+
     public function store(StoreResidentMutationRequest $request): \Illuminate\Http\JsonResponse
     {
         return $this->service->getStore($request->validated());
@@ -37,6 +42,9 @@ class ResidentMutationController extends Controller
     {
         return $this->service->getDestroy($request, $mutation);
     }
+
+
+
 
     public function restore(int $id)
     {

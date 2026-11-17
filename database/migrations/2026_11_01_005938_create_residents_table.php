@@ -34,6 +34,7 @@ return new class extends Migration
             $table->string('tempat_dikeluarkan', 100)->nullable();
             $table->date('tgl_dikeluarkan')->nullable();
             $table->date('tgl_mulai_tinggal')->nullable();
+            $table->boolean('is_aktif')->default(false);
             $table->text('catatan')->nullable();
             $table->timestamps();
             $table->softDeletes();
