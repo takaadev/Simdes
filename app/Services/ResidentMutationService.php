@@ -2,11 +2,10 @@
 
 namespace App\Services;
 
+use App\Enums\MutationCategoryList;
 use App\Enums\MutationTypeList;
-use App\Enums\RelationshipList;
 use App\Http\Requests\Resident\ImportExcelResidentRequest;
 use App\Imports\ResidentImport;
-use App\Models\FamilyCard;
 use App\Models\Resident;
 use App\Models\ResidentMutation;
 use Illuminate\Http\JsonResponse;
@@ -15,269 +14,249 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
-use RuntimeException;
 use Yajra\DataTables\Facades\DataTables;
 
 class ResidentMutationService
 {
-
     public function getData(Request $request)
     {
-        // Filter data mutasi penduduk.
-        $applyFilters = function ($query) use ($request) {
-            // Filter jenis kelamin.
-            $query->when(
-                $request->filled('jenis_kelamin')
-                    && $request->input('jenis_kelamin') !== 'all',
-                fn($query) => $query->where(
-                    'jenis_kelamin',
-                    $request->input('jenis_kelamin')
-                )
-            );
-
-            // Filter kewarganegaraan.
-            $query->when(
-                $request->filled('kewarganegaraan')
-                    && $request->input('kewarganegaraan') !== 'all',
-                fn($query) => $query->where(
-                    'kewarganegaraan',
-                    $request->input('kewarganegaraan')
-                )
-            );
-
-            // Filter kategori mutasi.
-            $query->when(
-                $request->filled('kategori_mutasi')
-                    && $request->input('kategori_mutasi') !== 'all',
-                fn($query) => $query->where(
-                    'kategori_mutasi',
-                    $request->input('kategori_mutasi')
-                )
-            );
-
-            // Filter tipe mutasi.
-            $query->when(
-                $request->filled('tipe_mutasi')
-                    && $request->input('tipe_mutasi') !== 'all',
-                fn($query) => $query->where(
-                    'tipe_mutasi',
-                    $request->input('tipe_mutasi')
-                )
-            );
-
-            // Filter data terhapus.
-            $query->when(
+        $baseQuery = ResidentMutation::query()
+            ->leftJoin('residents', 'residents.id', '=', 'resident_mutations.resident_id')
+            ->when(
+                $request->filled('jenis_kelamin') && $request->input('jenis_kelamin') !== 'all',
+                fn($q) => $q->where('residents.jenis_kelamin', $request->input('jenis_kelamin'))
+            )
+            ->when(
+                $request->filled('kewarganegaraan') && $request->input('kewarganegaraan') !== 'all',
+                fn($q) => $q->where('residents.kewarganegaraan', $request->input('kewarganegaraan'))
+            )
+            ->when(
+                $request->filled('kategori_mutasi') && $request->input('kategori_mutasi') !== 'all',
+                fn($q) => $q->where('resident_mutations.kategori_mutasi', $request->input('kategori_mutasi'))
+            )
+            ->when(
+                $request->filled('tipe_mutasi') && $request->input('tipe_mutasi') !== 'all',
+                fn($q) => $q->where('resident_mutations.tipe_mutasi', $request->input('tipe_mutasi'))
+            )
+            ->when(
                 $request->input('deleted') === 'trashed',
-                fn($query) => $query->onlyTrashed()
+                fn($q) => $q->onlyTrashed()
             );
 
-            return $query;
-        };
-
-        // Query utama mutasi penduduk.
-        $query = $applyFilters(
-            ResidentMutation::query()->select([
-                'id',
-                'nama_lengkap',
-                'nomor_identitas',
-                'tempat_lahir',
-                'tgl_lahir',
-                'jenis_kelamin',
-                'kewarganegaraan',
-                'kebangsaan',
-                'tipe_mutasi',
-                'kategori_mutasi',
-                'tgl_mutasi',
-                'tujuan_mutasi',
-                'catatan',
-                'resident_id',
-                'rt_tujuan',
-                'rw_tujuan',
-                'recorded_by',
-                'created_at',
-                'updated_at',
-                'deleted_at',
-            ])
-        );
-
-        // Pengurutan data.
-        $query->when(
-            in_array($request->input('sort_name'), ['asc', 'desc'], true),
-            fn($query) => $query->orderBy(
-                'nama_lengkap',
-                $request->input('sort_name')
-            ),
-            fn($query) => $query->latest('tgl_mutasi')
-        );
-
-        // Query statistik mutasi.
-        $summary = $applyFilters(
-            ResidentMutation::query()
-        )
+        // Hitung ringkasan dari baseQuery yang sama (hindari duplikasi filter).
+        $summary = (clone $baseQuery)
             ->selectRaw("
-            COUNT(*) as total,
-            SUM(CASE WHEN jenis_kelamin = 'L' THEN 1 ELSE 0 END) as male,
-            SUM(CASE WHEN jenis_kelamin = 'P' THEN 1 ELSE 0 END) as female,
-            SUM(CASE WHEN kewarganegaraan = 'WNI' THEN 1 ELSE 0 END) as wni,
-            SUM(CASE WHEN kewarganegaraan = 'WNA' THEN 1 ELSE 0 END) as wna,
-            SUM(CASE WHEN tipe_mutasi = 'add' THEN 1 ELSE 0 END) as addition,
-            SUM(CASE WHEN tipe_mutasi = 'minus' THEN 1 ELSE 0 END) as reduction,
-            SUM(CASE WHEN kategori_mutasi = 'death' THEN 1 ELSE 0 END) as death,
-            SUM(CASE WHEN kategori_mutasi = 'birth' THEN 1 ELSE 0 END) as birth,
-            SUM(CASE WHEN kategori_mutasi = 'incoming' THEN 1 ELSE 0 END) as incoming,
-            SUM(CASE WHEN kategori_mutasi = 'outgoing' THEN 1 ELSE 0 END) as outgoing
+            COUNT(DISTINCT resident_mutations.id) as total,
+            SUM(CASE WHEN residents.jenis_kelamin = 'L' THEN 1 ELSE 0 END) as male,
+            SUM(CASE WHEN residents.jenis_kelamin = 'P' THEN 1 ELSE 0 END) as female,
+            SUM(CASE WHEN residents.kewarganegaraan = 'WNI' THEN 1 ELSE 0 END) as wni,
+            SUM(CASE WHEN residents.kewarganegaraan = 'WNA' THEN 1 ELSE 0 END) as wna,
+            SUM(CASE WHEN resident_mutations.tipe_mutasi = 'add' THEN 1 ELSE 0 END) as addition,
+            SUM(CASE WHEN resident_mutations.tipe_mutasi = 'minus' THEN 1 ELSE 0 END) as reduction,
+            SUM(CASE WHEN resident_mutations.kategori_mutasi = 'death' THEN 1 ELSE 0 END) as death,
+            SUM(CASE WHEN resident_mutations.kategori_mutasi = 'birth' THEN 1 ELSE 0 END) as birth,
+            SUM(CASE WHEN resident_mutations.kategori_mutasi = 'incoming' THEN 1 ELSE 0 END) as incoming,
+            SUM(CASE WHEN resident_mutations.kategori_mutasi = 'outgoing' THEN 1 ELSE 0 END) as outgoing
         ")
             ->first();
 
+        // Query utama DataTables (semua kolom diberi prefix tabel agar tidak ambigu).
+        $query = (clone $baseQuery)
+            ->select([
+                'resident_mutations.id',
+                'resident_mutations.nomor_identitas',
+                'resident_mutations.tipe_mutasi',
+                'resident_mutations.kategori_mutasi',
+                'resident_mutations.tgl_mutasi',
+                'resident_mutations.tujuan_mutasi',
+                'resident_mutations.catatan',
+                'resident_mutations.resident_id',
+                'resident_mutations.recorded_by',
+                'resident_mutations.created_at',
+                'resident_mutations.updated_at',
+                'resident_mutations.deleted_at',
+            ])
+            ->with([
+                'resident' => fn($q) => $q->withTrashed()->select([
+                    'id',
+                    'nik',
+                    'nama_lengkap',
+                    'jenis_kelamin',
+                    'tempat_lahir',
+                    'tgl_lahir',
+                    'status_perkawinan',
+                    'agama',
+                    'pendidikan',
+                    'pekerjaan',
+                    'status_dalam_keluarga',
+                    'dapat_membaca',
+                    'gol_darah',
+                    'kewarganegaraan',
+                    'kebangsaan',
+                    'ayah',
+                    'ibu',
+                    'tempat_dikeluarkan',
+                    'tgl_dikeluarkan',
+                    'tgl_mulai_tinggal',
+                    'rt',
+                    'rw',
+                    'alamat',
+                    'is_aktif',
+                ]),
+            ]);
+
+        // Pengurutan custom sort_name atau default terbaru jika DataTables tidak mengirim order.
+        if (in_array($request->input('sort_name'), ['asc', 'desc'], true)) {
+            $query->orderBy('residents.nama_lengkap', $request->input('sort_name'));
+        } elseif (!$request->filled('order')) {
+            $query->orderByDesc('resident_mutations.tgl_mutasi');
+        }
+
         return DataTables::eloquent($query)
             ->with('summary', [
-                'total' => (int) $summary->total,
-                'male' => (int) $summary->male,
-                'female' => (int) $summary->female,
-                'wni' => (int) $summary->wni,
-                'wna' => (int) $summary->wna,
-                'addition' => (int) $summary->addition,
-                'reduction' => (int) $summary->reduction,
-                'death' => (int) $summary->death,
-                'birth' => (int) $summary->birth,
-                'incoming' => (int) $summary->incoming,
-                'outgoing' => (int) $summary->outgoing,
+                'total' => (int) ($summary?->total ?? 0),
+                'male' => (int) ($summary?->male ?? 0),
+                'female' => (int) ($summary?->female ?? 0),
+                'wni' => (int) ($summary?->wni ?? 0),
+                'wna' => (int) ($summary?->wna ?? 0),
+                'addition' => (int) ($summary?->addition ?? 0),
+                'reduction' => (int) ($summary?->reduction ?? 0),
+                'death' => (int) ($summary?->death ?? 0),
+                'birth' => (int) ($summary?->birth ?? 0),
+                'incoming' => (int) ($summary?->incoming ?? 0),
+                'outgoing' => (int) ($summary?->outgoing ?? 0),
             ])
+            // Global search lintas tabel residents & resident_mutations.
+            ->filter(function ($query) use ($request) {
+                $search = trim((string) $request->input('search.value', ''));
+
+                if ($search !== '') {
+                    $query->where(function ($q) use ($search) {
+                        $q->where('residents.nama_lengkap', 'like', "%{$search}%")
+                            ->orWhere('residents.nik', 'like', "%{$search}%")
+                            ->orWhere('residents.tempat_lahir', 'like', "%{$search}%")
+                            ->orWhere('residents.kebangsaan', 'like', "%{$search}%")
+                            ->orWhere('resident_mutations.nomor_identitas', 'like', "%{$search}%")
+                            ->orWhere('resident_mutations.tujuan_mutasi', 'like', "%{$search}%")
+                            ->orWhere('resident_mutations.catatan', 'like', "%{$search}%")
+                            ->orWhere('resident_mutations.tgl_mutasi', 'like', "%{$search}%");
+                    });
+                }
+            })
+            // Mapping sorting untuk kolom hasil join & kolom virtual.
+            ->orderColumn('nama_lengkap', 'residents.nama_lengkap $1')
+            ->orderColumn('tempat_lahir', 'residents.tempat_lahir $1')
+            ->orderColumn('tgl_lahir', 'residents.tgl_lahir $1')
+            ->orderColumn('jenis_kelamin', 'residents.jenis_kelamin $1')
+            ->orderColumn('kewarganegaraan', 'residents.kewarganegaraan $1')
+            ->orderColumn('kebangsaan', 'residents.kebangsaan $1')
+            ->orderColumn('tgl_mutasi', 'resident_mutations.tgl_mutasi $1')
+            ->orderColumn('tanggal_penambahan', 'resident_mutations.tgl_mutasi $1')
+            ->orderColumn('tanggal_pindah', 'resident_mutations.tgl_mutasi $1')
+            ->orderColumn('tanggal_meninggal', 'resident_mutations.tgl_mutasi $1')
+            ->orderColumn('tipe_mutasi', 'resident_mutations.tipe_mutasi $1')
+            ->orderColumn('kategori_mutasi', 'resident_mutations.kategori_mutasi $1')
+            ->orderColumn('tujuan_mutasi', 'resident_mutations.tujuan_mutasi $1')
             ->addIndexColumn()
-
-            ->editColumn(
+            ->addColumn(
                 'nama_lengkap',
-                fn($row) => $this->tooltip($row->nama_lengkap)
+                fn($row) => $this->tooltip($row->resident?->nama_lengkap ?? '-')
             )
-
-            ->editColumn(
+            ->addColumn(
                 'tempat_lahir',
-                fn($row) => $row->tempat_lahir ?: '-'
+                fn($row) => $row->resident?->tempat_lahir ?: '-'
             )
-
-            ->editColumn(
+            ->addColumn(
                 'tgl_lahir',
-                fn($row) => $this->formatDate($row->tgl_lahir)
+                fn($row) => $this->formatDate($row->resident?->tgl_lahir)
             )
-
-            ->editColumn(
+            ->addColumn(
                 'jenis_kelamin',
-                fn($row) => $row->jenis_kelamin?->label() ?? '-'
+                fn($row) => $row->resident?->jenis_kelamin?->label() ?? '-'
             )
-
-            ->editColumn(
+            ->addColumn(
                 'kewarganegaraan',
-                fn($row) => $row->kewarganegaraan?->label() ?? '-'
+                fn($row) => $row->resident?->kewarganegaraan?->label() ?? '-'
             )
-
-            ->editColumn(
+            ->addColumn(
                 'kebangsaan',
-                fn($row) => $row->kebangsaan ?: '-'
+                fn($row) => $row->resident?->kebangsaan ?: '-'
             )
-
-            // Kolom Datang Dari.
             ->addColumn('datang_dari', function ($row) {
-                if ($row->tipe_mutasi !== \App\Enums\MutationTypeList::ADD) {
+                if ($row->tipe_mutasi !== MutationTypeList::ADD) {
                     return '-';
                 }
 
                 return match ($row->kategori_mutasi) {
-                    \App\Enums\MutationCategoryList::BIRTH => 'Kelahiran',
-                    \App\Enums\MutationCategoryList::INCOMING => $row->tujuan_mutasi ?: '-',
+                    MutationCategoryList::BIRTH => 'Kelahiran',
+                    MutationCategoryList::INCOMING => $row->tujuan_mutasi ?: '-',
                     default => '-',
                 };
             })
-
-            // Tanggal Penambahan.
-            ->addColumn('tanggal_penambahan', function ($row) {
-                return $row->tipe_mutasi === \App\Enums\MutationTypeList::ADD
+            ->addColumn(
+                'tanggal_penambahan',
+                fn($row) => $row->tipe_mutasi === MutationTypeList::ADD
                     ? $this->formatDate($row->tgl_mutasi)
-                    : '-';
-            })
-
-            // Kolom Pindah Ke.
-            ->addColumn('pindah_ke', function ($row) {
-                return (
-                    $row->tipe_mutasi === \App\Enums\MutationTypeList::MINUS
-                    && $row->kategori_mutasi === \App\Enums\MutationCategoryList::OUTGOING
-                )
-                    ? ($row->tujuan_mutasi ?: '-')
-                    : '-';
-            })
-
-            // Tanggal Pindah.
-            ->addColumn('tanggal_pindah', function ($row) {
-                return (
-                    $row->tipe_mutasi === \App\Enums\MutationTypeList::MINUS
-                    && $row->kategori_mutasi === \App\Enums\MutationCategoryList::OUTGOING
-                )
-                    ? $this->formatDate($row->tgl_mutasi)
-                    : '-';
-            })
-
-            // Keterangan Meninggal.
-            ->addColumn('meninggal', function ($row) {
-                return (
-                    $row->tipe_mutasi === \App\Enums\MutationTypeList::MINUS
-                    && $row->kategori_mutasi === \App\Enums\MutationCategoryList::DEATH
-                )
-                    ? 'Meninggal'
-                    : '-';
-            })
-
-            // Tanggal Meninggal.
-            ->addColumn('tanggal_meninggal', function ($row) {
-                return (
-                    $row->tipe_mutasi === \App\Enums\MutationTypeList::MINUS
-                    && $row->kategori_mutasi === \App\Enums\MutationCategoryList::DEATH
-                )
-                    ? $this->formatDate($row->tgl_mutasi)
-                    : '-';
-            })
-
+                    : '-'
+            )
+            ->addColumn(
+                'pindah_ke',
+                fn($row) => (
+                    $row->tipe_mutasi === MutationTypeList::MINUS
+                    && $row->kategori_mutasi === MutationCategoryList::OUTGOING
+                ) ? ($row->tujuan_mutasi ?: '-') : '-'
+            )
+            ->addColumn(
+                'tanggal_pindah',
+                fn($row) => (
+                    $row->tipe_mutasi === MutationTypeList::MINUS
+                    && $row->kategori_mutasi === MutationCategoryList::OUTGOING
+                ) ? $this->formatDate($row->tgl_mutasi) : '-'
+            )
+            ->addColumn(
+                'meninggal',
+                fn($row) => (
+                    $row->tipe_mutasi === MutationTypeList::MINUS
+                    && $row->kategori_mutasi === MutationCategoryList::DEATH
+                ) ? 'Meninggal' : '-'
+            )
+            ->addColumn(
+                'tanggal_meninggal',
+                fn($row) => (
+                    $row->tipe_mutasi === MutationTypeList::MINUS
+                    && $row->kategori_mutasi === MutationCategoryList::DEATH
+                ) ? $this->formatDate($row->tgl_mutasi) : '-'
+            )
             ->editColumn(
                 'tipe_mutasi',
                 fn($row) => view('components.badge', [
                     'color' => match ($row->tipe_mutasi) {
-                        \App\Enums\MutationTypeList::ADD => 'success',
-                        \App\Enums\MutationTypeList::MINUS => 'warning',
+                        MutationTypeList::ADD => 'success',
+                        MutationTypeList::MINUS => 'warning',
                         default => 'secondary',
                     },
                     'slot' => $row->tipe_mutasi?->label() ?? '-',
                 ])->render()
             )
-
             ->editColumn(
                 'kategori_mutasi',
                 fn($row) => $row->kategori_mutasi?->label() ?? '-'
             )
-
             ->editColumn(
                 'tgl_mutasi',
                 fn($row) => $this->formatDate($row->tgl_mutasi)
             )
-
             ->editColumn(
                 'tujuan_mutasi',
                 fn($row) => $row->tujuan_mutasi ?: '-'
             )
-
-            ->editColumn(
-                'catatan',
-                fn($row) => $this->tooltip($row->catatan)
-            )
-
             ->addColumn(
                 'action',
-                fn($row) => view('pages.mutation.comp.actions', [
-                    'row' => $row,
-                ])->render()
+                fn($row) => view('pages.mutation.comp.actions', ['row' => $row])->render()
             )
-
             ->rawColumns([
                 'nama_lengkap',
                 'tipe_mutasi',
-                'catatan',
                 'action',
             ])
             ->toJson();
@@ -297,37 +276,82 @@ class ResidentMutationService
         ])->render();
     }
 
+
     public function getStore(array $data): JsonResponse
     {
         try {
             $mutation = DB::transaction(function () use ($data) {
-                $data['recorded_by'] = Auth::id();
+                // 1. Simpan data penduduk baru
+                $resident = Resident::create([
+                    'family_card_id'       => null,
+                    'nama_lengkap'         => $data['nama_lengkap'],
+                    'jenis_kelamin'        => $data['jenis_kelamin'],
+                    'nik'                  => $data['nomor_identitas'],
+                    'kk'                   => null,
+                    'tempat_lahir'         => $data['tempat_lahir'],
+                    'tgl_lahir'            => $data['tgl_lahir'],
+                    'status_perkawinan'    => $data['status_perkawinan'],
+                    'agama'                => $data['agama'],
+                    'pendidikan'           => $data['pendidikan'],
+                    'pekerjaan'            => $data['pekerjaan'],
+                    'dapat_membaca'        => $data['dapat_membaca'],
+                    'kewarganegaraan'      => $data['kewarganegaraan'],
+                    'status_dalam_keluarga' => $data['status_dalam_keluarga'],
+                    'kebangsaan'           => $data['kebangsaan'],
+                    'gol_darah'            => $data['gol_darah'] ?? null,
+                    'ayah'                 => $data['ayah'] ?? null,
+                    'ibu'                  => $data['ibu'] ?? null,
+                    'tempat_dikeluarkan'   => $data['tempat_dikeluarkan'] ?? null,
+                    'tgl_dikeluarkan'      => $data['tgl_dikeluarkan'] ?? null,
+                    'tgl_mulai_tinggal'    => $data['tgl_mulai_tinggal'] ?? null,
+                    'rt'                   => $data['rt'] ?? null,
+                    'rw'                   => $data['rw'] ?? null,
+                    'alamat'               => $data['alamat'] ?? null,
+                    'is_aktif'             => true,
+                ]);
 
-                return ResidentMutation::create($data);
+                // 2. Simpan riwayat mutasi masuk
+                return ResidentMutation::create([
+                    'nomor_identitas' => $resident->nik,
+                    'tipe_mutasi'     => MutationTypeList::ADD->value,
+                    'kategori_mutasi' => $data['kategori_mutasi'],
+                    'tgl_mutasi'      => $data['tgl_mutasi'],
+                    'tujuan_mutasi'   => $data['tujuan_mutasi'] ?? null,
+                    'catatan'         => $data['catatan_mutasi'] ?? null,
+                    'resident_id'     => $resident->id,
+                    'recorded_by'     => Auth::id(),
+                ]);
             });
 
             return response()->json([
                 'success' => true,
-                'message' => 'Data mutasi penduduk berhasil ditambahkan.',
-                'data' => $mutation,
+                'message' => 'Data penduduk dan mutasi berhasil ditambahkan.',
+                'data'    => $mutation,
             ], 201);
         } catch (\Throwable $e) {
-            Log::error('Gagal menambahkan data mutasi penduduk.', [
+            Log::error('Gagal menambahkan penduduk melalui mutasi masuk.', [
                 'error' => $e->getMessage(),
+                'data'  => $data,
             ]);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Data mutasi penduduk gagal ditambahkan.',
+                'message' => 'Data penduduk dan mutasi gagal ditambahkan.',
             ], 500);
         }
     }
+
 
     public function getUpdate(ResidentMutation $mutation, array $data): JsonResponse
     {
         try {
             DB::transaction(function () use ($mutation, $data) {
-                $mutation->update($data);
+                $mutation->update([
+                    'kategori_mutasi' => $data['kategori_mutasi'],
+                    'tgl_mutasi' => $data['tgl_mutasi'],
+                    'tujuan_mutasi' => $data['tujuan_mutasi'] ?? null,
+                    'catatan' => $data['catatan'] ?? null,
+                ]);
             });
 
             return response()->json([
@@ -351,7 +375,6 @@ class ResidentMutationService
     {
         try {
             $forceDelete = $request->boolean('confirm_delete');
-
             if ($mutation->trashed() && !$forceDelete) {
                 return response()->json([
                     'success' => false,
@@ -397,146 +420,90 @@ class ResidentMutationService
         }
     }
 
-    public function getMutationToResident(array $data): JsonResponse
+    public function getMutationOutgoing(array $data): JsonResponse
     {
         try {
             return DB::transaction(function () use ($data) {
-
-                // 1. Ambil dan kunci data mutasi.
-                $mutation = ResidentMutation::query()
-                    ->whereKey($data['mutation_id'])
-                    ->where('tipe_mutasi', MutationTypeList::ADD->value)
-                    ->whereNull('resident_id')
+                $resident = Resident::query()
+                    ->whereKey($data['resident_id'])
                     ->lockForUpdate()
                     ->first();
 
-                if (!$mutation) {
+                if (!$resident) {
                     return response()->json([
                         'success' => false,
-                        'message' => 'Data mutasi tidak ditemukan atau sudah dipindahkan ke Buku Induk Penduduk.',
+                        'message' => 'Data penduduk tidak ditemukan di Buku Induk Penduduk.',
                     ], 422);
                 }
 
-                // 2. Tentukan NIK.
-                // Gunakan nomor_identitas mutasi jika tersedia.
-                $nik = filled($mutation->nomor_identitas)
-                    ? $mutation->nomor_identitas
-                    : ($data['nik'] ?? null);
-
-                if (blank($nik)) {
+                if (!$resident->is_aktif) {
                     return response()->json([
                         'success' => false,
-                        'message' => 'NIK wajib diisi karena nomor identitas pada data mutasi kosong.',
+                        'message' => 'Penduduk ini sudah tidak berstatus aktif.',
                     ], 422);
                 }
 
-                // 3. Ambil nilai enum Kepala Keluarga berdasarkan label.
-                $headValue = array_search(
-                    'Kepala Keluarga',
-                    RelationshipList::options(),
-                    true
-                );
+                $kategori = $data['kategori_mutasi'];
 
-                if ($headValue === false) {
-                    throw new RuntimeException(
-                        'Opsi Kepala Keluarga tidak ditemukan pada RelationshipList.'
-                    );
-                }
-
-                // 4. Cari KK berdasarkan nomor KK.
-                // withTrashed digunakan agar nomor KK yang pernah dihapus
-                // tidak dibuat ulang dengan nomor yang sama.
-                $familyCard = FamilyCard::withTrashed()
-                    ->where('nomor_kk', $data['kk'])
-                    ->lockForUpdate()
-                    ->first();
-
-                $isNewFamilyCard = !$familyCard;
-
-                if ($isNewFamilyCard) {
-                    // 5. Jika KK belum ada, buat KK baru.
-                    $familyCard = FamilyCard::create([
-                        'nomor_kk' => $data['kk'],
-                    ]);
-
-                    // KK baru otomatis menjadikan penduduk sebagai Kepala Keluarga.
-                    $statusDalamKeluarga = $headValue;
-                } else {
-                    // Pulihkan KK jika sebelumnya dihapus sementara.
-                    if ($familyCard->trashed()) {
-                        $familyCard->restore();
-                    }
-
-                    // 6. Periksa apakah KK sudah memiliki Kepala Keluarga.
-                    $hasHead = $familyCard->residents()
-                        ->where('status_dalam_keluarga', $headValue)
-                        ->exists();
-
-                    $requestedRelationship = $data['status_dalam_keluarga'];
-
-                    if ($requestedRelationship === $headValue && $hasHead) {
-                        return response()->json([
-                            'success' => false,
-                            'message' => 'KK tersebut sudah memiliki Kepala Keluarga. Silakan pilih hubungan keluarga yang lain.',
-                        ], 422);
-                    }
-
-                    $statusDalamKeluarga = $requestedRelationship;
-                }
-
-                // 7. Siapkan data penduduk.
-                $residentData = [
-                    'family_card_id' => $familyCard->id,
-                    'nama_lengkap' => $mutation->nama_lengkap,
-                    'jenis_kelamin' => $mutation->jenis_kelamin->value ?? $mutation->jenis_kelamin,
-                    'tempat_lahir' => $mutation->tempat_lahir,
-                    'tgl_lahir' => $mutation->tgl_lahir,
-                    'kewarganegaraan' => $mutation->kewarganegaraan->value ?? $mutation->kewarganegaraan,
-                    'kebangsaan' => $mutation->kebangsaan,
-
-                    'nik' => $nik,
-                    'kk' => $familyCard->nomor_kk,
-                    'status_perkawinan' => $data['status_perkawinan'],
-                    'agama' => $data['agama'],
-                    'pendidikan' => $data['pendidikan'],
-                    'pekerjaan' => $data['pekerjaan'],
-                    'status_dalam_keluarga' => $statusDalamKeluarga,
-                    'dapat_membaca' => $data['dapat_membaca'],
-                    'rt' => $data['rt'] ?? $mutation->rt_tujuan ?? null,
-                    'rw' => $data['rw'] ?? $mutation->rw_tujuan ?? null,
-                    'alamat' => $data['alamat'],
-                    'catatan' => $data['catatan'] ?? $mutation->catatan,
+                $allowedCategories = [
+                    MutationCategoryList::DEATH->value,
+                    MutationCategoryList::OUTGOING->value,
                 ];
 
-                // 8. Simpan penduduk.
-                $resident = Resident::create($residentData);
+                if (!in_array($kategori, $allowedCategories, true)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Kategori mutasi tidak valid.',
+                    ], 422);
+                }
 
-                // 9. Tandai mutasi sudah dipindahkan ke BIP.
-                $mutation->update([
-                    'resident_id' => $resident->id,
+                if (
+                    $kategori === MutationCategoryList::OUTGOING->value &&
+                    empty($data['tujuan_mutasi'])
+                ) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Tujuan mutasi wajib diisi untuk penduduk keluar.',
+                    ], 422);
+                }
+
+                $tanggalMutasi = \Carbon\Carbon::parse($data['tgl_mutasi']);
+
+                if (
+                    $resident->tgl_lahir &&
+                    $tanggalMutasi->lt($resident->tgl_lahir)
+                ) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Tanggal mutasi tidak boleh sebelum tanggal lahir penduduk.',
+                    ], 422);
+                }
+
+                ResidentMutation::create([
+                    'tipe_mutasi'     => MutationTypeList::MINUS,
+                    'kategori_mutasi' => $kategori,
+                    'tgl_mutasi'      => $tanggalMutasi->toDateString(),
+                    'tujuan_mutasi'   => $data['tujuan_mutasi'] ?? null,
+                    'catatan'         => $data['catatan'] ?? null,
+                    'resident_id'     => $resident->id,
+                    'recorded_by'     => auth()->id(),
+                ]);
+
+                $resident->update([
+                    'is_aktif' => false,
                 ]);
 
                 return response()->json([
                     'success' => true,
-                    'message' => $isNewFamilyCard
-                        ? 'Data penduduk berhasil ditambahkan. KK baru berhasil dibuat dan penduduk otomatis menjadi Kepala Keluarga.'
-                        : 'Data mutasi berhasil dipindahkan ke Buku Induk Penduduk.',
-                    'data' => [
-                        'id' => $resident->id,
-                        'nama_lengkap' => $resident->nama_lengkap,
-                        'nik' => $resident->nik,
-                        'kk' => $familyCard->nomor_kk,
-                        'status_dalam_keluarga' => $statusDalamKeluarga,
-                        'family_card_id' => $familyCard->id,
-                    ],
-                ], 201);
+                    'message' => 'Mutasi penduduk berhasil disimpan.',
+                ]);
             });
         } catch (\Throwable $e) {
             report($e);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat memindahkan data mutasi ke Buku Induk Penduduk.',
+                'message' => 'Terjadi kesalahan saat memproses mutasi penduduk.',
             ], 500);
         }
     }

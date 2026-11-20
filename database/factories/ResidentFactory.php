@@ -24,44 +24,56 @@ class ResidentFactory extends Factory
 
     public function definition(): array
     {
+        $tglLahir = fake()
+            ->dateTimeBetween('-80 years', '-1 day')
+            ->format('Y-m-d');
+
         return [
             // A. Identitas Kartu Keluarga
-            'family_card_id' => null,
-
+            'family_card_id' => fake()->numberBetween(1, 50),
             // B. Identitas Penduduk
             'nama_lengkap' => fake()->name(),
+
             'jenis_kelamin' => fake()->randomElement(
                 array_column(GenderList::cases(), 'value')
             ),
+
             'nik' => fake()->unique()->numerify('################'),
             'kk' => fake()->numerify('################'),
+
             'tempat_lahir' => fake()->city(),
-            'tgl_lahir' => fake()
-                ->dateTimeBetween('-80 years', '-1 day')
-                ->format('Y-m-d'),
+            'tgl_lahir' => $tglLahir,
 
             // C. Data Kependudukan
             'status_perkawinan' => fake()->randomElement(
                 array_column(MaritalStatusList::cases(), 'value')
             ),
+
             'agama' => fake()->randomElement(
                 array_column(ReligionList::cases(), 'value')
             ),
+
             'pendidikan' => fake()->randomElement(
                 array_column(EducationList::cases(), 'value')
             ),
+
             'pekerjaan' => fake()->randomElement(
                 array_column(OccupationList::cases(), 'value')
             ),
+
             'dapat_membaca' => fake()->boolean(),
+
             'kewarganegaraan' => fake()->randomElement(
                 array_column(CitizenshipList::cases(), 'value')
             ),
+
             'status_dalam_keluarga' => fake()->randomElement(
                 array_column(RelationshipList::cases(), 'value')
             ),
+
             'kebangsaan' => 'Indonesia',
-            'gol_darah' => fake()->randomElement(
+
+            'gol_darah' => fake()->optional()->randomElement(
                 array_column(BloodList::cases(), 'value')
             ),
 
@@ -73,20 +85,24 @@ class ResidentFactory extends Factory
             'rt' => fake()->randomElement(
                 array_column(RtList::cases(), 'value')
             ),
+
             'rw' => fake()->randomElement(
                 array_column(RwList::cases(), 'value')
             ),
+
             'alamat' => fake()->streetAddress(),
 
             // F. Data Penerbitan E-KTP
             'tempat_dikeluarkan' => fake()->city(),
             'tgl_dikeluarkan' => fake()->optional()->date(),
+
+            // G. Data Domisili
             'tgl_mulai_tinggal' => fake()->optional()->date(),
 
-            // G. Status Penduduk
+            // H. Status Penduduk
             'is_aktif' => true,
 
-            // H. Keterangan
+            // I. Keterangan
             'catatan' => fake()->optional()->sentence(),
         ];
     }
@@ -96,7 +112,7 @@ class ResidentFactory extends Factory
      */
     public function active(): static
     {
-        return $this->state(fn () => [
+        return $this->state(fn() => [
             'is_aktif' => true,
         ]);
     }
@@ -106,7 +122,7 @@ class ResidentFactory extends Factory
      */
     public function inactive(): static
     {
-        return $this->state(fn () => [
+        return $this->state(fn() => [
             'is_aktif' => false,
         ]);
     }

@@ -26,7 +26,6 @@ class StoreMutationOutgoingRequest extends FormRequest
 
             'kategori_mutasi' => [
                 'required',
-                Rule::enum(MutationCategoryList::class),
                 Rule::in([
                     MutationCategoryList::DEATH->value,
                     MutationCategoryList::OUTGOING->value,
@@ -40,7 +39,7 @@ class StoreMutationOutgoingRequest extends FormRequest
 
             'tujuan_mutasi' => [
                 'nullable',
-                'required_if:kategori_mutasi,outgoing',
+                'required_if:kategori_mutasi,' . MutationCategoryList::OUTGOING->value,
                 'string',
                 'max:255',
             ],
@@ -48,7 +47,7 @@ class StoreMutationOutgoingRequest extends FormRequest
             'catatan' => [
                 'nullable',
                 'string',
-                'max:65535',
+                'max:255',
             ],
         ];
     }
@@ -61,7 +60,6 @@ class StoreMutationOutgoingRequest extends FormRequest
             'resident_id.exists' => 'Penduduk tidak ditemukan, sudah tidak aktif, atau telah dihapus.',
 
             'kategori_mutasi.required' => 'Kategori mutasi wajib dipilih.',
-            'kategori_mutasi.enum' => 'Kategori mutasi tidak valid.',
             'kategori_mutasi.in' => 'Kategori mutasi harus berupa kematian atau penduduk keluar.',
 
             'tgl_mutasi.required' => 'Tanggal mutasi wajib diisi.',
@@ -72,7 +70,7 @@ class StoreMutationOutgoingRequest extends FormRequest
             'tujuan_mutasi.max' => 'Tujuan pindah maksimal 255 karakter.',
 
             'catatan.string' => 'Catatan harus berupa teks.',
-            'catatan.max' => 'Catatan terlalu panjang.',
+            'catatan.max' => 'Catatan maksimal 255 karakter.',
         ];
     }
 
@@ -82,7 +80,7 @@ class StoreMutationOutgoingRequest extends FormRequest
             'resident_id' => 'penduduk',
             'kategori_mutasi' => 'kategori mutasi',
             'tgl_mutasi' => 'tanggal mutasi',
-            'tujuan_mutasi' => 'tujuan pindah',
+            'tujuan_mutasi' => 'tujuan mutasi',
             'catatan' => 'catatan',
         ];
     }

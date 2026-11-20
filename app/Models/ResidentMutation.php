@@ -3,11 +3,8 @@
 namespace App\Models;
 
 use App\Contracts\Restorable;
-use App\Enums\CitizenshipList;
-use App\Enums\GenderList;
 use App\Enums\MutationCategoryList;
 use App\Enums\MutationTypeList;
-use App\Enums\RtList;
 use App\Models\Concerns\RestoresSoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,14 +20,9 @@ class ResidentMutation extends Model implements Restorable
     protected function casts(): array
     {
         return [
-            'tgl_lahir' => 'date',
             'tgl_mutasi' => 'date',
-            'jenis_kelamin' => GenderList::class,
-            'kewarganegaraan' => CitizenshipList::class,
             'tipe_mutasi' => MutationTypeList::class,
             'kategori_mutasi' => MutationCategoryList::class,
-            'rt_tujuan' => RtList::class,
-            'rw_tujuan' => RtList::class,
         ];
     }
 

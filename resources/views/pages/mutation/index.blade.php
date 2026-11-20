@@ -1,4 +1,3 @@
-
 <x-appcontent>
     @include('pages.mutation.comp.widgets')
     @include('pages.mutation.comp.filter')
@@ -45,7 +44,6 @@
 
                     if (parent && !parent.classList.contains('wide-scroll-ledger')) {
                         const scrollWrapper = document.createElement('div');
-
                         scrollWrapper.className = 'wide-scroll-ledger';
 
                         parent.insertBefore(scrollWrapper, tableNode);
@@ -54,22 +52,57 @@
                 }
 
                 // =====================================================
+                // INISIALISASI TOOLTIP BOOTSTRAP 5
+                // =====================================================
+                function initTooltips(container) {
+                    if (!window.bootstrap?.Tooltip || !container) return;
+
+                    container.querySelectorAll('[data-bs-toggle="tooltip"]').forEach((el) => {
+                        bootstrap.Tooltip.getOrCreateInstance(el);
+                    });
+                }
+
+                // =====================================================
+                // AMBIL NILAI FILTER
+                // =====================================================
+                const filterNames = [
+                    'jenis_kelamin',
+                    'kewarganegaraan',
+                    'kategori_mutasi',
+                    'tipe_mutasi',
+                    'deleted',
+                    'sort_name'
+                ];
+
+                function getFilterValue(name) {
+                    const el = $(`[name="${name}"], #filter_${name}, #${name}`).first();
+                    return el.length ? el.val() : '';
+                }
+
+                // =====================================================
                 // DATATABLES
                 // =====================================================
                 const table = tableElement.DataTable({
                     processing: true,
                     serverSide: true,
-
                     scrollX: false,
                     autoWidth: false,
                     responsive: false,
 
                     ajax: {
                         url: @json(route('mutations.index')),
-                        type: 'GET'
+                        type: 'GET',
+                        data: function(d) {
+                            filterNames.forEach((name) => {
+                                const val = getFilterValue(name);
+                                if (val !== undefined && val !== null && val !== '') {
+                                    d[name] = val;
+                                }
+                            });
+                        }
                     },
 
-                    pageLength: 15,
+                    pageLength: 10,
 
                     columns: [
                         // 1. Nomor urut
@@ -110,7 +143,8 @@
                         // 6. Kewarganegaraan
                         {
                             data: 'kewarganegaraan',
-                            name: 'kewarganegaraan'
+                            name: 'kewarganegaraan',
+                            className: 'text-center'
                         },
 
                         // 7. Kebangsaan
@@ -123,6 +157,7 @@
                         {
                             data: 'datang_dari',
                             name: 'datang_dari',
+                            orderable: false,
                             defaultContent: '-'
                         },
 
@@ -138,6 +173,7 @@
                         {
                             data: 'pindah_ke',
                             name: 'pindah_ke',
+                            orderable: false,
                             defaultContent: '-'
                         },
 
@@ -153,6 +189,7 @@
                         {
                             data: 'meninggal',
                             name: 'meninggal',
+                            orderable: false,
                             defaultContent: '-'
                         },
 
@@ -169,7 +206,7 @@
                             data: 'catatan',
                             name: 'catatan',
                             orderable: false,
-                            defaultContent: '-'
+                            render: (data) => (data ? data : '-')
                         },
 
                         // 15. Aksi
@@ -182,9 +219,8 @@
                         }
                     ],
 
-                    order: [
-                        [1, 'asc']
-                    ],
+                    // Biarkan default sorting dari backend (tgl_mutasi terbaru / sort_name)
+                    order: [],
 
                     // =================================================
                     // LANGUAGE
@@ -216,8 +252,30 @@
                     // DRAW CALLBACK
                     // =================================================
                     drawCallback: function() {
-                        wrapTableWithScroll(table.table().node());
+                        const tableNode = this.api().table().node();
+                        wrapTableWithScroll(tableNode);
+                        initTooltips(tableNode);
                     }
+                });
+
+                // Reload tabel saat filter berubah
+                const filterSelector = filterNames
+                    .map((name) => `[name="${name}"], #filter_${name}, #${name}`)
+                    .join(', ');
+
+                $(document).on('change', filterSelector, function() {
+                    table.ajax.reload();
+                });
+
+                // Update widget summary otomatis dari response JSON
+                tableElement.on('xhr.dt', function(e, settings, json) {
+                    if (!json || !json.summary) return;
+
+                    Object.entries(json.summary).forEach(([key, value]) => {
+                        $(`[data-summary="${key}"]`).text(value);
+                    });
+
+                    $(document).trigger('mutation:summary', [json.summary]);
                 });
 
                 // Wrapper awal

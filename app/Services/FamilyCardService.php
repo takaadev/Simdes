@@ -16,17 +16,15 @@ class FamilyCardService
 {
     public function getData(Request $request)
     {
+        $isTrashed = $request->input('deleted') === 'trashed';
+
         // =====================================================
         // QUERY DASAR
         // =====================================================
         $baseQuery = Resident::query()
-            ->join(
-                'family_cards',
-                'family_cards.id',
-                '=',
-                'residents.family_card_id'
-            )
-            ->whereNull('family_cards.deleted_at');
+            ->join('family_cards', 'family_cards.id', '=', 'residents.family_card_id')
+            ->whereNull('family_cards.deleted_at')
+            ->when($isTrashed, fn($q) => $q->onlyTrashed());
 
         // =====================================================
         // FILTER DATA PENDUDUK
@@ -35,24 +33,13 @@ class FamilyCardService
             $query->when(
                 $request->filled('jenis_kelamin')
                     && $request->input('jenis_kelamin') !== 'all',
-                fn($query) => $query->where(
-                    'residents.jenis_kelamin',
-                    $request->input('jenis_kelamin')
-                )
+                fn($q) => $q->where('residents.jenis_kelamin', $request->input('jenis_kelamin'))
             );
 
             $query->when(
                 $request->filled('kewarganegaraan')
                     && $request->input('kewarganegaraan') !== 'all',
-                fn($query) => $query->where(
-                    'residents.kewarganegaraan',
-                    $request->input('kewarganegaraan')
-                )
-            );
-
-            $query->when(
-                $request->input('deleted') === 'trashed',
-                fn($query) => $query->onlyTrashed()
+                fn($q) => $q->where('residents.kewarganegaraan', $request->input('kewarganegaraan'))
             );
 
             return $query;
@@ -62,11 +49,11 @@ class FamilyCardService
         // PENCARIAN DATATABLE
         // =====================================================
         $applySearch = function ($query) use ($request) {
-            $keyword = trim((string) $request->input('search.value'));
+            $keyword = trim((string) $request->input('search.value', ''));
 
             if ($keyword !== '') {
-                $query->where(function ($query) use ($keyword) {
-                    $query->where('family_cards.nomor_kk', 'like', "%{$keyword}%")
+                $query->where(function ($q) use ($keyword) {
+                    $q->where('family_cards.nomor_kk', 'like', "%{$keyword}%")
                         ->orWhere('residents.nama_lengkap', 'like', "%{$keyword}%")
                         ->orWhere('residents.nik', 'like', "%{$keyword}%")
                         ->orWhere('residents.tempat_lahir', 'like', "%{$keyword}%")
@@ -84,36 +71,32 @@ class FamilyCardService
         };
 
         // =====================================================
-        // HELPER MENGHITUNG JUMLAH KELOMPOK KK
+        // HELPER HITUNG JUMLAH KELOMPOK KK
         // =====================================================
-        $countGroups = function ($query) {
-            $groups = (clone $query)
-                ->reorder()
-                ->select('family_cards.id')
-                ->distinct()
-                ->toBase();
+        $countGroups = fn($query) => (int) (clone $query)
+            ->reorder()
+            ->distinct('family_cards.id')
+            ->count('family_cards.id');
 
-            return DB::query()
-                ->fromSub($groups, 'family_groups')
-                ->count();
-        };
-
-        // =====================================================
-        // TOTAL KK
-        // =====================================================
         $recordsTotal = $countGroups($baseQuery);
 
-        // =====================================================
-        // FILTER KK
-        // =====================================================
         $filteredQuery = $applyFilters(clone $baseQuery);
-
-        // =====================================================
-        // PENCARIAN KK
-        // =====================================================
         $searchedQuery = $applySearch(clone $filteredQuery);
 
         $recordsFiltered = $countGroups($searchedQuery);
+
+        // =====================================================
+        // RINGKASAN BUKU KARTU KELUARGA
+        // =====================================================
+        $summary = (clone $filteredQuery)
+            ->reorder()
+            ->selectRaw("
+            COUNT(residents.id) AS total_penduduk,
+            SUM(CASE WHEN residents.jenis_kelamin = 'L' THEN 1 ELSE 0 END) AS laki_laki,
+            SUM(CASE WHEN residents.jenis_kelamin = 'P' THEN 1 ELSE 0 END) AS perempuan,
+            COUNT(DISTINCT family_cards.id) AS total_kk
+        ")
+            ->first();
 
         // =====================================================
         // PAGINATION BERDASARKAN KELOMPOK KK
@@ -127,246 +110,178 @@ class FamilyCardService
                 'family_cards.id',
                 'family_cards.nomor_kk',
             ])
-            ->groupBy(
-                'family_cards.id',
-                'family_cards.nomor_kk'
-            )
+            ->groupBy('family_cards.id', 'family_cards.nomor_kk')
             ->orderBy('family_cards.nomor_kk')
             ->orderBy('family_cards.id');
 
         if ($length !== -1) {
-            $groupQuery
-                ->offset($start)
-                ->limit(max(1, $length));
+            $groupQuery->offset($start)->limit(max(1, $length));
         }
 
-        $familyCardIds = $groupQuery
-            ->pluck('family_cards.id');
+        $familyCardIds = $groupQuery->pluck('family_cards.id');
+
+        // Jika tidak ada KK yang cocok, langsung kembalikan data kosong.
+        if ($familyCardIds->isEmpty()) {
+            return response()->json([
+                'draw' => (int) $request->input('draw'),
+                'recordsTotal' => $recordsTotal,
+                'recordsFiltered' => $recordsFiltered,
+                'data' => [],
+                'summary' => [
+                    'total_penduduk' => (int) ($summary?->total_penduduk ?? 0),
+                    'laki_laki' => (int) ($summary?->laki_laki ?? 0),
+                    'perempuan' => (int) ($summary?->perempuan ?? 0),
+                    'total_kk' => (int) ($summary?->total_kk ?? 0),
+                ],
+            ]);
+        }
+
+        // Urutan status dalam keluarga (dipakai ulang di query anggota & relasi KK).
+        $statusOrderSql = "
+        CASE %s
+            WHEN 'Kepala Keluarga' THEN 1
+            WHEN 'Istri' THEN 2
+            WHEN 'Anak' THEN 3
+            WHEN 'Menantu' THEN 4
+            WHEN 'Cucu' THEN 5
+            WHEN 'Orang Tua' THEN 6
+            WHEN 'Mertua' THEN 7
+            WHEN 'Famili Lain' THEN 8
+            WHEN 'Pembantu' THEN 9
+            ELSE 10
+        END ASC
+    ";
 
         // =====================================================
-        // AMBIL SELURUH ANGGOTA DARI KK TERPILIH
+        // AMBIL ANGGOTA DARI KK TERPILIH
         // =====================================================
-        $query = $applyFilters(
-            Resident::query()
-                ->join(
-                    'family_cards',
-                    'family_cards.id',
-                    '=',
-                    'residents.family_card_id'
-                )
-                ->whereNull('family_cards.deleted_at')
-                ->whereIn(
-                    'residents.family_card_id',
-                    $familyCardIds
-                )
-                ->select([
-                    'residents.id',
-                    'residents.family_card_id',
-                    'family_cards.nomor_kk',
-                    'residents.nama_lengkap',
-                    'residents.nik',
-                    'residents.jenis_kelamin',
-                    'residents.tempat_lahir',
-                    'residents.tgl_lahir',
-                    'residents.gol_darah',
-                    'residents.agama',
-                    'residents.pendidikan',
-                    'residents.pekerjaan',
-                    'residents.alamat',
-                    'residents.rt',
-                    'residents.rw',
-                    'residents.status_perkawinan',
-                    'residents.tempat_dikeluarkan',
-                    'residents.tgl_dikeluarkan',
-                    'residents.status_dalam_keluarga',
-                    'residents.kewarganegaraan',
-                    'residents.ayah',
-                    'residents.ibu',
-                    'residents.tgl_mulai_tinggal',
-                    'residents.deleted_at',
-                ])
-        );
-
-        // Terapkan pencarian agar anggota yang ditampilkan
-        // sesuai dengan hasil pencarian.
-        $query = $applySearch($query);
-
-        // =====================================================
-        // PENGURUTAN ANGGOTA KELUARGA
-        // =====================================================
-        $query
+        $residents = $applySearch($applyFilters(clone $baseQuery))
+            ->whereIn('residents.family_card_id', $familyCardIds)
+            ->select([
+                'residents.id',
+                'residents.family_card_id',
+                'family_cards.nomor_kk',
+                'residents.nama_lengkap',
+                'residents.nik',
+                'residents.jenis_kelamin',
+                'residents.tempat_lahir',
+                'residents.tgl_lahir',
+                'residents.gol_darah',
+                'residents.agama',
+                'residents.pendidikan',
+                'residents.pekerjaan',
+                'residents.alamat',
+                'residents.rt',
+                'residents.rw',
+                'residents.status_perkawinan',
+                'residents.tempat_dikeluarkan',
+                'residents.tgl_dikeluarkan',
+                'residents.status_dalam_keluarga',
+                'residents.kewarganegaraan',
+                'residents.ayah',
+                'residents.ibu',
+                'residents.tgl_mulai_tinggal',
+                'residents.deleted_at',
+            ])
             ->orderBy('family_cards.nomor_kk')
-            ->orderByRaw("
-            CASE residents.status_dalam_keluarga
-                WHEN 'Kepala Keluarga' THEN 1
-                WHEN 'Istri' THEN 2
-                WHEN 'Anak' THEN 3
-                WHEN 'Menantu' THEN 4
-                WHEN 'Cucu' THEN 5
-                WHEN 'Orang Tua' THEN 6
-                WHEN 'Mertua' THEN 7
-                WHEN 'Famili Lain' THEN 8
-                WHEN 'Pembantu' THEN 9
-                ELSE 10
-            END ASC
-        ")
-            ->orderBy('residents.nama_lengkap');
-
-        $residents = $query->get();
+            ->orderBy('family_cards.id')
+            ->orderByRaw(sprintf($statusOrderSql, 'residents.status_dalam_keluarga'))
+            ->orderBy('residents.nama_lengkap')
+            ->get();
 
         // =====================================================
-        // RINGKASAN BUKU KARTU KELUARGA
+        // AMBIL DATA KK BESERTA ANGGOTANYA UNTUK AKSI / MODAL
         // =====================================================
-        $summaryQuery = $applyFilters(clone $baseQuery);
+        $familyCards = FamilyCard::query()
+            ->with([
+                'residents' => fn($q) => $q
+                    ->when($isTrashed, fn($sub) => $sub->withTrashed())
+                    ->orderByRaw(sprintf($statusOrderSql, 'status_dalam_keluarga'))
+                    ->orderBy('nama_lengkap'),
+            ])
+            ->whereIn('id', $familyCardIds)
+            ->get()
+            ->keyBy('id');
 
-        $summary = $summaryQuery
-            ->select([])
-            ->selectRaw("
-            COUNT(residents.id) AS total_penduduk,
-            SUM(
-                CASE
-                    WHEN residents.jenis_kelamin = 'L' THEN 1
-                    ELSE 0
-                END
-            ) AS laki_laki,
-            SUM(
-                CASE
-                    WHEN residents.jenis_kelamin = 'P' THEN 1
-                    ELSE 0
-                END
-            ) AS perempuan,
-            COUNT(DISTINCT family_cards.id) AS total_kk
-        ")
-            ->first();
+        // Helper aman untuk membaca nilai Enum atau string.
+        $enumLabel = function ($field): string {
+            if ($field instanceof \BackedEnum) {
+                return method_exists($field, 'label') ? $field->label() : (string) $field->value;
+            }
+
+            return filled($field) ? (string) $field : '-';
+        };
+
+        $enumValue = fn($field): ?string => $field instanceof \BackedEnum
+            ? (string) $field->value
+            : (filled($field) ? (string) $field : null);
 
         // =====================================================
         // FORMAT DATA RESPONSE
         // =====================================================
-        // =====================================================
-        // AMBIL DATA KK BESERTA SELURUH ANGGOTA
-        // =====================================================
-        $familyCards = FamilyCard::query()
-            ->with(['residents' => function ($query) {
-                $query->orderByRaw("
-            CASE status_dalam_keluarga
-                WHEN 'Kepala Keluarga' THEN 1
-                WHEN 'Istri' THEN 2
-                WHEN 'Anak' THEN 3
-                WHEN 'Menantu' THEN 4
-                WHEN 'Cucu' THEN 5
-                WHEN 'Orang Tua' THEN 6
-                WHEN 'Mertua' THEN 7
-                WHEN 'Famili Lain' THEN 8
-                WHEN 'Pembantu' THEN 9
-                ELSE 10
-            END ASC
-            ")->orderBy('nama_lengkap');
-            }])->whereIn('id', $familyCardIds)->get()->keyBy('id');
         $lastFamilyCardId = null;
 
-        $data = $residents
-            ->values()
-            ->map(
-                function ($row, $index) use (&$lastFamilyCardId, $familyCards) {
-                    $alamat = collect([
-                        $row->alamat,
-                        $row->rt ? "RT {$row->rt}" : null,
-                        $row->rw ? "RW {$row->rw}" : null,
-                    ])->filter()->implode(', ');
+        $data = $residents->values()->map(
+            function ($row, $index) use (&$lastFamilyCardId, $familyCards, $enumLabel, $enumValue) {
+                $rt = $enumValue($row->rt);
+                $rw = $enumValue($row->rw);
 
-                    // Aksi hanya ditampilkan satu kali untuk setiap KK.
-                    $isFirstMember = $lastFamilyCardId !== $row->family_card_id;
+                $alamat = collect([
+                    $row->alamat,
+                    $rt ? "RT {$rt}" : null,
+                    $rw ? "RW {$rw}" : null,
+                ])->filter()->implode(', ');
 
-                    $lastFamilyCardId = $row->family_card_id;
+                // Aksi hanya ditampilkan satu kali untuk setiap KK.
+                $isFirstMember = $lastFamilyCardId !== $row->family_card_id;
+                $lastFamilyCardId = $row->family_card_id;
 
-                    return [
-                        'DT_RowIndex' => $index + 1,
-
-                        'id' => $row->id,
-                        'family_card_id' => $row->family_card_id,
-                        'nomor_kk' => $row->nomor_kk ?: '-',
-
-                        'nama_lengkap' => $this->tooltip(
-                            $row->nama_lengkap
-                        ),
-
-                        'nik' => $row->nik ?: '-',
-
-                        'jenis_kelamin' =>
-                        $row->jenis_kelamin?->label() ?? '-',
-
-                        'tempat_lahir' => $row->tempat_lahir ?: '-',
-
-                        'tgl_lahir' => $this->formatDate(
-                            $row->tgl_lahir
-                        ),
-
-                        'gol_darah' => $row->gol_darah ?: '-',
-
-                        'agama' => $row->agama?->label() ?? '-',
-
-                        'pendidikan' => $row->pendidikan?->label() ?? '-',
-
-                        'pekerjaan' => $row->pekerjaan?->label() ?? '-',
-
-                        'alamat' => $this->tooltip($alamat ?: '-'),
-
-                        'status_perkawinan' =>
-                        $row->status_perkawinan?->label() ?? '-',
-
-                        'tempat_dikeluarkan' =>
-                        $row->tempat_dikeluarkan ?: '-',
-
-                        'tgl_dikeluarkan' => $this->formatDate(
-                            $row->tgl_dikeluarkan
-                        ),
-
-                        'status_dalam_keluarga' =>
-                        $row->status_dalam_keluarga ?: '-',
-
-                        'kewarganegaraan' =>
-                        $row->kewarganegaraan?->label() ?? '-',
-
-                        'ayah' => $row->ayah ?: '-',
-
-                        'ibu' => $row->ibu ?: '-',
-
-                        'tgl_mulai_tinggal' => $this->formatDate(
-                            $row->tgl_mulai_tinggal
-                        ),
-
-                        // Aksi KK hanya ditampilkan pada satu anggota.
-                        'action' => $isFirstMember
-                            ? view('pages.familycard.comp.actions', [
-                                'row' => $row,
-                                'familyCard' => $familyCards->get($row->family_card_id),
-                            ])->render()
-                            : '',
-                    ];
-                }
-            );
+                return [
+                    'DT_RowIndex' => $index + 1,
+                    'id' => $row->id,
+                    'family_card_id' => $row->family_card_id,
+                    'nomor_kk' => $row->nomor_kk ?: '-',
+                    'nama_lengkap' => $this->tooltip($row->nama_lengkap),
+                    'nik' => $row->nik ?: '-',
+                    'jenis_kelamin' => $enumLabel($row->jenis_kelamin),
+                    'tempat_lahir' => $row->tempat_lahir ?: '-',
+                    'tgl_lahir' => $this->formatDate($row->tgl_lahir),
+                    'gol_darah' => $enumLabel($row->gol_darah),
+                    'agama' => $enumLabel($row->agama),
+                    'pendidikan' => $enumLabel($row->pendidikan),
+                    'pekerjaan' => $enumLabel($row->pekerjaan),
+                    'alamat' => $this->tooltip($alamat ?: '-'),
+                    'status_perkawinan' => $enumLabel($row->status_perkawinan),
+                    'tempat_dikeluarkan' => $row->tempat_dikeluarkan ?: '-',
+                    'tgl_dikeluarkan' => $this->formatDate($row->tgl_dikeluarkan),
+                    'status_dalam_keluarga' => $enumLabel($row->status_dalam_keluarga),
+                    'kewarganegaraan' => $enumLabel($row->kewarganegaraan),
+                    'ayah' => $row->ayah ?: '-',
+                    'ibu' => $row->ibu ?: '-',
+                    'tgl_mulai_tinggal' => $this->formatDate($row->tgl_mulai_tinggal),
+                    'action' => $isFirstMember
+                        ? view('pages.familycard.comp.actions', [
+                            'row' => $row,
+                            'familyCard' => $familyCards->get($row->family_card_id),
+                        ])->render()
+                        : '',
+                ];
+            }
+        );
 
         // =====================================================
         // RESPONSE DATATABLE
         // =====================================================
         return response()->json([
             'draw' => (int) $request->input('draw'),
-
-            // Total kelompok KK.
             'recordsTotal' => $recordsTotal,
-
-            // Total kelompok KK setelah filter dan pencarian.
             'recordsFiltered' => $recordsFiltered,
-
-            // Semua anggota dari kelompok KK pada halaman aktif.
             'data' => $data,
-
-            // Ringkasan.
             'summary' => [
-                'total_penduduk' => (int) ($summary->total_penduduk ?? 0),
-                'laki_laki' => (int) ($summary->laki_laki ?? 0),
-                'perempuan' => (int) ($summary->perempuan ?? 0),
-                'total_kk' => (int) ($summary->total_kk ?? 0),
+                'total_penduduk' => (int) ($summary?->total_penduduk ?? 0),
+                'laki_laki' => (int) ($summary?->laki_laki ?? 0),
+                'perempuan' => (int) ($summary?->perempuan ?? 0),
+                'total_kk' => (int) ($summary?->total_kk ?? 0),
             ],
         ]);
     }

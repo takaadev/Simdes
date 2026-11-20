@@ -1,3 +1,4 @@
+
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -6,26 +7,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('village_positions', function (Blueprint $table) {
             $table->id();
-            $table->string('nama', 150);
-            $table->string('kode', 50)->nullable()->unique();
-            $table->string('kategori', 50);
+            $table->string('kode', 10)->unique();
+            $table->string('nama');
+            $table->string('kategori', 10);
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();
-            $table->index(['kategori', 'is_active']);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('village_positions');

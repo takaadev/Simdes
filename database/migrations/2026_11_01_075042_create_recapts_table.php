@@ -17,7 +17,6 @@ return new class extends Migration
             $table->date('bulan');
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
-            $table->softDeletes();
             $table->unique(['tahun', 'bulan']);
         });
     }

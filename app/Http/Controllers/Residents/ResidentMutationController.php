@@ -5,11 +5,11 @@ namespace App\Http\Controllers\Residents;
 use App\Http\Controllers\Concerns\HandlesRestore;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ResidentMutation\StoreMutationOutgoingRequest;
-use App\Http\Requests\ResidentMutation\StoreMutationToResidentRequest;
 use App\Http\Requests\ResidentMutation\StoreResidentMutationRequest;
 use App\Http\Requests\ResidentMutation\UpdateResidentMutationRequest;
 use App\Models\ResidentMutation;
 use App\Services\ResidentMutationService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ResidentMutationController extends Controller
@@ -24,16 +24,17 @@ class ResidentMutationController extends Controller
         return $this->service->getData($request);
     }
 
-    public function mutationOutgoing(StoreMutationOutgoingRequest $request){
-
+    public function mutationOutgoing(StoreMutationOutgoingRequest $request)
+    {
+        return $this->service->getMutationOutgoing($request->validated());
     }
 
-    public function store(StoreResidentMutationRequest $request): \Illuminate\Http\JsonResponse
+    public function store(StoreResidentMutationRequest $request): JsonResponse
     {
         return $this->service->getStore($request->validated());
     }
 
-    public function update(UpdateResidentMutationRequest $request, ResidentMutation $mutation): \Illuminate\Http\JsonResponse
+    public function update(UpdateResidentMutationRequest $request, ResidentMutation $mutation): JsonResponse
     {
         return $this->service->getUpdate($mutation, $request->validated());
     }
@@ -43,21 +44,8 @@ class ResidentMutationController extends Controller
         return $this->service->getDestroy($request, $mutation);
     }
 
-
-
-
     public function restore(int $id)
     {
         return HandlesRestore::restore(ResidentMutation::onlyTrashed()->findOrFail($id));
     }
-
-    public function mutationToResident(StoreMutationToResidentRequest $request): \Illuminate\Http\JsonResponse
-    {
-        return $this->service->getMutationToResident($request->validated());
-    }
-
-    // public function importexcel(ImportExcelResidentRequest $request)
-    // {
-    //     return $this->service->getImportExcel($request);
-    // }
 }

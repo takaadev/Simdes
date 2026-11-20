@@ -4,7 +4,6 @@ namespace App\Enums;
 
 enum RwList: string
 {
-    case RW_000 = '000';
     case RW_001 = '001';
     case RW_002 = '002';
     case RW_003 = '003';

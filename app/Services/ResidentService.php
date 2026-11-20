@@ -76,6 +76,7 @@ class ResidentService
                 'tempat_dikeluarkan',
                 'tgl_dikeluarkan',
                 'tgl_mulai_tinggal',
+                'is_aktif',
                 'catatan',
                 'created_at',
                 'updated_at',
@@ -100,7 +101,9 @@ class ResidentService
             SUM(CASE WHEN jenis_kelamin = 'L' THEN 1 ELSE 0 END) as male,
             SUM(CASE WHEN jenis_kelamin = 'P' THEN 1 ELSE 0 END) as female,
             SUM(CASE WHEN kewarganegaraan = 'WNI' THEN 1 ELSE 0 END) as wni,
-            SUM(CASE WHEN kewarganegaraan = 'WNA' THEN 1 ELSE 0 END) as wna
+            SUM(CASE WHEN kewarganegaraan = 'WNA' THEN 1 ELSE 0 END) as wna,
+            SUM(CASE WHEN is_aktif = 1 THEN 1 ELSE 0 END) as active,
+            SUM(CASE WHEN is_aktif = 0 THEN 1 ELSE 0 END) as inactive
         ")
             ->first();
 
@@ -111,6 +114,8 @@ class ResidentService
                 'female' => (int) $summary->female,
                 'wni' => (int) $summary->wni,
                 'wna' => (int) $summary->wna,
+                'active' => (int) $summary->active,
+                'inactive' => (int) $summary->inactive,
             ])
             ->addIndexColumn()
 
@@ -178,13 +183,20 @@ class ResidentService
                 'kk',
                 fn($row) => $row->kk ?: '-'
             )
+            ->editColumn(
+                'is_aktif',
+                fn($row) => view('components.badge', [
+                    'color' => $row->is_aktif ? 'success' : 'secondary',
+                    'slot' => $row->is_aktif ? 'Aktif' : 'Tidak Aktif',
+                ])->render()
+            )
 
             // Alamat beserta RT dan RW.
             ->editColumn('alamat', function ($row) {
                 $alamat = collect([
                     $row->alamat,
-                    $row->rt ? "RT {$row->rt}" : null,
-                    $row->rw ? "RW {$row->rw}" : null,
+                    $row->rt ? "RT {$row->rt->value}" : null,
+                    $row->rw ? "RW {$row->rw->value}" : null,
                 ])->filter()->implode(', ');
 
                 return $this->tooltip($alamat ?: '-');
@@ -202,6 +214,7 @@ class ResidentService
                 'nama_lengkap',
                 'alamat',
                 'action',
+                'is_aktif',
             ])
             ->toJson();
     }

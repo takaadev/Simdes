@@ -19,6 +19,7 @@
             <th>Kedudukan dalam Keluarga</th>
             <th>NIK</th>
             <th>Nomor KK</th>
+            <th>Status</th>
             <th>Aksi</th>
         </tr>
     </x-table>
@@ -163,6 +164,10 @@
                         {
                             data: 'kk',
                             name: 'kk'
+                        },
+                        {
+                            data: 'is_aktif',
+                            name: 'is_aktif'
                         },
 
                         // 16. Aksi.

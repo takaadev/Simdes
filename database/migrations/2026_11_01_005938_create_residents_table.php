@@ -13,8 +13,8 @@ return new class extends Migration
             $table->foreignId('family_card_id')->nullable()->constrained('family_cards')->restrictOnDelete();
             $table->string('nama_lengkap', 150);
             $table->string('jenis_kelamin', 2);
-            $table->string('nik', 16)->unique();
-            $table->string('kk', 16);
+            $table->string('nik', 30)->unique();
+            $table->string('kk', 30)->nullable();
             $table->string('tempat_lahir', 100);
             $table->date('tgl_lahir');
             $table->string('status_perkawinan', 30);

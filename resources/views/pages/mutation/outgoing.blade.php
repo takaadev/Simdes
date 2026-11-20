@@ -1,5 +1,5 @@
 <x-action-create href="{{ route('mutations.outgoing') }}" modalTitle="Mutasi Penduduk Keluar" label="Mutasi Keluar"
-    color="btn-simdes-outline" icon="right-from-bracket">
+    color="btn-simdes-excel" icon="right-from-bracket">
     <x-fieldset label="Informasi Mutasi Keluar">
         <div class="row g-3">
 
@@ -30,7 +30,6 @@
                     placeholder="Masukkan keterangan tambahan mengenai mutasi penduduk..."
                     hint="Informasi tambahan yang diperlukan dalam administrasi kependudukan." rows="3" />
             </div>
-
         </div>
     </x-fieldset>
 </x-action-create>

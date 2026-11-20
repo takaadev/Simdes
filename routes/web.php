@@ -69,8 +69,7 @@ Route::prefix('admpenduduk')->group(function () {
     Route::resource('buku-rekapitulasi-penduduk', RecaptResidentController::class)
         ->names('recapts')
         ->parameters(['buku-rekapitulasi-penduduk' => 'recapt'])
-        ->except(['create', 'edit', 'show'])
-        ->withTrashed(['update', 'destroy']);
+        ->except(['create', 'edit', 'show', 'update']);
 
     Route::resource('buku-mutasi-penduduk', ResidentMutationController::class)
         ->names('mutations')

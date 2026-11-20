@@ -4,7 +4,6 @@ namespace App\Enums;
 
 enum RtList: string
 {
-    case RT_000 = '000';
     case RT_001 = '001';
     case RT_002 = '002';
     case RT_003 = '003';
