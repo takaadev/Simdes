@@ -110,7 +110,7 @@ class AgendaEntryFactory extends Factory
 
             'catatan' => fake()->optional(0.3)->sentence(),
 
-            'created_by' => User::factory(),
+            'created_by' => 1,
         ];
     }
 

@@ -180,6 +180,19 @@
 
                 // Wrapper awal
                 wrapTableWithScroll(table.table().node());
+                $('#btnCetakKeputusan').on('click', function() {
+                    window.openSimdesPrintModal({
+                        title: 'Buku Keputusan Kepala Desa',
+                        url: @json(route('village-decrees.print')),
+                        filterMap: {
+                            year: '[name="year"]',
+                            status: '[name="status"]',
+                            deleted: '[name="deleted"]',
+                        },
+                        tableSelector: '#villageDecreesTable',
+                        paper: 'A4 landscape',
+                    });
+                });
             });
         </script>
     @endpush

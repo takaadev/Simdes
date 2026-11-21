@@ -4,8 +4,8 @@ namespace Database\Factories;
 
 use App\Enums\EducationList;
 use App\Enums\GenderList;
+use App\Enums\ReligionList;
 use App\Enums\VillageOfficialStatusList;
-use App\Models\User;
 use App\Models\VillageOfficial;
 use App\Models\VillagePosition;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -67,11 +67,14 @@ class VillageOfficialFactory extends Factory
             'now'
         );
 
+        // Identitas aparat.
+        $nama = $faker->name();
+        $niap = $faker->unique()->numerify('###############');
+
         return [
             // A. Identitas Aparat
-            'nama' => $faker->name(),
-
-            'niap' => $faker->unique()->numerify('###############'),
+            'nama' => $nama,
+            'niap' => $niap,
 
             'nip' => $faker->optional(0.3)->passthrough(
                 $faker->unique()->numerify('################')
@@ -85,8 +88,10 @@ class VillageOfficialFactory extends Factory
             ),
 
             'tempat_lahir' => $faker->city(),
-
             'tgl_lahir' => $birthDate->format('Y-m-d'),
+            'agama' => fake()->randomElement(
+                array_column(ReligionList::cases(), 'value')
+            ),
 
             // B. Pendidikan, Kepangkatan, dan Jabatan
             'pendidikan' => $faker->randomElement(
@@ -110,26 +115,25 @@ class VillageOfficialFactory extends Factory
 
             // C. Keputusan Pengangkatan
             'nomor_pengangkatan' => $faker->unique()->numerify('###/SK/DS/####'),
-
             'tgl_pengangkatan' => $appointmentDate->format('Y-m-d'),
 
             // D. Keputusan Pemberhentian
             'nomor_pemberhentian' => null,
-
             'tgl_pemberhentian' => null,
 
             // E. Status dan Kontak
             'status' => VillageOfficialStatusList::ACTIVE->value,
-
             'telpon' => $faker->unique()->numerify('08##########'),
-
             'alamat' => $faker->address(),
 
             // F. Keterangan
             'notes' => $faker->optional()->sentence(),
 
+            // G. Akun Pengguna
+            'auth_id' => null,
+
             // Metadata
-            'created_by' => User::factory(),
+            'created_by' => null,
         ];
     }
 

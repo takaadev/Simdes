@@ -355,4 +355,58 @@ class VillageAssetService
             ], 500);
         }
     }
+
+    public function getPrintData(Request $request)
+    {
+        $isTrashed = $request->input('deleted') === 'trashed';
+        $search = trim((string) $request->input('search', ''));
+
+        return VillageAsset::query()
+            ->select([
+                'id',
+                'nama_asset',
+                'asal_beli',
+                'asal_pemerintah',
+                'asal_provinsi',
+                'asal_kabupaten',
+                'asal_sumbangan',
+                'kondisi_awal_baik',
+                'kondisi_awal_rusak',
+                'hapus_rusak',
+                'hapus_dijual',
+                'hapus_disumbangkan',
+                'tgl_hapus',
+                'kondisi_ahir_baik',
+                'kondisi_ahir_rusak',
+                'catatan',
+                'created_at',
+            ])
+            ->when($isTrashed, fn($q) => $q->onlyTrashed())
+            ->when(
+                $request->filled('year') && $request->input('year') !== 'all',
+                fn($q) => $q->whereYear('created_at', $request->input('year'))
+            )
+            ->when($search !== '', function ($q) use ($search) {
+                $q->where(function ($sub) use ($search) {
+                    $sub->where('nama_asset', 'like', "%{$search}%")
+                        ->orWhere('catatan', 'like', "%{$search}%");
+                });
+            })
+            ->orderBy('nama_asset')
+            ->get();
+    }
+
+    public function getFilterSummary(Request $request): ?string
+    {
+        $parts = [];
+
+        if ($request->filled('year') && $request->input('year') !== 'all') {
+            $parts[] = 'Tahun: ' . $request->input('year');
+        }
+        if ($request->input('deleted') === 'trashed') {
+            $parts[] = 'Status Data: Dihapus';
+        }
+
+        return $parts ? implode(' | ', $parts) : null;
+    }
 }

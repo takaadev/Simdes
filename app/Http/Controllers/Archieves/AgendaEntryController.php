@@ -9,7 +9,9 @@ use App\Http\Requests\AgendaEntry\StoreAgendaEntryRequest;
 use App\Http\Requests\AgendaEntry\UpdateAgendaEntryRequest;
 use App\Models\AgendaEntry;
 use App\Services\AgendaEntryService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class AgendaEntryController extends Controller
 {
@@ -24,12 +26,12 @@ class AgendaEntryController extends Controller
         return $this->service->getData($request);
     }
 
-    public function generateNumber(Request $request): \Illuminate\Http\JsonResponse
+    public function generateNumber(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'kategori_agenda' => [
                 'required',
-                \Illuminate\Validation\Rule::enum(AgendaCategoryList::class),
+                Rule::enum(AgendaCategoryList::class),
             ],
         ]);
 
@@ -48,12 +50,12 @@ class AgendaEntryController extends Controller
         ]);
     }
 
-    public function store(StoreAgendaEntryRequest $request): \Illuminate\Http\JsonResponse
+    public function store(StoreAgendaEntryRequest $request): JsonResponse
     {
         return $this->service->getStore($request->validated());
     }
 
-    public function update(UpdateAgendaEntryRequest $request, AgendaEntry $agenda): \Illuminate\Http\JsonResponse
+    public function update(UpdateAgendaEntryRequest $request, AgendaEntry $agenda): JsonResponse
     {
         return $this->service->getUpdate($agenda, $request->validated());
     }
@@ -66,5 +68,15 @@ class AgendaEntryController extends Controller
     public function restore(int $id)
     {
         return HandlesRestore::restore(AgendaEntry::onlyTrashed()->findOrFail($id));
+    }
+
+    public function print(Request $request)
+    {
+        $records = $this->service->getPrintData($request);
+
+        return view('pages.agenda.print', [
+            'records' => $records,
+            'filterSummary' => $this->service->getFilterSummary($request),
+        ]);
     }
 }

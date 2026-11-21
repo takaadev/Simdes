@@ -4,10 +4,11 @@ namespace App\Http\Controllers\Generals;
 
 use App\Http\Controllers\Concerns\HandlesRestore;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\VillageTreasuryLand\StoreVillageTreasuryLandRequest;
+use App\Http\Requests\VillageTreasuryLand\StoreVillageLandRequest;
 use App\Http\Requests\VillageTreasuryLand\UpdateVillageTreasuryLandRequest;
 use App\Models\VillageTreasuryLand;
 use App\Services\VillageTreasuryLandService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class VillageTreasuryLandController extends Controller
@@ -22,17 +23,13 @@ class VillageTreasuryLandController extends Controller
         return $this->service->getData($request);
     }
 
-    public function create()
-    {
-        return view('pages.villagetreasuryland.create');
-    }
 
-    public function store(StoreVillageTreasuryLandRequest $request): \Illuminate\Http\JsonResponse
+    public function store(StoreVillageLandRequest $request): JsonResponse
     {
         return $this->service->getStore($request->validated());
     }
 
-    public function update(UpdateVillageTreasuryLandRequest $request, VillageTreasuryLand $villageTreasuryLand): \Illuminate\Http\JsonResponse
+    public function update(UpdateVillageTreasuryLandRequest $request, VillageTreasuryLand $villageTreasuryLand): JsonResponse
     {
         return $this->service->getUpdate($villageTreasuryLand, $request->validated());
     }
@@ -45,5 +42,15 @@ class VillageTreasuryLandController extends Controller
     public function restore(int $id)
     {
         return HandlesRestore::restore(VillageTreasuryLand::onlyTrashed()->findOrFail($id));
+    }
+
+    public function print(Request $request)
+    {
+        $records = $this->service->getPrintData($request);
+
+        return view('pages.villagetreasuryland.print', [
+            'records' => $records,
+            'filterSummary' => $this->service->getFilterSummary($request),
+        ]);
     }
 }

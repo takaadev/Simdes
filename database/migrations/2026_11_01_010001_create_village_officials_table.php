@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('jenis_kelamin', 2);
             $table->string('tempat_lahir', 100);
             $table->date('tgl_lahir');
+            $table->string('agama', 30);
             $table->string('pendidikan', 100);
             $table->string('pangkat_golongan', 100)->nullable();
             $table->foreignId('village_position_id')->constrained('village_positions')->restrictOnDelete();
@@ -31,6 +32,7 @@ return new class extends Migration
             $table->string('telpon', 30)->unique();
             $table->text('alamat');
             $table->text('notes')->nullable();
+            $table->foreignId('auth_id')->nullable()->unique()->constrained('users')->nullOnDelete();
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
             $table->softDeletes();

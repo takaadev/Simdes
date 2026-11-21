@@ -309,4 +309,61 @@ class VillageDecreeService
             ], 500);
         }
     }
+
+
+    public function getPrintData(Request $request)
+    {
+        $isTrashed = $request->input('deleted') === 'trashed';
+        $search = trim((string) $request->input('search', ''));
+
+        return VillageDecree::query()
+            ->select([
+                'id',
+                'nomor_keputusan',
+                'tgl_keputusan',
+                'nama_keputusan',
+                'uraian',
+                'nomor_dilaporkan',
+                'tgl_dilaporkan',
+                'status',
+                'catatan',
+            ])
+            ->when($isTrashed, fn($q) => $q->onlyTrashed())
+            ->when(
+                $request->filled('year') && $request->input('year') !== 'all',
+                fn($q) => $q->whereYear('tgl_keputusan', $request->input('year'))
+            )
+            ->when(
+                $request->filled('status') && $request->input('status') !== 'all',
+                fn($q) => $q->where('status', $request->input('status'))
+            )
+            ->when($search !== '', function ($q) use ($search) {
+                $q->where(function ($sub) use ($search) {
+                    $sub->where('nomor_keputusan', 'like', "%{$search}%")
+                        ->orWhere('nama_keputusan', 'like', "%{$search}%")
+                        ->orWhere('uraian', 'like', "%{$search}%")
+                        ->orWhere('nomor_dilaporkan', 'like', "%{$search}%")
+                        ->orWhere('catatan', 'like', "%{$search}%");
+                });
+            })
+            ->orderByDesc('tgl_keputusan')
+            ->get();
+    }
+
+    public function getFilterSummary(Request $request): ?string
+    {
+        $parts = [];
+
+        if ($request->filled('year') && $request->input('year') !== 'all') {
+            $parts[] = 'Tahun: ' . $request->input('year');
+        }
+        if ($request->filled('status') && $request->input('status') !== 'all') {
+            $parts[] = 'Status: ' . $request->input('status');
+        }
+        if ($request->input('deleted') === 'trashed') {
+            $parts[] = 'Status Data: Dihapus';
+        }
+
+        return $parts ? implode(' | ', $parts) : null;
+    }
 }

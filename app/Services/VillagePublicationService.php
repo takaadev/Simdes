@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\RegulationStatusList;
 use App\Models\VillagePublication;
 use App\Models\VillageRegulation;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -217,7 +218,7 @@ class VillagePublicationService
         ])->render();
     }
 
-    public function getStore(array $data): \Illuminate\Http\JsonResponse
+    public function getStore(array $data): JsonResponse
     {
         try {
             \DB::transaction(function () use ($data) {
@@ -244,7 +245,7 @@ class VillagePublicationService
         }
     }
 
-    public function getUpdate(VillagePublication $publication, array $data): \Illuminate\Http\JsonResponse
+    public function getUpdate(VillagePublication $publication, array $data): JsonResponse
     {
         try {
             \DB::transaction(function () use ($publication, $data) {
@@ -329,5 +330,78 @@ class VillagePublicationService
                 'message' => 'Terjadi kesalahan saat menghapus publikasi peraturan desa.',
             ], 500);
         }
+    }
+
+    public function getPrintData(Request $request)
+    {
+        $isTrashed = $request->input('deleted') === 'trashed';
+        $search = trim((string) $request->input('search', ''));
+
+        return VillagePublication::query()
+            ->join('village_regulations', 'village_regulations.id', '=', 'village_publications.regulation_id')
+            ->select([
+                'village_publications.id',
+                'village_publications.regulation_id',
+                'village_publications.nomor_diundang',
+                'village_publications.tgl_diundang',
+                'village_publications.nomor_berita',
+                'village_publications.tgl_berita',
+                'village_publications.status',
+                'village_regulations.jenis_peraturan',
+                'village_regulations.nomor_peraturan',
+                'village_regulations.tgl_ditetapkan',
+                'village_regulations.nama_peraturan',
+                'village_regulations.catatan',
+            ])
+            ->when($isTrashed, fn($q) => $q->onlyTrashed())
+            ->when(
+                $request->filled('year') && $request->input('year') !== 'all',
+                function ($q) use ($request) {
+                    $year = $request->input('year');
+                    $q->where(function ($sub) use ($year) {
+                        $sub->whereYear('village_publications.tgl_diundang', $year)
+                            ->orWhereYear('village_publications.tgl_berita', $year);
+                    });
+                }
+            )
+            ->when(
+                $request->filled('jenis_peraturan') && $request->input('jenis_peraturan') !== 'all',
+                fn($q) => $q->where('village_regulations.jenis_peraturan', $request->input('jenis_peraturan'))
+            )
+            ->when(
+                $request->filled('status') && $request->input('status') !== 'all',
+                fn($q) => $q->where('village_publications.status', $request->input('status'))
+            )
+            ->when($search !== '', function ($q) use ($search) {
+                $q->where(function ($sub) use ($search) {
+                    $sub->where('village_publications.nomor_diundang', 'like', "%{$search}%")
+                        ->orWhere('village_publications.nomor_berita', 'like', "%{$search}%")
+                        ->orWhere('village_regulations.nomor_peraturan', 'like', "%{$search}%")
+                        ->orWhere('village_regulations.nama_peraturan', 'like', "%{$search}%")
+                        ->orWhere('village_regulations.catatan', 'like', "%{$search}%");
+                });
+            })
+            ->orderByRaw('COALESCE(village_publications.tgl_diundang, village_publications.tgl_berita, village_regulations.tgl_ditetapkan) DESC')
+            ->get();
+    }
+
+    public function getFilterSummary(Request $request): ?string
+    {
+        $parts = [];
+
+        if ($request->filled('year') && $request->input('year') !== 'all') {
+            $parts[] = 'Tahun: ' . $request->input('year');
+        }
+        if ($request->filled('jenis_peraturan') && $request->input('jenis_peraturan') !== 'all') {
+            $parts[] = 'Jenis: ' . $request->input('jenis_peraturan');
+        }
+        if ($request->filled('status') && $request->input('status') !== 'all') {
+            $parts[] = 'Status: ' . $request->input('status');
+        }
+        if ($request->input('deleted') === 'trashed') {
+            $parts[] = 'Status Data: Dihapus';
+        }
+
+        return $parts ? implode(' | ', $parts) : null;
     }
 }

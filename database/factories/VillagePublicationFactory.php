@@ -41,7 +41,7 @@ class VillagePublicationFactory extends Factory
             ),
 
             // Relasi Pengguna
-            'created_by' => User::factory(),
+            'created_by' => 1,
         ];
     }
 

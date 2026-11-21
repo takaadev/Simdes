@@ -8,10 +8,7 @@
     </x-slot:filter>
 
     <x-slot:actions>
-        <button type="button" id="btnCetakPeraturan" class="btn-simdes-outline">
-            <i class="fa-solid fa-print" aria-hidden="true"></i>
-            <span>Cetak</span>
-        </button>
+        <x-action-print id="btnCetakAgenda"/>
         @include('pages.agenda.outgoing.create')
         @include('pages.agenda.incoming.create')
     </x-slot:actions>

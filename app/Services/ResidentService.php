@@ -6,6 +6,8 @@ use App\Http\Requests\Resident\ImportExcelResidentRequest;
 use App\Imports\ResidentImport;
 use App\Models\FamilyCard;
 use App\Models\Resident;
+use BackedEnum;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,199 +19,149 @@ use Yajra\DataTables\Facades\DataTables;
 
 class ResidentService
 {
+    private function applyFilters($query, Request $request)
+    {
+        $exactFilters = [
+            'jenis_kelamin' => 'residents.jenis_kelamin',
+            'kewarganegaraan' => 'residents.kewarganegaraan',
+            'status_perkawinan' => 'residents.status_perkawinan',
+            'pendidikan' => 'residents.pendidikan',
+            'agama' => 'residents.agama',
+            'pekerjaan' => 'residents.pekerjaan',
+            'rt' => 'residents.rt',
+        ];
+
+        foreach ($exactFilters as $param => $column) {
+            $query->when(
+                $request->filled($param) && $request->input($param) !== 'all',
+                fn($q) => $q->where($column, $request->input($param))
+            );
+        }
+
+        // Filter Tahun Kelahiran
+        $query->when(
+            $request->filled('year') && $request->input('year') !== 'all',
+            fn($q) => $q->whereYear('residents.tgl_lahir', $request->input('year'))
+        );
+
+        // Filter Status Aktif (opsional)
+        $query->when(
+            $request->filled('is_aktif') && $request->input('is_aktif') !== 'all',
+            fn($q) => $q->where('residents.is_aktif', (bool) $request->input('is_aktif'))
+        );
+
+        // Filter Status Data (SoftDeletes)
+        $query->when(
+            $request->input('deleted') === 'trashed',
+            fn($q) => $q->onlyTrashed()
+        );
+
+        return $query;
+    }
 
     public function getData(Request $request)
     {
-        // Filter data penduduk.
-        $applyFilters = function ($query) use ($request) {
-            $query->when(
-                $request->filled('jenis_kelamin')
-                    && $request->input('jenis_kelamin') !== 'all',
-                fn($query) => $query->where(
-                    'jenis_kelamin',
-                    $request->input('jenis_kelamin')
-                )
-            );
+        $baseQuery = $this->applyFilters(Resident::query(), $request);
 
-            $query->when(
-                $request->filled('kewarganegaraan')
-                    && $request->input('kewarganegaraan') !== 'all',
-                fn($query) => $query->where(
-                    'kewarganegaraan',
-                    $request->input('kewarganegaraan')
-                )
-            );
-
-            $query->when(
-                $request->input('deleted') === 'trashed',
-                fn($query) => $query->onlyTrashed()
-            );
-
-            return $query;
-        };
+        // Query statistik penduduk (sinkron dengan seluruh filter aktif).
+        $summary = (clone $baseQuery)
+            ->selectRaw("
+                COUNT(*) as total,
+                COALESCE(SUM(CASE WHEN jenis_kelamin = 'L' THEN 1 ELSE 0 END), 0) as male,
+                COALESCE(SUM(CASE WHEN jenis_kelamin = 'P' THEN 1 ELSE 0 END), 0) as female,
+                COALESCE(SUM(CASE WHEN kewarganegaraan = 'WNI' THEN 1 ELSE 0 END), 0) as wni,
+                COALESCE(SUM(CASE WHEN kewarganegaraan = 'WNA' THEN 1 ELSE 0 END), 0) as wna,
+                COALESCE(SUM(CASE WHEN is_aktif = 1 THEN 1 ELSE 0 END), 0) as active,
+                COALESCE(SUM(CASE WHEN is_aktif = 0 THEN 1 ELSE 0 END), 0) as inactive
+            ")
+            ->first();
 
         // Query utama penduduk.
-        $query = $applyFilters(
-            Resident::query()->select([
-                'id',
-                'family_card_id',
-                'nama_lengkap',
-                'jenis_kelamin',
-                'nik',
-                'kk',
-                'tempat_lahir',
-                'tgl_lahir',
-                'status_perkawinan',
-                'agama',
-                'pendidikan',
-                'pekerjaan',
-                'dapat_membaca',
-                'kewarganegaraan',
-                'status_dalam_keluarga',
-                'kebangsaan',
-                'gol_darah',
-                'ayah',
-                'ibu',
-                'rt',
-                'rw',
-                'alamat',
-                'tempat_dikeluarkan',
-                'tgl_dikeluarkan',
-                'tgl_mulai_tinggal',
-                'is_aktif',
-                'catatan',
-                'created_at',
-                'updated_at',
-                'deleted_at',
-            ])
-        );
+        $query = (clone $baseQuery)->select([
+            'id',
+            'family_card_id',
+            'nama_lengkap',
+            'jenis_kelamin',
+            'nik',
+            'kk',
+            'tempat_lahir',
+            'tgl_lahir',
+            'status_perkawinan',
+            'agama',
+            'pendidikan',
+            'pekerjaan',
+            'dapat_membaca',
+            'kewarganegaraan',
+            'status_dalam_keluarga',
+            'kebangsaan',
+            'gol_darah',
+            'ayah',
+            'ibu',
+            'rt',
+            'rw',
+            'alamat',
+            'tempat_dikeluarkan',
+            'tgl_dikeluarkan',
+            'tgl_mulai_tinggal',
+            'is_aktif',
+            'catatan',
+            'created_at',
+            'updated_at',
+            'deleted_at',
+        ]);
 
         // Pengurutan data.
-        $query->when(
-            in_array($request->input('sort_name'), ['asc', 'desc'], true),
-            fn($query) => $query->orderBy(
-                'nama_lengkap',
-                $request->input('sort_name')
-            ),
-            fn($query) => $query->orderBy('nama_lengkap')
-        );
-
-        // Query statistik penduduk.
-        $summary = $applyFilters(Resident::query())
-            ->selectRaw("
-            COUNT(*) as total,
-            SUM(CASE WHEN jenis_kelamin = 'L' THEN 1 ELSE 0 END) as male,
-            SUM(CASE WHEN jenis_kelamin = 'P' THEN 1 ELSE 0 END) as female,
-            SUM(CASE WHEN kewarganegaraan = 'WNI' THEN 1 ELSE 0 END) as wni,
-            SUM(CASE WHEN kewarganegaraan = 'WNA' THEN 1 ELSE 0 END) as wna,
-            SUM(CASE WHEN is_aktif = 1 THEN 1 ELSE 0 END) as active,
-            SUM(CASE WHEN is_aktif = 0 THEN 1 ELSE 0 END) as inactive
-        ")
-            ->first();
+        if (in_array($request->input('sort_name'), ['asc', 'desc'], true)) {
+            $query->orderBy('nama_lengkap', $request->input('sort_name'));
+        } elseif (!$request->filled('order')) {
+            $query->orderBy('nama_lengkap', 'asc');
+        }
 
         return DataTables::eloquent($query)
             ->with('summary', [
-                'total' => (int) $summary->total,
-                'male' => (int) $summary->male,
-                'female' => (int) $summary->female,
-                'wni' => (int) $summary->wni,
-                'wna' => (int) $summary->wna,
-                'active' => (int) $summary->active,
-                'inactive' => (int) $summary->inactive,
+                'total' => (int) ($summary?->total ?? 0),
+                'male' => (int) ($summary?->male ?? 0),
+                'female' => (int) ($summary?->female ?? 0),
+                'wni' => (int) ($summary?->wni ?? 0),
+                'wna' => (int) ($summary?->wna ?? 0),
+                'active' => (int) ($summary?->active ?? 0),
+                'inactive' => (int) ($summary?->inactive ?? 0),
             ])
             ->addIndexColumn()
-
-            ->editColumn(
-                'nama_lengkap',
-                fn($row) => $this->tooltip($row->nama_lengkap)
-            )
-
-            ->editColumn(
-                'jenis_kelamin',
-                fn($row) => $row->jenis_kelamin?->label() ?? '-'
-            )
-
-            ->editColumn(
-                'status_perkawinan',
-                fn($row) => $row->status_perkawinan?->label() ?? '-'
-            )
-
-            ->editColumn(
-                'tempat_lahir',
-                fn($row) => $row->tempat_lahir ?: '-'
-            )
-
-            ->editColumn(
-                'tgl_lahir',
-                fn($row) => $this->formatDate($row->tgl_lahir)
-            )
-
-            ->editColumn(
-                'agama',
-                fn($row) => $row->agama?->label() ?? '-'
-            )
-
-            ->editColumn(
-                'pendidikan',
-                fn($row) => $row->pendidikan?->label() ?? '-'
-            )
-
-            ->editColumn(
-                'pekerjaan',
-                fn($row) => $row->pekerjaan?->label() ?? '-'
-            )
-
-            ->editColumn(
-                'dapat_membaca',
-                fn($row) => $row->dapat_membaca ? 'Ya' : 'Tidak'
-            )
-
-            ->editColumn(
-                'kewarganegaraan',
-                fn($row) => $row->kewarganegaraan?->label() ?? '-'
-            )
-
-            ->editColumn(
-                'status_dalam_keluarga',
-                fn($row) => $row->status_dalam_keluarga ?: '-'
-            )
-
-            ->editColumn(
-                'nik',
-                fn($row) => $row->nik ?: '-'
-            )
-
-            ->editColumn(
-                'kk',
-                fn($row) => $row->kk ?: '-'
-            )
-            ->editColumn(
-                'is_aktif',
-                fn($row) => view('components.badge', [
-                    'color' => $row->is_aktif ? 'success' : 'secondary',
-                    'slot' => $row->is_aktif ? 'Aktif' : 'Tidak Aktif',
-                ])->render()
-            )
-
-            // Alamat beserta RT dan RW.
+            ->editColumn('nama_lengkap', fn($row) => $this->tooltip($row->nama_lengkap))
+            ->editColumn('jenis_kelamin', fn($row) => $row->jenis_kelamin?->label() ?? '-')
+            ->editColumn('status_perkawinan', fn($row) => $row->status_perkawinan?->label() ?? '-')
+            ->editColumn('tempat_lahir', fn($row) => $row->tempat_lahir ?: '-')
+            ->editColumn('tgl_lahir', fn($row) => $this->formatDate($row->tgl_lahir))
+            ->editColumn('agama', fn($row) => $row->agama?->label() ?? '-')
+            ->editColumn('pendidikan', fn($row) => $row->pendidikan?->label() ?? '-')
+            ->editColumn('pekerjaan', fn($row) => $row->pekerjaan?->label() ?? '-')
+            ->editColumn('dapat_membaca', fn($row) => $row->dapat_membaca ? 'Ya' : 'Tidak')
+            ->editColumn('kewarganegaraan', fn($row) => $row->kewarganegaraan?->label() ?? '-')
+            ->editColumn('status_dalam_keluarga', fn($row) => $row->status_dalam_keluarga instanceof BackedEnum
+                ? $row->status_dalam_keluarga->label()
+                : ($row->status_dalam_keluarga ?: '-'))
+            ->editColumn('nik', fn($row) => $row->nik ?: '-')
+            ->editColumn('kk', fn($row) => $row->kk ?: '-')
+            ->editColumn('is_aktif', fn($row) => view('components.badge', [
+                'color' => $row->is_aktif ? 'success' : 'secondary',
+                'slot' => $row->is_aktif ? 'Aktif' : 'Tidak Aktif',
+            ])->render())
             ->editColumn('alamat', function ($row) {
+                $rt = $row->rt instanceof BackedEnum ? $row->rt->value : $row->rt;
+                $rw = $row->rw instanceof BackedEnum ? $row->rw->value : $row->rw;
+
                 $alamat = collect([
                     $row->alamat,
-                    $row->rt ? "RT {$row->rt->value}" : null,
-                    $row->rw ? "RW {$row->rw->value}" : null,
+                    $rt ? "RT {$rt}" : null,
+                    $rw ? "RW {$rw}" : null,
                 ])->filter()->implode(', ');
 
                 return $this->tooltip($alamat ?: '-');
             })
-
-            // Action.
-            ->addColumn(
-                'action',
-                fn($row) => view('pages.resident.comp.actions', [
-                    'row' => $row,
-                ])->render()
-            )
-
+            ->addColumn('action', fn($row) => view('pages.resident.comp.actions', [
+                'row' => $row,
+            ])->render())
             ->rawColumns([
                 'nama_lengkap',
                 'alamat',
@@ -219,12 +171,11 @@ class ResidentService
             ->toJson();
     }
 
-
     private function formatDate($date): string
     {
         return $date
-            ?->locale('id')
-            ->translatedFormat('d F Y') ?? '-';
+            ? Carbon::parse($date)->locale('id')->translatedFormat('d F Y')
+            : '-';
     }
 
     private function tooltip(?string $value): string
@@ -238,7 +189,6 @@ class ResidentService
     {
         try {
             $resident = DB::transaction(function () use ($data) {
-
                 // 1. Cari atau buat data Kartu Keluarga
                 $familyCard = FamilyCard::withTrashed()->firstOrCreate([
                     'nomor_kk' => $data['kk'],
@@ -261,7 +211,7 @@ class ResidentService
                 'message' => 'Data penduduk berhasil ditambahkan.',
                 'data' => $resident,
             ], 201);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Log::error('Gagal menambahkan data penduduk.', [
                 'error' => $e->getMessage(),
             ]);
@@ -277,13 +227,14 @@ class ResidentService
     {
         try {
             DB::transaction(function () use ($resident, $data) {
-                $familyCard = FamilyCard::withTrashed()
-                    ->firstOrCreate([
-                        'nomor_kk' => $data['kk'],
-                    ]);
+                $familyCard = FamilyCard::withTrashed()->firstOrCreate([
+                    'nomor_kk' => $data['kk'],
+                ]);
+
                 if ($familyCard->trashed()) {
                     $familyCard->restore();
                 }
+
                 $data['family_card_id'] = $familyCard->id;
                 $resident->update($data);
             });
@@ -309,6 +260,7 @@ class ResidentService
     {
         try {
             $forceDelete = $request->boolean('confirm_delete');
+
             if ($resident->trashed() && !$forceDelete) {
                 return response()->json([
                     'success' => false,
@@ -321,10 +273,7 @@ class ResidentService
                 ], 422);
             }
 
-            $deleted = DB::transaction(function () use (
-                $resident,
-                $forceDelete
-            ) {
+            $deleted = DB::transaction(function () use ($resident, $forceDelete) {
                 return $forceDelete
                     ? $resident->forceDelete()
                     : $resident->delete();
@@ -340,8 +289,8 @@ class ResidentService
                     ? 'Data penduduk berhasil dihapus permanen.'
                     : 'Data penduduk berhasil dipindahkan ke sampah.',
             ]);
-        } catch (\Throwable $e) {
-            \Log::error('Gagal menghapus data penduduk.', [
+        } catch (Throwable $e) {
+            Log::error('Gagal menghapus data penduduk.', [
                 'resident_id' => $resident->id,
                 'force_delete' => $forceDelete ?? false,
                 'error' => $e->getMessage(),
@@ -360,7 +309,7 @@ class ResidentService
             $import = new ResidentImport();
             Excel::import($import, $request->file('file'));
             $errors = $import->getErrors();
-            // Batalkan seluruh proses jika ditemukan kesalahan validasi.
+
             if (!empty($errors)) {
                 return response()->json([
                     'success' => false,
@@ -372,7 +321,6 @@ class ResidentService
 
             $rows = $import->getValidRows();
 
-            // Pastikan terdapat data yang dapat diimport.
             if (empty($rows)) {
                 return response()->json([
                     'success' => false,
@@ -380,7 +328,6 @@ class ResidentService
                 ], 422);
             }
 
-            // Simpan seluruh data dalam satu transaksi.
             DB::transaction(function () use ($rows) {
                 foreach ($rows as $row) {
                     Resident::forceCreate($row);
@@ -392,10 +339,10 @@ class ResidentService
                 'message' => count($rows) . ' data penduduk berhasil diimport.',
                 'total_imported' => count($rows),
             ]);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             report($e);
 
-            logger()->error('Import Excel Penduduk Gagal', [
+            Log::error('Import Excel Penduduk Gagal', [
                 'exception' => get_class($e),
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
@@ -407,5 +354,84 @@ class ResidentService
                 'message' => 'Import gagal. Tidak ada data yang berhasil disimpan.',
             ], 500);
         }
+    }
+
+    public function getPrintData(Request $request)
+    {
+        $search = trim((string) $request->input('search', ''));
+        $sortDir = in_array($request->input('sort_name'), ['asc', 'desc'], true)
+            ? $request->input('sort_name')
+            : 'asc';
+
+        $query = $this->applyFilters(
+            Resident::query()
+                ->leftJoin('family_cards', 'family_cards.id', '=', 'residents.family_card_id')
+                ->select([
+                    'residents.id',
+                    'residents.nama_lengkap',
+                    'residents.jenis_kelamin',
+                    'residents.status_perkawinan',
+                    'residents.tempat_lahir',
+                    'residents.tgl_lahir',
+                    'residents.agama',
+                    'residents.pendidikan',
+                    'residents.pekerjaan',
+                    'residents.dapat_membaca',
+                    'residents.kewarganegaraan',
+                    'residents.alamat',
+                    'residents.rt',
+                    'residents.rw',
+                    'residents.status_dalam_keluarga',
+                    'residents.nik',
+                    'residents.kk',
+                    'family_cards.nomor_kk',
+                    'residents.is_aktif',
+                    'residents.catatan',
+                ]),
+            $request
+        );
+
+        if ($search !== '') {
+            $query->where(function ($sub) use ($search) {
+                $sub->where('residents.nama_lengkap', 'like', "%{$search}%")
+                    ->orWhere('residents.nik', 'like', "%{$search}%")
+                    ->orWhere('residents.kk', 'like', "%{$search}%")
+                    ->orWhere('family_cards.nomor_kk', 'like', "%{$search}%")
+                    ->orWhere('residents.alamat', 'like', "%{$search}%")
+                    ->orWhere('residents.pekerjaan', 'like', "%{$search}%");
+            });
+        }
+
+        return $query
+            ->orderBy('residents.nama_lengkap', $sortDir)
+            ->get();
+    }
+
+    public function getFilterSummary(Request $request): ?string
+    {
+        $labels = [
+            'jenis_kelamin' => 'JK',
+            'kewarganegaraan' => 'Warga',
+            'status_perkawinan' => 'Status Kawin',
+            'pendidikan' => 'Pendidikan',
+            'agama' => 'Agama',
+            'pekerjaan' => 'Pekerjaan',
+            'rt' => 'RT',
+            'year' => 'Tahun Lahir',
+        ];
+
+        $parts = [];
+
+        foreach ($labels as $param => $label) {
+            if ($request->filled($param) && $request->input($param) !== 'all') {
+                $parts[] = "{$label}: " . $request->input($param);
+            }
+        }
+
+        if ($request->input('deleted') === 'trashed') {
+            $parts[] = 'Status Data: Dihapus';
+        }
+
+        return $parts ? implode(' | ', $parts) : null;
     }
 }

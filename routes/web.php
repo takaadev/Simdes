@@ -3,9 +3,11 @@
 use App\Http\Controllers\Archieves\AgendaEntryController;
 use App\Http\Controllers\Archieves\ExpeditionEntryController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Generals\VillageAssetController;
 use App\Http\Controllers\Generals\VillageDecreeController;
+use App\Http\Controllers\Generals\VillageLandController;
 use App\Http\Controllers\Generals\VillageOfficialController;
 use App\Http\Controllers\Generals\VillagePublicationController;
 use App\Http\Controllers\Generals\VillageRegulationController;
@@ -25,81 +27,92 @@ Route::prefix('login')->middleware('guest')->group(function () {
     Route::get('/', LoginController::class)->name('login');
     Route::post('/auth', [LoginController::class, 'login'])->name('login.auth');
 });
-Route::get('/dashboard', HomeController::class)->name('dashboard');
 
-Route::prefix('admumum')->group(function () {
-    Route::resource('peraturan-desa', VillageRegulationController::class)
-        ->parameters(['peraturan-desa' => 'villageRegulation'])
-        ->names('village-regulations')
-        ->except(['create', 'edit', 'show'])->withTrashed(['update', 'destroy']);
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
+    Route::get('/dashboard', HomeController::class)->name('dashboard');
 
-    Route::resource('keputusan-kepala-desa', VillageDecreeController::class)
-        ->parameters(['keputusan-kepala-desa' => 'villageDecree'])
-        ->names('village-decrees')
-        ->except(['create', 'edit', 'show'])->withTrashed(['update', 'destroy']);
+    Route::prefix('admumum')->group(function () {
+        Route::resource('peraturan-desa', VillageRegulationController::class)
+            ->parameters(['peraturan-desa' => 'villageRegulation'])
+            ->names('village-regulations')
+            ->except(['create', 'edit', 'show'])->withTrashed(['update', 'destroy']);
 
-    Route::resource('inventaris-dan-kekayaan-desa', VillageAssetController::class)
-        ->parameters(['inventaris-dan-kekayaan-desa' => 'villageAsset'])
-        ->names('village-assets')
-        ->except(['create', 'edit', 'show'])->withTrashed(['update', 'destroy']);
+        Route::resource('keputusan-kepala-desa', VillageDecreeController::class)
+            ->parameters(['keputusan-kepala-desa' => 'villageDecree'])
+            ->names('village-decrees')
+            ->except(['create', 'edit', 'show'])->withTrashed(['update', 'destroy']);
 
-    Route::resource('aparat-pemerintah-desa', VillageOfficialController::class)
-        ->parameters(['aparat-pemerintah-desa' => 'villageOfficial'])
-        ->names('village-officials')
-        ->except(['create', 'edit', 'show'])->withTrashed(['update', 'destroy']);
+        Route::resource('inventaris-dan-kekayaan-desa', VillageAssetController::class)
+            ->parameters(['inventaris-dan-kekayaan-desa' => 'villageAsset'])
+            ->names('village-assets')
+            ->except(['create', 'edit', 'show'])->withTrashed(['update', 'destroy']);
 
-    Route::resource('tanah-kas-desa', VillageTreasuryLandController::class)
-        ->parameters(['tanah-kas-desa' => 'villageTreasuryLand'])
-        ->names('village-treasury-lands')
-        ->except(['create', 'edit', 'show'])->withTrashed(['update', 'destroy']);
+        Route::resource('aparat-pemerintah-desa', VillageOfficialController::class)
+            ->parameters(['aparat-pemerintah-desa' => 'villageOfficial'])
+            ->names('village-officials')
+            ->except(['create', 'edit', 'show'])->withTrashed(['update', 'destroy']);
 
-    Route::resource('lembar-dan-berita-desa', VillagePublicationController::class)
-        ->parameters(['lembar-dan-berita-desa' => 'villagePublication'])
-        ->names('village-publications')
-        ->except(['create', 'edit', 'show'])->withTrashed(['update', 'destroy']);
+        Route::resource('tanah-kas-desa', VillageTreasuryLandController::class)
+            ->parameters(['tanah-kas-desa' => 'villageTreasuryLand'])
+            ->names('village-treasury-lands')
+            ->except(['create', 'edit', 'show'])->withTrashed(['update', 'destroy']);
+
+        Route::resource('tanah-di-desa', VillageLandController::class)
+            ->parameters(['tanah-di-desa' => 'villageLand'])
+            ->names('village-lands')
+            ->except(['create', 'edit', 'show'])->withTrashed(['update', 'destroy']);
+
+        Route::resource('lembar-dan-berita-desa', VillagePublicationController::class)
+            ->parameters(['lembar-dan-berita-desa' => 'villagePublication'])
+            ->names('village-publications')
+            ->except(['create', 'edit', 'show'])->withTrashed(['update', 'destroy']);
+    });
+
+    Route::prefix('admpenduduk')->group(function () {
+        Route::resource('buku-induk-penduduk', ResidentController::class)
+            ->names('residents')
+            ->parameters(['buku-induk-penduduk' => 'resident'])
+            ->except(['create', 'edit', 'show'])
+            ->withTrashed(['update', 'destroy']);
+
+        Route::resource('buku-rekapitulasi-penduduk', RecaptResidentController::class)
+            ->names('recapts')
+            ->parameters(['buku-rekapitulasi-penduduk' => 'recapt'])
+            ->except(['create', 'edit', 'show', 'update']);
+
+        Route::resource('buku-mutasi-penduduk', ResidentMutationController::class)
+            ->names('mutations')
+            ->parameters(['buku-mutasi-penduduk' => 'mutation'])
+            ->except(['create', 'edit', 'show'])
+            ->withTrashed(['update', 'destroy']);
+
+        Route::resource('buku-penduduk-sementara', TemporaryResidentController::class)
+            ->names('temporaryresidents')
+            ->parameters(['buku-penduduk-sementara' => 'temporary'])
+            ->except(['create', 'edit', 'show'])
+            ->withTrashed(['update', 'destroy']);
+
+        Route::resource('buku-ktp-dan-kk', FamilyCardController::class)
+            ->names('familycards')
+            ->parameters(['buku-ktp-dan-kk' => 'familycard'])
+            ->except(['create', 'edit', 'show'])
+            ->withTrashed(['update', 'destroy']);
+    });
+
+    Route::prefix('arsip')->group(function () {
+        Route::resource('agenda', AgendaEntryController::class)
+            ->names('agendas')
+            ->parameters(['agenda' => 'agenda'])
+            ->except(['create', 'edit', 'show'])
+            ->withTrashed(['update', 'destroy']);
+
+        Route::resource('ekspedisi', ExpeditionEntryController::class)
+            ->names('expeditions')
+            ->parameters(['ekspedisi' => 'expedition'])
+            ->except(['create', 'edit', 'show'])
+            ->withTrashed(['update', 'destroy']);
+    });
 });
 
-Route::prefix('admpenduduk')->group(function () {
-    Route::resource('buku-induk-penduduk', ResidentController::class)
-        ->names('residents')
-        ->parameters(['buku-induk-penduduk' => 'resident'])
-        ->except(['create', 'edit', 'show'])
-        ->withTrashed(['update', 'destroy']);
-
-    Route::resource('buku-rekapitulasi-penduduk', RecaptResidentController::class)
-        ->names('recapts')
-        ->parameters(['buku-rekapitulasi-penduduk' => 'recapt'])
-        ->except(['create', 'edit', 'show', 'update']);
-
-    Route::resource('buku-mutasi-penduduk', ResidentMutationController::class)
-        ->names('mutations')
-        ->parameters(['buku-mutasi-penduduk' => 'mutation'])
-        ->except(['create', 'edit', 'show'])
-        ->withTrashed(['update', 'destroy']);
-
-    Route::resource('buku-penduduk-sementara', TemporaryResidentController::class)
-        ->names('temporaryresidents')
-        ->parameters(['buku-penduduk-sementara' => 'temporary'])
-        ->except(['create', 'edit', 'show'])
-        ->withTrashed(['update', 'destroy']);
-
-    Route::resource('buku-ktp-dan-kk', FamilyCardController::class)
-        ->names('familycards')
-        ->parameters(['buku-ktp-dan-kk' => 'familycard'])
-        ->except(['create', 'edit', 'show'])
-        ->withTrashed(['update', 'destroy']);
-});
-
-Route::prefix('arsip')->group(function () {
-    Route::resource('agenda', AgendaEntryController::class)
-        ->names('agendas')
-        ->parameters(['agenda' => 'agenda'])
-        ->except(['create', 'edit', 'show'])
-        ->withTrashed(['update', 'destroy']);
-
-    Route::resource('ekspedisi', ExpeditionEntryController::class)
-        ->names('expeditions')
-        ->parameters(['ekspedisi' => 'expedition'])
-        ->except(['create', 'edit', 'show'])
-        ->withTrashed(['update', 'destroy']);
-});
+require __DIR__ . '/settings.php';

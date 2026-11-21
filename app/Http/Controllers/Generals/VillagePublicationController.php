@@ -8,6 +8,7 @@ use App\Http\Requests\VillagePublication\StoreVillagePublicationRequest;
 use App\Http\Requests\VillagePublication\UpdateVillagePublicationRequest;
 use App\Models\VillagePublication;
 use App\Services\VillagePublicationService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class VillagePublicationController extends Controller
@@ -22,12 +23,12 @@ class VillagePublicationController extends Controller
         return $this->service->getData($request);
     }
 
-    public function store(StoreVillagePublicationRequest $request): \Illuminate\Http\JsonResponse
+    public function store(StoreVillagePublicationRequest $request): JsonResponse
     {
         return $this->service->getStore($request->validated());
     }
 
-    public function update(UpdateVillagePublicationRequest $request, VillagePublication $villagePublication): \Illuminate\Http\JsonResponse
+    public function update(UpdateVillagePublicationRequest $request, VillagePublication $villagePublication): JsonResponse
     {
         return $this->service->getUpdate($villagePublication, $request->validated());
     }
@@ -40,5 +41,15 @@ class VillagePublicationController extends Controller
     public function restore(int $id)
     {
         return HandlesRestore::restore(VillagePublication::onlyTrashed()->findOrFail($id));
+    }
+
+    public function print(Request $request)
+    {
+        $records = $this->service->getPrintData($request);
+
+        return view('pages.villagepublication.print', [
+            'records' => $records,
+            'filterSummary' => $this->service->getFilterSummary($request),
+        ]);
     }
 }

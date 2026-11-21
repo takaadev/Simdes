@@ -105,46 +105,83 @@
         </div>
 
         <!-- User Profile Dropdown -->
-        <div class="dropdown">
-            <button type="button" class="topbar-profile-btn" id="userDropdownBtn" data-bs-toggle="dropdown"
-                aria-expanded="false" aria-label="Menu profil pengguna">
-                <span class="topbar-avatar" data-user-initials>BS</span>
-                <span class="topbar-profile-info d-none d-md-block">
-                    <span class="topbar-profile-name" data-user-fullname>Budi Santoso, S.AP</span>
-                    <span class="topbar-profile-role" data-user-role>Sekretaris Desa</span>
-                </span>
-                <i class="fa-solid fa-chevron-down text-simdes-muted d-none d-md-inline-block"
-                    style="font-size:0.7rem;" aria-hidden="true"></i>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end simdes-dropdown-menu" aria-labelledby="userDropdownBtn">
-                <li class="px-3 py-2 border-bottom mb-1" style="border-color:var(--simdes-border) !important;">
-                    <div class="fw-bold" style="font-size:0.84rem;" data-user-fullname>Budi Santoso,
-                        S.AP</div>
-                    <div class="text-simdes-muted" style="font-size:0.74rem;" data-user-unit>
-                        Sekretariat Pemerintah Desa Tiaro</div>
-                </li>
-                <li>
-                    <a class="dropdown-item" href="#userProfileModal" data-action="open-profile-modal">
-                        <i class="fa-regular fa-id-badge text-simdes-secondary" aria-hidden="true"></i>
-                        Profil Aparatur
-                    </a>
-                </li>
-                <li>
-                    <a class="dropdown-item" href="#sectionInfoDesa">
-                        <i class="fa-solid fa-landmark text-simdes-secondary" aria-hidden="true"></i>
-                        Informasi Kantor Desa
-                    </a>
-                </li>
-                <li>
-                    <hr class="dropdown-divider" style="border-color:var(--simdes-border);">
-                </li>
-                <li>
-                    <a class="dropdown-item text-danger" href="../login.html" data-action="confirm-logout">
-                        <i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i>
-                        Keluar Sistem
-                    </a>
-                </li>
-            </ul>
-        </div>
+        @php
+            $authUser = auth()->user()?->loadMissing('villageOfficial.position');
+            $authOfficial = $authUser?->villageOfficial;
+
+            $displayName = $authOfficial?->nama ?: $authUser?->name ?? 'Pengguna';
+
+            $initials =
+                collect(preg_split('/\s+/', trim($displayName)))
+                    ->filter()
+                    ->take(2)
+                    ->map(fn($word) => mb_strtoupper(mb_substr($word, 0, 1)))
+                    ->implode('') ?:
+                'US';
+
+            $roleEnum =
+                $authUser?->role instanceof \App\Enums\RoleAccessType
+                    ? $authUser->role
+                    : \App\Enums\RoleAccessType::tryFrom((string) ($authUser?->role ?? ''));
+
+            $roleLabel = $roleEnum?->label() ?? ($authUser?->role ?: 'Aparatur Desa');
+            $positionLabel = $authOfficial?->position?->nama ?: 'Pemerintah Desa Tiaro';
+        @endphp
+
+        @if ($authUser)
+            <div class="dropdown">
+                <button type="button" class="topbar-profile-btn" id="userDropdownBtn" data-bs-toggle="dropdown"
+                    aria-expanded="false" aria-label="Menu profil pengguna">
+                    <span class="topbar-avatar">
+                        @if ($authUser->avatar_url)
+                            <img src="{{ asset('storage/' . $authUser->avatar_url) }}" alt="{{ $displayName }}"
+                                class="w-100 h-100 rounded-circle object-fit-cover">
+                        @else
+                            {{ $initials }}
+                        @endif
+                    </span>
+                    <span class="topbar-profile-info d-none d-md-block">
+                        <span class="topbar-profile-name">{{ $displayName }}</span>
+                        <span class="topbar-profile-role">{{ $roleLabel }}</span>
+                    </span>
+                    <i class="fa-solid fa-chevron-down text-simdes-muted d-none d-md-inline-block"
+                        style="font-size:0.7rem;" aria-hidden="true"></i>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-end simdes-dropdown-menu" aria-labelledby="userDropdownBtn">
+                    <li class="px-3 py-2 border-bottom mb-1" style="border-color:var(--simdes-border) !important;">
+                        <div class="fw-bold text-truncate" style="font-size:0.84rem; max-width: 220px;">
+                            {{ $displayName }}
+                        </div>
+                        <div class="text-simdes-muted text-truncate" style="font-size:0.74rem; max-width: 220px;">
+                            {{ $positionLabel }}
+                        </div>
+                    </li>
+                    <li>
+                        <button type="button" class="dropdown-item" data-bs-toggle="modal"
+                            data-bs-target="#userProfileModal">
+                            <i class="fa-regular fa-id-badge text-simdes-secondary" aria-hidden="true"></i>
+                            Profil Aparatur
+                        </button>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="#sectionInfoDesa">
+                            <i class="fa-solid fa-landmark text-simdes-secondary" aria-hidden="true"></i>
+                            Informasi Kantor Desa
+                        </a>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider" style="border-color:var(--simdes-border);">
+                    </li>
+                    <li>
+                        <button type="button" class="dropdown-item text-danger" data-bs-toggle="modal"
+                            data-bs-target="#logoutConfirmModal">
+                            <i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i>
+                            Keluar Sistem
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        @endif
     </div>
 </header>

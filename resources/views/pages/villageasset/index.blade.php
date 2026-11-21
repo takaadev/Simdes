@@ -263,6 +263,18 @@
 
                 // Wrapper awal
                 wrapTableWithScroll(table.table().node());
+                $('#btnCetakAsset').on('click', function() {
+                    window.openSimdesPrintModal({
+                        title: 'Buku Inventaris dan Kekayaan Desa',
+                        url: @json(route('village-assets.print')),
+                        filterMap: {
+                            year: '[name="year"]',
+                            deleted: '[name="deleted"]',
+                        },
+                        tableSelector: '#villageAssetsTable',
+                        paper: 'A4 landscape',
+                    });
+                });
             });
         </script>
     @endpush

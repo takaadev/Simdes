@@ -515,4 +515,80 @@ class AgendaEntryService
             ], 500);
         }
     }
+    public function getPrintData(Request $request)
+    {
+        $incomingType = AgendaTypeList::INCOMING->value;
+        $outgoingType = AgendaTypeList::OUTGOING->value;
+        $filterTipe   = $request->input('tipe_agenda', 'all');
+        $filterDelete = $request->input('deleted');
+        $filterYear   = $request->input('year');
+        $search       = trim((string) $request->input('search', ''));
+
+        $baseFilter = function ($query) use ($filterDelete, $filterYear, $search) {
+            if ($filterDelete === 'trashed') {
+                $query->onlyTrashed();
+            } elseif ($filterDelete === 'all') {
+                $query->withTrashed();
+            }
+
+            if (filled($filterYear) && $filterYear !== 'all') {
+                $query->whereYear('tgl_surat', $filterYear);
+            }
+
+            if ($search !== '') {
+                $query->where(function ($sub) use ($search) {
+                    $sub->where('nomor_surat', 'like', "%{$search}%")
+                        ->orWhere('pengirim', 'like', "%{$search}%")
+                        ->orWhere('penerima', 'like', "%{$search}%")
+                        ->orWhere('isi_surat', 'like', "%{$search}%")
+                        ->orWhere('catatan', 'like', "%{$search}%");
+                });
+            }
+
+            return $query;
+        };
+
+        $incoming = ($filterTipe === $outgoingType)
+            ? collect()
+            : $baseFilter(AgendaEntry::query()->where('tipe_agenda', $incomingType))
+            ->orderBy('id', 'asc')
+            ->get()
+            ->values();
+
+        $outgoing = ($filterTipe === $incomingType)
+            ? collect()
+            : $baseFilter(AgendaEntry::query()->where('tipe_agenda', $outgoingType))
+            ->orderBy('id', 'asc')
+            ->get()
+            ->values();
+
+        $maxRows = max($incoming->count(), $outgoing->count());
+        $rows = collect();
+
+        for ($i = 0; $i < $maxRows; $i++) {
+            $rows->push((object) [
+                'incoming' => $incoming->get($i),
+                'outgoing' => $outgoing->get($i),
+            ]);
+        }
+
+        return $rows;
+    }
+
+    public function getFilterSummary(Request $request): ?string
+    {
+        $parts = [];
+
+        if ($request->filled('year') && $request->input('year') !== 'all') {
+            $parts[] = 'Tahun: ' . $request->input('year');
+        }
+        if ($request->filled('tipe_agenda') && $request->input('tipe_agenda') !== 'all') {
+            $parts[] = 'Tipe: ' . ($request->input('tipe_agenda') === AgendaTypeList::INCOMING->value ? 'Surat Masuk' : 'Surat Keluar');
+        }
+        if ($request->input('deleted') === 'trashed') {
+            $parts[] = 'Status Data: Dihapus';
+        }
+
+        return $parts ? implode(' | ', $parts) : null;
+    }
 }

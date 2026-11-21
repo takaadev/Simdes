@@ -47,7 +47,7 @@ class Menu extends Component
                     ['no' => '3', 'route' => 'village-assets.index', 'label' => 'Inventaris dan Kekayaan Desa', 'ready' => true],
                     ['no' => '4', 'route' => 'village-officials.index', 'label' => 'Aparat Pemerintah Desa', 'ready' => true],
                     ['no' => '5', 'route' => 'village-treasury-lands.index', 'label' => 'Tanah Kas Desa', 'ready' => true],
-                    ['no' => '6', 'route' => '#', 'label' => 'Tanah Desa', 'ready' => true],
+                    ['no' => '6', 'route' => 'village-lands.index', 'label' => 'Tanah Desa', 'ready' => true],
                     ['no' => '9', 'route' => 'village-publications.index', 'label' => 'Lembaran Desa dan Berita Desa', 'ready' => true],
                 ],
             ],
@@ -78,7 +78,19 @@ class Menu extends Component
                 'items' => [
                     ['no' => '1', 'route' => 'agendas.index', 'label' => 'Buku Agenda', 'ready' => true],
                     ['no' => '2', 'route' => 'expeditions.index', 'label' => 'Buku Ekspedisi', 'ready' => true],
-                    // ['no' => '5', 'route' => '#', 'label' => 'Arsip Dokumen Surat', 'ready' => true],
+                ],
+            ],
+
+            [
+                'type' => 'group',
+                'group' => 'pengaturan',
+                'label' => 'Pengaturan',
+                'icon' => 'gear',
+                'tooltip' => 'Pengaturan Aplikasi',
+                'items' => [
+                    ['no' => '1', 'route' => '#', 'label' => 'Umum', 'ready' => true],
+                    ['no' => '2', 'route' => '#', 'label' => 'Profil Desa', 'ready' => true],
+                    ['no' => '3', 'route' => 'settings.users.index', 'label' => 'Pengguna', 'ready' => true],
                 ],
             ],
         ];

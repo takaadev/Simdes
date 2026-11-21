@@ -1,8 +1,6 @@
 <?php
 
 namespace Database\Seeders;
-
-use App\Enums\BloodList;
 use App\Enums\CitizenshipList;
 use App\Enums\EducationList;
 use App\Enums\GenderList;

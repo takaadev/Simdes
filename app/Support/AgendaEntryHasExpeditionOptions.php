@@ -20,8 +20,7 @@ class AgendaEntryHasExpeditionOptions
                         'agenda_entries.id'
                     )
                     ->whereNull('expedition_entries.deleted_at')
-                    ->when(
-                        $expeditionId,
+                    ->when($expeditionId,
                         fn($query) => $query->where(
                             'expedition_entries.id',
                             '!=',

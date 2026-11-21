@@ -254,6 +254,19 @@
 
                 // Wrapper awal
                 wrapTableWithScroll(table.table().node());
+                $('#btnCetakAgenda').on('click', function() {
+                    window.openSimdesPrintModal({
+                        title: 'Buku Agenda',
+                        url: @json(route('agendas.print')),
+                        filterMap: {
+                            year: '#filterYearSelect',
+                            tipe_agenda: '#filterTipeAgendaSelect',
+                            deleted: '#filterDeletedSelect',
+                        },
+                        tableSelector: '#agendaEntriesTable',
+                        paper: '330mm 215mm',
+                    });
+                });
             });
         </script>
     @endpush

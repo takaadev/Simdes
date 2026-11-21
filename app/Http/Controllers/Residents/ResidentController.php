@@ -48,4 +48,14 @@ class ResidentController extends Controller
     {
         return $this->service->getImportExcel($request);
     }
+
+    public function print(Request $request)
+    {
+        $records = $this->service->getPrintData($request);
+
+        return view('pages.resident.print', [
+            'records' => $records,
+            'filterSummary' => $this->service->getFilterSummary($request),
+        ]);
+    }
 }

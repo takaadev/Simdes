@@ -93,7 +93,10 @@
             </p>
         </main>
     </div>
-
+    <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery.js') }}"></script>
+    <script src="{{ asset('assets/js/toast.js') }}"></script>
+    @stack('footer')
 </body>
 
 </html>

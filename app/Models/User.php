@@ -2,35 +2,34 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Hidden;
+use App\Contracts\Restorable;
+use App\Enums\RoleAccessType;
+use App\Models\Concerns\RestoresSoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable([
-    'name',
-    'username',
-    'email',
-    'avatar_url',
-    'password',
-])]
-#[Hidden([
-    'password',
-    'remember_token',
-])]
-class User extends Authenticatable
+class User extends Authenticatable implements Restorable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes, RestoresSoftDeletes;
+
+    protected $guarded = ['id'];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'role' => RoleAccessType::class,
+            'last_login_at' => 'datetime',
         ];
     }
 
@@ -42,7 +41,7 @@ class User extends Authenticatable
 
     public function villageOfficial(): HasOne
     {
-        return $this->hasOne(VillageOfficial::class, 'auth');
+        return $this->hasOne(VillageOfficial::class, 'auth_id', 'id');
     }
 
     public function createdVillageOfficials(): HasMany

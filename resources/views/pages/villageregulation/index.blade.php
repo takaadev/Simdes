@@ -224,6 +224,21 @@
 
                 // Wrapper awal
                 wrapTableWithScroll(table.table().node());
+
+                $('#printVillageregulation').on('click', function() {
+                    window.openSimdesPrintModal({
+                        title: 'Buku Peraturan di Desa',
+                        url: @json(route('village-regulations.print')),
+                        filterMap: {
+                            year: '[name="year"]',
+                            jenis_peraturan: '[name="jenis_peraturan"]',
+                            status: '[name="status"]',
+                            deleted: '[name="deleted"]',
+                        },
+                        tableSelector: '#villageRegulationsTable',
+                        paper: 'A4 landscape',
+                    });
+                });
             });
         </script>
     @endpush

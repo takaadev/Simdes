@@ -54,7 +54,7 @@ class ResidentMutationFactory extends Factory
 
             // Relasi
             'resident_id' => Resident::factory(),
-            'recorded_by' => User::factory(),
+            'recorded_by' => 1,
         ];
     }
 

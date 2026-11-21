@@ -2,22 +2,26 @@
 
 namespace App\Models;
 
+use App\Contracts\Restorable;
+use App\Models\Concerns\RestoresSoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class VillageLand extends Model
+class VillageLand extends Model implements Restorable
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, RestoresSoftDeletes;
 
-    protected $guarded = [];
+    protected $guarded = ['id'];
 
     protected function casts(): array
     {
         return [
-            'total_area' => 'decimal:2',
+            // Jumlah Luas Tanah
+            'jml' => 'decimal:2',
 
+            // Status Hak Tanah
             'hm' => 'decimal:2',
             'hgb' => 'decimal:2',
             'hp' => 'decimal:2',
@@ -27,22 +31,25 @@ class VillageLand extends Model
             'vi' => 'decimal:2',
             'tn' => 'decimal:2',
 
-            'housing' => 'decimal:2',
-            'trade_services' => 'decimal:2',
-            'office' => 'decimal:2',
-            'industry' => 'decimal:2',
-            'public_facilities' => 'decimal:2',
+            // Penggunaan Tanah - Non Pertanian
+            'perumahan' => 'decimal:2',
+            'dagang_jasa' => 'decimal:2',
+            'perkantoran' => 'decimal:2',
+            'industri' => 'decimal:2',
+            'fasilitas_umum' => 'decimal:2',
 
-            'paddy_field' => 'decimal:2',
-            'dry_field' => 'decimal:2',
-            'plantation' => 'decimal:2',
-            'livestock_fishery' => 'decimal:2',
-            'shrub_forest' => 'decimal:2',
-            'protected_forest' => 'decimal:2',
+            // Penggunaan Tanah - Pertanian
+            'sawah' => 'decimal:2',
+            'tegalan' => 'decimal:2',
+            'perkebunan' => 'decimal:2',
+            'peternakan_perikanan' => 'decimal:2',
+            'hutan_belukar' => 'decimal:2',
+            'hutan_lebat' => 'decimal:2',
 
-            'land_mutation' => 'decimal:2',
-            'vacant_land' => 'decimal:2',
-            'other_area' => 'decimal:2',
+            // Mutasi dan Luas Lainnya
+            'mutasi_tanah' => 'decimal:2',
+            'tanah_kosong' => 'decimal:2',
+            'lainnya' => 'decimal:2',
         ];
     }
 

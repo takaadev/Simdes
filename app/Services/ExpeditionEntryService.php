@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\AgendaEntry;
 use App\Models\ExpeditionEntry;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -155,7 +156,7 @@ class ExpeditionEntryService
         ])->render();
     }
 
-    public function getStore(array $data): \Illuminate\Http\JsonResponse
+    public function getStore(array $data): JsonResponse
     {
         try {
             \DB::transaction(function () use ($data) {
@@ -210,7 +211,7 @@ class ExpeditionEntryService
         }
     }
 
-    public function getUpdate(ExpeditionEntry $expedition, array $data): \Illuminate\Http\JsonResponse
+    public function getUpdate(ExpeditionEntry $expedition, array $data): JsonResponse
     {
         try {
             \DB::transaction(function () use ($expedition, $data) {
@@ -265,7 +266,7 @@ class ExpeditionEntryService
         }
     }
 
-    public function getDestroy(Request $request, ExpeditionEntry $expedition): \Illuminate\Http\JsonResponse
+    public function getDestroy(Request $request, ExpeditionEntry $expedition): JsonResponse
     {
         try {
             $forceDelete = $request->boolean('confirm_delete');
@@ -312,5 +313,51 @@ class ExpeditionEntryService
                 'message' => 'Terjadi kesalahan saat menghapus Buku Ekspedisi.',
             ], 500);
         }
+    }
+
+    public function getPrintData(Request $request)
+    {
+        $isTrashed = $request->input('deleted') === 'trashed';
+        $search = trim((string) $request->input('search', ''));
+
+        return ExpeditionEntry::query()
+            ->select([
+                'id',
+                'tanggal_kirim',
+                'nomor_surat',
+                'tgl_surat',
+                'penerima',
+                'isi_surat',
+                'catatan',
+            ])
+            ->when($isTrashed, fn($q) => $q->onlyTrashed())
+            ->when(
+                $request->filled('year') && $request->input('year') !== 'all',
+                fn($q) => $q->whereYear('tanggal_kirim', $request->input('year'))
+            )
+            ->when($search !== '', function ($q) use ($search) {
+                $q->where(function ($sub) use ($search) {
+                    $sub->where('nomor_surat', 'like', "%{$search}%")
+                        ->orWhere('penerima', 'like', "%{$search}%")
+                        ->orWhere('isi_surat', 'like', "%{$search}%")
+                        ->orWhere('catatan', 'like', "%{$search}%");
+                });
+            })
+            ->orderByDesc('tanggal_kirim')
+            ->get();
+    }
+
+    public function getFilterSummary(Request $request): ?string
+    {
+        $parts = [];
+
+        if ($request->filled('year') && $request->input('year') !== 'all') {
+            $parts[] = 'Tahun: ' . $request->input('year');
+        }
+        if ($request->input('deleted') === 'trashed') {
+            $parts[] = 'Status Data: Dihapus';
+        }
+
+        return $parts ? implode(' | ', $parts) : null;
     }
 }

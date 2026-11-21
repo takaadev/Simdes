@@ -201,6 +201,20 @@
 
                 // Wrapper awal
                 wrapTableWithScroll(table.table().node());
+                $('#btnCetakPublikasi').on('click', function() {
+                    window.openSimdesPrintModal({
+                        title: 'Buku Lembaran Desa dan Berita Desa',
+                        url: @json(route('village-publications.print')),
+                        filterMap: {
+                            year: '[name="year"]',
+                            jenis_peraturan: '[name="jenis_peraturan"]',
+                            status: '[name="status"]',
+                            deleted: '[name="deleted"]',
+                        },
+                        tableSelector: '#villagePublicationsTable',
+                        paper: 'A4 landscape',
+                    });
+                });
             });
         </script>
     @endpush

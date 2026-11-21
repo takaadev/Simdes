@@ -65,7 +65,7 @@
                         type: 'GET'
                     },
 
-                    pageLength: 15,
+                    pageLength: 10,
 
                     columns: [
                         // 1. Nomor urut.
@@ -221,6 +221,20 @@
 
                 // Wrapper awal.
                 wrapTableWithScroll(table.table().node());
+                $('#btnCetakPenduduk').on('click', function() {
+                    window.openSimdesPrintModal({
+                        title: 'Buku Induk Penduduk',
+                        url: @json(route('residents.print')),
+                        filterMap: {
+                            jenis_kelamin: '#filterGenderSelect',
+                            kewarganegaraan: '#filterCitizenshipSelect',
+                            rt: '#filterRtSelect',
+                            deleted: '#filterDeletedSelect',
+                        },
+                        tableSelector: '#residentTable',
+                        paper: '330mm 215mm', // F4 Landscape agar 16 kolom termasuk NIK & KK tidak terpotong
+                    });
+                });
             });
         </script>
     @endpush

@@ -68,7 +68,7 @@ class TemporaryResidentFactory extends Factory
                 ->dateTimeBetween($tglDatang, 'now')
                 ?->format('Y-m-d'),
             'catatan' => fake('id_ID')->optional()->sentence(),
-            'recorded_by' => User::factory(),
+            'recorded_by' => 1,
         ];
     }
 

@@ -46,7 +46,7 @@ class ExpeditionEntryFactory extends Factory
 
             'notes' => fake()->optional(0.4)->sentence(),
 
-            'created_by' => User::factory(),
+            'created_by' => 1,
         ];
     }
 }

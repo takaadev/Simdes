@@ -1,5 +1,5 @@
 <x-action-create href="{{ route('agendas.store') }}" size="lg" modalTitle="Tambah Surat Masuk" icon="inbox"
-    label="Surat Masuk" color="btn-simdes-outline">
+    label="Surat Masuk" color="btn-simdes-primary">
     <x-input-text value="incoming" name="tipe_agenda" type="hidden" />
     {{-- A. Informasi Penerimaan Surat --}}
     <x-fieldset label="A. Informasi Penerimaan Surat">

@@ -1,5 +1,5 @@
 <x-action-create href="{{ route('agendas.store') }}" size="lg" modalTitle="Tambah Surat Keluar" label="Surat Keluar"
-    icon="share" color="btn-simdes-outline bg-orange">
+    icon="share" color="btn-simdes-excel">
     <x-input-text value="outgoing" name="tipe_agenda" type="hidden" />
 
     {{-- A. Informasi Surat Keluar --}}

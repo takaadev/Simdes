@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Enums\VillageOfficialStatusList;
 use App\Models\VillageOfficial;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -22,6 +22,7 @@ class VillageOfficialService
                 'jenis_kelamin',
                 'tempat_lahir',
                 'tgl_lahir',
+                'agama',
                 'pangkat_golongan',
                 'village_position_id',
                 'pendidikan',
@@ -160,6 +161,11 @@ class VillageOfficialService
             )
 
             ->editColumn(
+                'tempat_lahir',
+                fn($row) => $row->agama ?: '-'
+            )
+
+            ->editColumn(
                 'tgl_lahir',
                 fn($row) => $this->formatDate($row->tgl_lahir)
             )
@@ -253,7 +259,7 @@ class VillageOfficialService
         ])->render();
     }
 
-    public function getStore(array $data): \Illuminate\Http\JsonResponse
+    public function getStore(array $data): JsonResponse
     {
         try {
             $villageOfficial = \DB::transaction(function () use ($data) {
@@ -279,7 +285,7 @@ class VillageOfficialService
         }
     }
 
-    public function getUpdate(VillageOfficial $villageOfficial, array $data): \Illuminate\Http\JsonResponse
+    public function getUpdate(VillageOfficial $villageOfficial, array $data): JsonResponse
     {
         try {
             \DB::transaction(function () use ($villageOfficial, $data) {
@@ -303,7 +309,7 @@ class VillageOfficialService
         }
     }
 
-    public function getDestroy(Request $request, VillageOfficial $villageOfficial): \Illuminate\Http\JsonResponse
+    public function getDestroy(Request $request, VillageOfficial $villageOfficial): JsonResponse
     {
         try {
             $forceDelete = $request->boolean('confirm_delete');
@@ -348,5 +354,85 @@ class VillageOfficialService
                 'message' => 'Terjadi kesalahan saat menghapus data aparat desa.',
             ], 500);
         }
+    }
+
+    public function getPrintData(Request $request)
+    {
+        $isTrashed = $request->input('deleted') === 'trashed';
+        $search = trim((string) $request->input('search', ''));
+
+        return VillageOfficial::query()
+            ->with('position:id,kode,nama')
+            ->select([
+                'id',
+                'nama',
+                'niap',
+                'nip',
+                'jenis_kelamin',
+                'tempat_lahir',
+                'tgl_lahir',
+                'agama',
+                'pendidikan',
+                'pangkat_golongan',
+                'village_position_id',
+                'nomor_pengangkatan',
+                'tgl_pengangkatan',
+                'nomor_pemberhentian',
+                'tgl_pemberhentian',
+                'status',
+                'telpon',
+                'alamat',
+                'notes',
+            ])
+            ->when($isTrashed, fn($q) => $q->onlyTrashed())
+            ->when(
+                $request->filled('jenis_kelamin') && $request->input('jenis_kelamin') !== 'all',
+                fn($q) => $q->where('jenis_kelamin', $request->input('jenis_kelamin'))
+            )
+            ->when(
+                $request->filled('status') && $request->input('status') !== 'all',
+                fn($q) => $q->where('status', $request->input('status'))
+            )
+            ->when(
+                $request->filled('year') && $request->input('year') !== 'all',
+                fn($q) => $q->whereYear('tgl_pengangkatan', $request->input('year'))
+            )
+            ->when(
+                $request->filled('position_id') && $request->input('position_id') !== 'all',
+                fn($q) => $q->where('village_position_id', $request->input('position_id'))
+            )
+            ->when($search !== '', function ($q) use ($search) {
+                $q->where(function ($sub) use ($search) {
+                    $sub->where('nama', 'like', "%{$search}%")
+                        ->orWhere('niap', 'like', "%{$search}%")
+                        ->orWhere('nip', 'like', "%{$search}%")
+                        ->orWhere('nomor_pengangkatan', 'like', "%{$search}%")
+                        ->orWhere('notes', 'like', "%{$search}%")
+                        ->orWhereHas('position', fn($pos) => $pos->where('nama', 'like', "%{$search}%"));
+                });
+            })
+            ->orderBy('village_position_id')
+            ->orderBy('nama')
+            ->get();
+    }
+
+    public function getFilterSummary(Request $request): ?string
+    {
+        $parts = [];
+
+        if ($request->filled('jenis_kelamin') && $request->input('jenis_kelamin') !== 'all') {
+            $parts[] = 'JK: ' . $request->input('jenis_kelamin');
+        }
+        if ($request->filled('status') && $request->input('status') !== 'all') {
+            $parts[] = 'Status: ' . $request->input('status');
+        }
+        if ($request->filled('year') && $request->input('year') !== 'all') {
+            $parts[] = 'Tahun Pengangkatan: ' . $request->input('year');
+        }
+        if ($request->input('deleted') === 'trashed') {
+            $parts[] = 'Status Data: Dihapus';
+        }
+
+        return $parts ? implode(' | ', $parts) : null;
     }
 }

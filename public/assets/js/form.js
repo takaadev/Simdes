@@ -72,6 +72,10 @@
 
         $form[0].reset();
 
+         $form.find('select').each(function () {
+            $(this).val(null).trigger('change');
+        });
+
         clearValidationErrors($form);
 
         $form.find('[data-file-preview]').empty();

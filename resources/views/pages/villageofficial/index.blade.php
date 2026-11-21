@@ -10,6 +10,7 @@
             <th>Jenis Kelamin</th>
             <th>Tempat Lahir</th>
             <th>Tanggal Lahir</th>
+            <th>Agama</th>
             <th>Pangkat / Golongan</th>
             <th>Jabatan</th>
             <th>Pendidikan</th>
@@ -115,7 +116,11 @@
                         name: 'tgl_lahir',
                         className: 'text-center'
                     },
-
+                    {
+                        data: 'agama',
+                        name: 'agama',
+                        className: 'text-center'
+                    },
                     // 8. Pangkat / Golongan
                     {
                         data: 'pangkat_golongan',
@@ -240,6 +245,21 @@
 
             // Wrapper awal
             wrapTableWithScroll(table.table().node());
+            $('#btnCetakAparat').on('click', function() {
+                window.openSimdesPrintModal({
+                    title: 'Buku Aparat Pemerintah Desa',
+                    url: @json(route('village-officials.print')),
+                    filterMap: {
+                        jenis_kelamin: '[name="jenis_kelamin"]',
+                        status: '[name="status"]',
+                        year: '[name="year"]',
+                        position_id: '[name="position_id"]',
+                        deleted: '[name="deleted"]',
+                    },
+                    tableSelector: '#villageOfficialTable',
+                    paper: 'A4 landscape',
+                });
+            });
         });
     </script>
 @endpush

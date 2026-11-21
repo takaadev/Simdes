@@ -347,6 +347,19 @@
 
                 // Wrapper awal
                 wrapTableWithScroll(table.table().node());
+                $('#btnCetakTanahKas').on('click', function() {
+                    window.openSimdesPrintModal({
+                        title: 'Buku Tanah Kas Desa',
+                        url: @json(route('village-treasury-lands.print')),
+                        filterMap: {
+                            year: '[name="year"]',
+                            kelas: '[name="kelas"]',
+                            deleted: '[name="deleted"]',
+                        },
+                        tableSelector: '#villageTreasuryLandTable',
+                        paper: '330mm 215mm', // F4 Landscape agar 24 kolom lega
+                    });
+                });
             });
         </script>
     @endpush

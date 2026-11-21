@@ -2,9 +2,10 @@
 
 namespace App\Services;
 
-use App\Models\VillageAsset;
 use App\Models\VillageTreasuryLand;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Yajra\DataTables\Facades\DataTables;
 
 class VillageTreasuryLandService
@@ -283,7 +284,7 @@ class VillageTreasuryLandService
         ])->render();
     }
 
-    public function getStore(array $data): \Illuminate\Http\JsonResponse
+    public function getStore(array $data): JsonResponse
     {
         $documentPath = null;
 
@@ -292,7 +293,7 @@ class VillageTreasuryLandService
                 // Upload dokumen.
                 if (
                     isset($data['dokumen']) &&
-                    $data['dokumen'] instanceof \Illuminate\Http\UploadedFile
+                    $data['dokumen'] instanceof UploadedFile
                 ) {
                     $documentPath = $data['dokumen']->store(
                         'village-treasury-lands',
@@ -335,7 +336,7 @@ class VillageTreasuryLandService
         }
     }
 
-    public function getUpdate(VillageTreasuryLand $land, array $data): \Illuminate\Http\JsonResponse
+    public function getUpdate(VillageTreasuryLand $land, array $data): JsonResponse
     {
         $documentPath = null;
         $oldDocumentPath = $land->dokumen;
@@ -345,7 +346,7 @@ class VillageTreasuryLandService
                 // Upload dokumen baru jika tersedia.
                 if (
                     isset($data['dokumen']) &&
-                    $data['dokumen'] instanceof \Illuminate\Http\UploadedFile
+                    $data['dokumen'] instanceof UploadedFile
                 ) {
                     $documentPath = $data['dokumen']->store(
                         'village-treasury-lands',
@@ -397,7 +398,7 @@ class VillageTreasuryLandService
         }
     }
 
-    public function getDestroy(Request $request, VillageTreasuryLand $land): \Illuminate\Http\JsonResponse
+    public function getDestroy(Request $request, VillageTreasuryLand $land): JsonResponse
     {
         try {
             $forceDelete = $request->boolean('confirm_delete');
@@ -445,5 +446,76 @@ class VillageTreasuryLandService
                 'message' => 'Terjadi kesalahan saat menghapus tanah kas desa.',
             ], 500);
         }
+    }
+
+    public function getPrintData(Request $request)
+    {
+        $isTrashed = $request->input('deleted') === 'trashed';
+        $search = trim((string) $request->input('search', ''));
+
+        return VillageTreasuryLand::query()
+            ->select([
+                'id',
+                'asal_tanah',
+                'nomor_sertifikat',
+                'kelas_tanah',
+                'luas_tanah',
+                'lt_asli_desa',
+                'lt_pemerintah',
+                'lt_provinsi',
+                'lt_kabupaten',
+                'lt_lainnya',
+                'tgl_perolehan',
+                'lt_tipe_sawah',
+                'lt_tipe_tegal',
+                'lt_tipe_kebun',
+                'lt_tipe_tambak',
+                'lt_tipe_kering',
+                'patok_tanah',
+                'papan_nama',
+                'lokasi',
+                'peruntukan',
+                'mutasi',
+                'catatan',
+            ])
+            ->when($isTrashed, fn($q) => $q->onlyTrashed())
+            ->when(
+                $request->filled('year') && $request->input('year') !== 'all',
+                fn($q) => $q->whereYear('tgl_perolehan', $request->input('year'))
+            )
+            ->when(
+                $request->filled('kelas') && $request->input('kelas') !== 'all',
+                fn($q) => $q->where('kelas_tanah', $request->input('kelas'))
+            )
+            ->when($search !== '', function ($q) use ($search) {
+                $q->where(function ($sub) use ($search) {
+                    $sub->where('nomor_sertifikat', 'like', "%{$search}%")
+                        ->orWhere('asal_tanah', 'like', "%{$search}%")
+                        ->orWhere('kelas_tanah', 'like', "%{$search}%")
+                        ->orWhere('lokasi', 'like', "%{$search}%")
+                        ->orWhere('peruntukan', 'like', "%{$search}%")
+                        ->orWhere('mutasi', 'like', "%{$search}%")
+                        ->orWhere('catatan', 'like', "%{$search}%");
+                });
+            })
+            ->orderBy('nomor_sertifikat')
+            ->get();
+    }
+
+    public function getFilterSummary(Request $request): ?string
+    {
+        $parts = [];
+
+        if ($request->filled('year') && $request->input('year') !== 'all') {
+            $parts[] = 'Tahun Perolehan: ' . $request->input('year');
+        }
+        if ($request->filled('kelas') && $request->input('kelas') !== 'all') {
+            $parts[] = 'Kelas Tanah: ' . $request->input('kelas');
+        }
+        if ($request->input('deleted') === 'trashed') {
+            $parts[] = 'Status Data: Dihapus';
+        }
+
+        return $parts ? implode(' | ', $parts) : null;
     }
 }

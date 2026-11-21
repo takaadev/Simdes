@@ -136,6 +136,21 @@ class AppHeading extends Component
                 'title' => 'Arsip Dokumen Surat',
                 'description' => 'Simpan, kelola, dan telusuri arsip digital dokumen surat Pemerintah Desa Tiaro.',
             ],
+
+            'umum' => [
+                'title' => 'Pengaturan Umum',
+                'description' => 'Kelola konfigurasi umum aplikasi SIMDES untuk mendukung penyelenggaraan administrasi Pemerintahan Desa Tiaro.',
+            ],
+
+            'profil-desa' => [
+                'title' => 'Profil Desa',
+                'description' => 'Kelola informasi identitas dan profil Desa Tiaro sebagai informasi resmi dalam aplikasi SIMDES.',
+            ],
+
+            'pengguna' => [
+                'title' => 'Manajemen Pengguna',
+                'description' => 'Kelola akun pengguna, informasi akses, dan hak akses untuk menggunakan aplikasi SIMDES.',
+            ],
         ];
 
         /*
@@ -170,6 +185,18 @@ class AppHeading extends Component
             // Arsip Surat
             'arsip-surat' => 'Arsip Surat',
             'arsip-dokumen-surat' => 'Arsip Dokumen Surat',
+
+            // Pengaturan Aplikasi
+            'pengaturan' => 'Pengaturan',
+            'umum' => 'Umum',
+            'profil-desa' => 'Profil Desa',
+            'pengguna' => 'Pengguna',
+
+            // =====================================================
+            // PENGATURAN APLIKASI
+            // =====================================================
+
+
         ];
 
         /*

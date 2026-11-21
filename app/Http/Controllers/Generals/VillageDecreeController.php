@@ -36,4 +36,14 @@ class VillageDecreeController extends Controller
     {
         return HandlesRestore::restore(VillageDecree::onlyTrashed()->findOrFail($id));
     }
+
+    public function print(Request $request)
+    {
+        $records = $this->service->getPrintData($request);
+
+        return view('pages.villagedecree.print', [
+            'records' => $records,
+            'filterSummary' => $this->service->getFilterSummary($request),
+        ]);
+    }
 }

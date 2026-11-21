@@ -44,7 +44,7 @@ class VillageDecreeFactory extends Factory
 
             'catatan' => fake()->optional()->sentence(),
 
-            'created_by' => User::factory(),
+            'created_by' => 1,
         ];
     }
 

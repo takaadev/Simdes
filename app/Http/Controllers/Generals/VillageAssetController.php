@@ -36,4 +36,14 @@ class VillageAssetController extends Controller
     {
         return HandlesRestore::restore(VillageAsset::onlyTrashed()->findOrFail($id));
     }
+
+    public function print(Request $request)
+    {
+        $records = $this->service->getPrintData($request);
+
+        return view('pages.villageasset.print', [
+            'records' => $records,
+            'filterSummary' => $this->service->getFilterSummary($request),
+        ]);
+    }
 }

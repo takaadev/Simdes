@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Contracts\Restorable;
 use App\Enums\EducationList;
 use App\Enums\GenderList;
+use App\Enums\ReligionList;
 use App\Enums\VillageOfficialStatusList;
 use App\Models\Concerns\RestoresSoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -25,6 +26,7 @@ class VillageOfficial extends Model implements Restorable
             'jenis_kelamin' => GenderList::class,
             'status' => VillageOfficialStatusList::class,
             'pendidikan' => EducationList::class,
+            'agama' => ReligionList::class,
             'tgl_lahir' => 'date',
             'tgl_pengangkatan' => 'date',
             'tgl_pemberhentian' => 'date',
@@ -39,5 +41,10 @@ class VillageOfficial extends Model implements Restorable
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'auth_id', 'id');
     }
 }

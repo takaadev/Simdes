@@ -141,6 +141,18 @@
                     }
                 });
                 wrapTableWithScroll(table.table().node());
+                $('#btnCetakEkspedisi').on('click', function() {
+                    window.openSimdesPrintModal({
+                        title: 'Buku Ekspedisi',
+                        url: @json(route('expeditions.print')),
+                        filterMap: {
+                            year: '[name="year"]',
+                            deleted: '[name="deleted"]',
+                        },
+                        tableSelector: '#expeditionEntriesTable',
+                        paper: 'A4 landscape',
+                    });
+                });
             });
         </script>
     @endpush

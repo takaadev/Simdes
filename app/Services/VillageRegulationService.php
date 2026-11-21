@@ -408,4 +408,79 @@ class VillageRegulationService
             ], 500);
         }
     }
+
+    public function getPrintData(Request $request)
+    {
+        $isTrashed = $request->input('deleted') === 'trashed';
+        $search = trim((string) $request->input('search', ''));
+
+        return VillageRegulation::query()
+            ->leftJoin('village_publications', function ($join) {
+                $join->on('village_publications.regulation_id', '=', 'village_regulations.id')
+                    ->whereNull('village_publications.deleted_at');
+            })
+            ->select([
+                'village_regulations.id',
+                'village_regulations.jenis_peraturan',
+                'village_regulations.nomor_peraturan',
+                'village_regulations.tgl_ditetapkan',
+                'village_regulations.nama_peraturan',
+                'village_regulations.uraian',
+                'village_regulations.tgl_kesepakatan',
+                'village_regulations.nomor_dilaporkan',
+                'village_regulations.tgl_dilaporkan',
+                'village_regulations.catatan',
+                'village_regulations.status',
+                'village_publications.nomor_diundang',
+                'village_publications.tgl_diundang',
+                'village_publications.nomor_berita',
+                'village_publications.tgl_berita',
+            ])
+            ->when($isTrashed, fn($q) => $q->onlyTrashed())
+            ->when(
+                $request->filled('year') && $request->input('year') !== 'all',
+                fn($q) => $q->whereYear('village_regulations.tgl_ditetapkan', $request->input('year'))
+            )
+            ->when(
+                $request->filled('jenis_peraturan') && $request->input('jenis_peraturan') !== 'all',
+                fn($q) => $q->where('village_regulations.jenis_peraturan', $request->input('jenis_peraturan'))
+            )
+            ->when(
+                $request->filled('status') && $request->input('status') !== 'all',
+                fn($q) => $q->where('village_regulations.status', $request->input('status'))
+            )
+            ->when($search !== '', function ($q) use ($search) {
+                $q->where(function ($sub) use ($search) {
+                    $sub->where('village_regulations.nomor_peraturan', 'like', "%{$search}%")
+                        ->orWhere('village_regulations.nama_peraturan', 'like', "%{$search}%")
+                        ->orWhere('village_regulations.uraian', 'like', "%{$search}%")
+                        ->orWhere('village_regulations.nomor_dilaporkan', 'like', "%{$search}%")
+                        ->orWhere('village_regulations.catatan', 'like', "%{$search}%")
+                        ->orWhere('village_publications.nomor_diundang', 'like', "%{$search}%")
+                        ->orWhere('village_publications.nomor_berita', 'like', "%{$search}%");
+                });
+            })
+            ->orderByDesc('village_regulations.tgl_ditetapkan')
+            ->get();
+    }
+
+    public function getFilterSummary(Request $request): ?string
+    {
+        $parts = [];
+
+        if ($request->filled('year') && $request->input('year') !== 'all') {
+            $parts[] = 'Tahun: ' . $request->input('year');
+        }
+        if ($request->filled('jenis_peraturan') && $request->input('jenis_peraturan') !== 'all') {
+            $parts[] = 'Jenis: ' . $request->input('jenis_peraturan');
+        }
+        if ($request->filled('status') && $request->input('status') !== 'all') {
+            $parts[] = 'Status: ' . $request->input('status');
+        }
+        if ($request->input('deleted') === 'trashed') {
+            $parts[] = 'Status Data: Dihapus';
+        }
+
+        return $parts ? implode(' | ', $parts) : null;
+    }
 }

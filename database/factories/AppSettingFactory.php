@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\AppSetting;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,7 +18,7 @@ class AppSettingFactory extends Factory
             'type' => 'string',
             'group' => 'general',
             'description' => fake()->sentence(),
-            'updated_by' => User::factory(),
+            'updated_by' => 1,
         ];
     }
 }
