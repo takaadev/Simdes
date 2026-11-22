@@ -26,7 +26,7 @@
     <table class="print-table">
         <thead>
             <tr>
-                <th rowspan="2" style="width: 2.5%;">NOMOR<br>URUT</th>
+                <th rowspan="2" style="width: 2.5%;">NO.</th>
                 <th rowspan="2" style="width: 11%;">NAMA LENGKAP /<br>PANGGILAN</th>
                 <th rowspan="2" style="width: 3.5%;">JENIS<br>KELAMIN</th>
                 <th rowspan="2" style="width: 6%;">STATUS<br>PERKAWINAN</th>

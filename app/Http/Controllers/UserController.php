@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Settings;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Concerns\HandlesRestore;
 use App\Http\Controllers\Controller;
@@ -20,7 +20,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         if (! $request->expectsJson() && ! $request->ajax()) {
-            return view('pages.settings.user.index');
+            return view('pages.user.index');
         }
         return $this->service->getData($request);
     }

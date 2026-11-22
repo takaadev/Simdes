@@ -32,10 +32,7 @@
     </x-slot:filter>
 
     <x-slot:actions>
-        <button type="button" id="btnCetakMutasi" class="btn-simdes-outline">
-            <i class="fa-solid fa-print" aria-hidden="true"></i>
-            <span>Cetak</span>
-        </button>
+        <x-action-print id="btnCetakMutasi"/>
         @include('pages.mutation.outgoing')
         @include('pages.mutation.create')
     </x-slot:actions>

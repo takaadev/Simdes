@@ -29,6 +29,7 @@
     </x-slot:filter>
     <x-slot:actions>
         <x-action-print id="btnCetakAparat"/>
+        @include('pages.villageofficial.dismissal')
         @include('pages.villageofficial.create')
     </x-slot:actions>
 </x-filters>

@@ -2,9 +2,14 @@
 
 namespace App\Services;
 
+use App\Enums\VillageOfficialStatusList;
+use App\Models\User;
 use App\Models\VillageOfficial;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
 
 class VillageOfficialService
@@ -259,23 +264,60 @@ class VillageOfficialService
         ])->render();
     }
 
+
     public function getStore(array $data): JsonResponse
     {
+        $hasUser = (bool) ($data['has_user'] ?? false);
+
         try {
-            $villageOfficial = \DB::transaction(function () use ($data) {
+            $villageOfficial = DB::transaction(function () use ($data, $hasUser) {
+
+                $role = $data['role'] ?? null;
+
+                // Hapus field khusus akun login.
+                unset(
+                    $data['has_user'],
+                    $data['role'],
+                    $data['password']
+                );
+
+                // Informasi pembuat data.
                 $data['created_by'] = auth()->id();
 
-                return VillageOfficial::create($data);
+                // Simpan data aparat desa.
+                $villageOfficial = VillageOfficial::create($data);
+
+                // Buat akun login jika diaktifkan.
+                if ($hasUser) {
+                    $user = User::create([
+                        'name' => $villageOfficial->nama,
+                        'username' => $villageOfficial->niap,
+                        'email' => null,
+                        'role' => $role,
+                        'password' => Hash::make('@pemdes2026'),
+                    ]);
+
+                    // Hubungkan akun dengan aparat desa.
+                    $villageOfficial->update([
+                        'auth_id' => $user->id,
+                    ]);
+                }
+
+                return $villageOfficial;
             });
 
             return response()->json([
                 'success' => true,
-                'message' => 'Data aparat desa berhasil ditambahkan.',
-                'data' => $villageOfficial,
+                'message' => 'Data aparat desa berhasil ditambahkan.'
+                    . ($hasUser ? ' Akun login juga berhasil dibuat.' : ''),
+                'data' => $villageOfficial->fresh('user'),
             ], 201);
         } catch (\Throwable $e) {
-            \Log::error('Gagal menambahkan data aparat desa.', [
+
+            Log::error('Gagal menambahkan data aparat desa.', [
                 'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
             ]);
 
             return response()->json([
@@ -285,11 +327,28 @@ class VillageOfficialService
         }
     }
 
+
     public function getUpdate(VillageOfficial $villageOfficial, array $data): JsonResponse
     {
         try {
-            \DB::transaction(function () use ($villageOfficial, $data) {
+            DB::transaction(function () use ($villageOfficial, $data) {
+                $oldNiap = $villageOfficial->niap;
+
+                // Perbarui data aparat desa.
                 $villageOfficial->update($data);
+
+                // Jika NIAP berubah dan aparat memiliki akun login.
+                if (
+                    $oldNiap !== $villageOfficial->niap &&
+                    $villageOfficial->auth_id
+                ) {
+                    $user = User::query()->whereKey($villageOfficial->auth_id)->first();
+                    if ($user) {
+                        $user->update([
+                            'username' => $villageOfficial->niap,
+                        ]);
+                    }
+                }
             });
 
             return response()->json([
@@ -297,9 +356,12 @@ class VillageOfficialService
                 'message' => 'Data aparat desa berhasil diperbarui.',
             ]);
         } catch (\Throwable $e) {
-            \Log::error('Gagal memperbarui data aparat desa.', [
+            Log::error('Gagal memperbarui data aparat desa.', [
                 'village_official_id' => $villageOfficial->id,
+                'auth_id' => $villageOfficial->auth_id,
                 'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
             ]);
 
             return response()->json([
@@ -313,8 +375,6 @@ class VillageOfficialService
     {
         try {
             $forceDelete = $request->boolean('confirm_delete');
-
-            // Data Trash wajib dikonfirmasi.
             if ($villageOfficial->trashed() && !$forceDelete) {
                 return response()->json([
                     'success' => false,
@@ -327,31 +387,101 @@ class VillageOfficialService
                 ], 422);
             }
 
-            $deleted = \DB::transaction(function () use (
-                $villageOfficial,
-                $forceDelete
-            ) {
-                return $forceDelete
-                    ? $villageOfficial->forceDelete()
-                    : $villageOfficial->delete();
+            DB::transaction(function () use ($villageOfficial, $forceDelete) {
+                // Cari akun pengguna yang terhubung.
+                $user = $villageOfficial->auth_id ? User::withTrashed()->find($villageOfficial->auth_id) : null;
+                if ($forceDelete) {
+                    $deleted = $villageOfficial->forceDelete();
+                    if (!$deleted) {
+                        throw new \RuntimeException(
+                            'Data aparat desa gagal dihapus permanen.'
+                        );
+                    }
+                    if ($user) {
+                        $user->forceDelete();
+                    }
+                } else {
+                    if ($user && !$user->trashed()) {
+                        $user->delete();
+                    }
+                    $deleted = $villageOfficial->delete();
+                    if (!$deleted) {
+                        throw new \RuntimeException(
+                            'Data aparat desa gagal dipindahkan ke sampah.'
+                        );
+                    }
+                }
             });
-
-            if (!$deleted) {
-                throw new \RuntimeException('Data aparat desa gagal dihapus.');
-            }
 
             return response()->json([
                 'success' => true,
                 'message' => $forceDelete
-                    ? 'Data aparat desa berhasil dihapus permanen.'
-                    : 'Data aparat desa berhasil dipindahkan ke sampah.',
+                    ? 'Data aparat desa dan akun login berhasil dihapus permanen.'
+                    : 'Data aparat desa dan akun login berhasil dipindahkan ke sampah.',
             ]);
         } catch (\Throwable $e) {
-            report($e);
+            Log::error('Gagal menghapus data aparat desa.', [
+                'village_official_id' => $villageOfficial->id,
+                'auth_id' => $villageOfficial->auth_id,
+                'force_delete' => $forceDelete ?? false,
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
 
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan saat menghapus data aparat desa.',
+            ], 500);
+        }
+    }
+
+    public function getDismissal(array $data): JsonResponse
+    {
+        try {
+            DB::transaction(function () use ($data) {
+
+                $villageOfficial = VillageOfficial::query()
+                    ->where('status', VillageOfficialStatusList::ACTIVE->value)
+                    ->lockForUpdate()
+                    ->findOrFail($data['official_id']);
+
+                // Perbarui data pemberhentian aparat.
+                $villageOfficial->update([
+                    'nomor_pemberhentian' => $data['nomor_pemberhentian'],
+                    'tgl_pemberhentian' => $data['tgl_pemberhentian'],
+                    'notes' => $data['notes'] ?? null,
+                    'status' => $data['status'],
+                ]);
+
+                // Soft delete akun login jika tersedia.
+                if ($villageOfficial->auth_id) {
+                    $user = User::query()
+                        ->lockForUpdate()
+                        ->find($villageOfficial->auth_id);
+
+                    if ($user) {
+                        $user->delete();
+                    }
+                }
+            });
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data pemberhentian aparat desa berhasil disimpan.',
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Gagal melakukan pemberhentian aparat desa.', [
+                'official_id' => $data['official_id'] ?? null,
+                'status' => $data['status'] ?? null,
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat memproses pemberhentian aparat desa.',
             ], 500);
         }
     }

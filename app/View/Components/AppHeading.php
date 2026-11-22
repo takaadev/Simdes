@@ -2,6 +2,7 @@
 
 namespace App\View\Components;
 
+use App\Models\AppSetting;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Str;
@@ -10,234 +11,185 @@ use Illuminate\View\Component;
 class AppHeading extends Component
 {
     public array $breadcrumbs = [];
-
     public string $title;
-
     public string $description;
+    public ?AppSetting $appSetting;
 
-    public function __construct()
+    public function __construct(?AppSetting $appSetting = null)
     {
-        /*
-        |--------------------------------------------------------------------------
-        | Konfigurasi Halaman
-        |--------------------------------------------------------------------------
-        */
+        $this->appSetting = $appSetting ?? AppSetting::first();
 
-        $pages = [
+        $namaDesa = $this->resolveNamaDesa();
+        $pages    = $this->getPages($namaDesa);
+        $labels   = $this->getLabels();
+        $segments = request()->segments();
+
+        $routeName = request()->route()?->getName();
+        $routeKey  = $routeName ? Str::before($routeName, '.') : null;
+
+        $currentPage = ($routeKey && isset($pages[$routeKey]))
+            ? $routeKey
+            : ($segments ? end($segments) : 'dashboard');
+
+        $fallbackTitle = $labels[$currentPage] ?? Str::headline($currentPage);
+        $lowerTitle    = strtolower($fallbackTitle);
+
+        $suffixDesa = Str::endsWith($lowerTitle, 'desa')
+            ? preg_replace('/^desa\s+/i', '', $namaDesa)
+            : $namaDesa;
+
+        $page = $pages[$currentPage] ?? [
+            'title'       => $fallbackTitle,
+            'description' => "Kelola data {$lowerTitle} {$suffixDesa}.",
+        ];
+
+        $this->title       = $page['title'] ?? $fallbackTitle;
+        $this->description = $page['description'] ?? '';
+
+        $this->breadcrumbs = collect($segments)
+            ->map(fn(string $segment) => [
+                'label' => $labels[$segment] ?? Str::headline($segment),
+            ])
+            ->values()
+            ->all();
+    }
+
+    /**
+     * Memastikan awalan "Desa" tidak dobel (misal "Desa Desa Tiaro").
+     */
+    private function resolveNamaDesa(): string
+    {
+        $nama = trim((string) ($this->appSetting?->nama_desa ?? ''));
+
+        if ($nama === '') {
+            return 'Desa';
+        }
+
+        return Str::startsWith(strtolower($nama), 'desa ') ? $nama : "Desa {$nama}";
+    }
+
+    /**
+     * Konfigurasi judul dan deskripsi per halaman.
+     */
+    private function getPages(string $namaDesa): array
+    {
+        $appName = config('app.name', 'SIMDES');
+
+        return [
             // Dashboard
             'dashboard' => [
-                'title' => 'Dashboard Pemerintahan Desa',
-                'description' => 'Ringkasan eksekutif penyelenggaraan administrasi umum dan kependudukan Kantor Desa Tiaro.',
+                'title'       => 'Dashboard Pemerintahan Desa',
+                'description' => "Ringkasan administrasi umum dan kependudukan Kantor {$namaDesa}.",
             ],
 
-            // =====================================================
-            // ADMINISTRASI UMUM
-            // =====================================================
-
-            'buku-peraturan-desa' => [
-                'title' => 'Buku Peraturan Desa',
-                'description' => 'Kelola dan dokumentasikan seluruh peraturan yang ditetapkan di Desa Tiaro.',
+            // Administrasi Umum
+            'village-regulations' => [
+                'title'       => 'Buku Peraturan Desa',
+                'description' => "Kelola dan dokumentasikan seluruh peraturan yang ditetapkan di {$namaDesa}.",
             ],
-
-            'buku-keputusan-kepala-desa' => [
-                'title' => 'Buku Keputusan Kepala Desa',
-                'description' => 'Kelola dan dokumentasikan seluruh keputusan yang ditetapkan oleh Kepala Desa Tiaro.',
+            'village-decrees' => [
+                'title'       => 'Buku Keputusan Kepala Desa',
+                'description' => "Kelola dan dokumentasikan seluruh keputusan yang ditetapkan oleh Kepala {$namaDesa}.",
             ],
-
-            'buku-inventaris-dan-kekayaan-desa' => [
-                'title' => 'Buku Inventaris dan Kekayaan Desa',
-                'description' => 'Catat, kelola, dan pantau seluruh inventaris serta kekayaan milik Pemerintah Desa Tiaro.',
+            'village-assets' => [
+                'title'       => 'Buku Inventaris dan Kekayaan Desa',
+                'description' => "Catat, kelola, dan pantau seluruh inventaris serta kekayaan milik Pemerintah {$namaDesa}.",
             ],
-
-            'buku-aparat-pemerintah-desa' => [
-                'title' => 'Buku Aparat Pemerintah Desa',
+            'village-officials' => [
+                'title'       => 'Buku Aparat Pemerintah Desa',
                 'description' => 'Kelola data aparat pemerintah desa beserta informasi jabatan dan administrasi kepegawaiannya.',
             ],
-
-            'buku-tanah-kas-desa' => [
-                'title' => 'Buku Tanah Kas Desa',
-                'description' => 'Kelola pencatatan dan dokumentasi tanah kas yang menjadi aset milik Desa Tiaro.',
+            'village-treasury-lands' => [
+                'title'       => 'Buku Tanah Kas Desa',
+                'description' => "Kelola pencatatan dan dokumentasi tanah kas yang menjadi aset milik {$namaDesa}.",
             ],
-
-            'buku-tanah-di-desa' => [
-                'title' => 'Buku Tanah di Desa',
-                'description' => 'Kelola data administrasi pertanahan dan pencatatan informasi tanah di wilayah Desa Tiaro.',
+            'village-lands' => [
+                'title'       => 'Buku Tanah di Desa',
+                'description' => "Kelola data administrasi pertanahan dan pencatatan informasi tanah di wilayah {$namaDesa}.",
             ],
-
-            'buku-agenda' => [
-                'title' => 'Buku Agenda',
-                'description' => 'Kelola pencatatan agenda kegiatan dan administrasi surat-menyurat Pemerintah Desa Tiaro.',
-            ],
-
-            'buku-ekspedisi' => [
-                'title' => 'Buku Ekspedisi',
-                'description' => 'Catat dan pantau pengiriman serta pendistribusian surat dan dokumen resmi pemerintah desa.',
-            ],
-
-            'buku-lembaran-desa-dan-berita-desa' => [
-                'title' => 'Buku Lembaran Desa dan Berita Desa',
+            'village-publications' => [
+                'title'       => 'Buku Lembaran Desa dan Berita Desa',
                 'description' => 'Kelola dokumentasi lembaran desa dan berita desa sebagai bagian dari administrasi pemerintahan.',
             ],
 
-            // =====================================================
-            // ADMINISTRASI PENDUDUK
-            // =====================================================
-
-            'buku-induk-penduduk' => [
-                'title' => 'Buku Induk Penduduk',
-                'description' => 'Kelola dan perbarui data induk penduduk sebagai basis administrasi kependudukan Desa Tiaro.',
+            // Administrasi Penduduk
+            'residents' => [
+                'title'       => 'Buku Induk Penduduk',
+                'description' => "Kelola dan perbarui data induk penduduk sebagai basis administrasi kependudukan {$namaDesa}.",
             ],
-
-            'buku-mutasi-penduduk-desa' => [
-                'title' => 'Buku Mutasi Penduduk Desa',
+            'mutations' => [
+                'title'       => 'Buku Mutasi Penduduk Desa',
                 'description' => 'Catat dan dokumentasikan perubahan data penduduk, termasuk kelahiran, kematian, kedatangan, dan kepindahan.',
             ],
-
-            'buku-rekapitulasi-jumlah-penduduk' => [
-                'title' => 'Buku Rekapitulasi Jumlah Penduduk',
-                'description' => 'Sajikan rekapitulasi jumlah penduduk berdasarkan data administrasi kependudukan Desa Tiaro.',
+            'recapts' => [
+                'title'       => 'Buku Rekapitulasi Jumlah Penduduk',
+                'description' => "Sajikan rekapitulasi jumlah penduduk berdasarkan data administrasi kependudukan {$namaDesa}.",
             ],
-
-            'buku-penduduk-sementara' => [
-                'title' => 'Buku Penduduk Sementara',
-                'description' => 'Kelola pencatatan dan dokumentasi penduduk sementara yang berada di wilayah Desa Tiaro.',
+            'temporaryresidents' => [
+                'title'       => 'Buku Penduduk Sementara',
+                'description' => "Kelola pencatatan dan dokumentasi penduduk sementara yang berada di wilayah {$namaDesa}.",
             ],
-
-            'buku-ktp-dan-kk' => [
-                'title' => 'Buku KTP dan Kartu Keluarga',
+            'familycards' => [
+                'title'       => 'Buku KTP dan Kartu Keluarga',
                 'description' => 'Kelola pencatatan administrasi dokumen kependudukan berupa Kartu Tanda Penduduk dan Kartu Keluarga.',
             ],
 
-            // =====================================================
-            // ARSIP DIGITAL / SURAT
-            // =====================================================
-
-            'surat-masuk' => [
-                'title' => 'Surat Masuk',
-                'description' => 'Kelola pencatatan, penerimaan, dan dokumentasi surat yang masuk ke Pemerintah Desa Tiaro.',
+            // Arsip Digital
+            'agendas' => [
+                'title'       => 'Buku Agenda',
+                'description' => "Kelola pencatatan agenda kegiatan dan administrasi surat-menyurat Pemerintah {$namaDesa}.",
+            ],
+            'expeditions' => [
+                'title'       => 'Buku Ekspedisi',
+                'description' => 'Catat dan pantau pengiriman serta pendistribusian surat dan dokumen resmi pemerintah desa.',
             ],
 
-            'surat-keluar' => [
-                'title' => 'Surat Keluar',
-                'description' => 'Kelola pembuatan, pencatatan, dan dokumentasi surat resmi yang diterbitkan Pemerintah Desa Tiaro.',
+            // Pengaturan Sistem
+            'pengaturan' => [
+                'title'       => 'Pengaturan Aplikasi',
+                'description' => "Kelola konfigurasi aplikasi {$appName} dan informasi profil Pemerintahan {$namaDesa}.",
             ],
-
-            'klasifikasi-surat' => [
-                'title' => 'Klasifikasi Surat',
-                'description' => 'Kelola pengelompokan dan kode klasifikasi surat untuk mendukung tertib administrasi persuratan desa.',
-            ],
-
-            'klasifikasi-surat' => [
-                'title' => 'Klasifikasi Surat',
-                'description' => 'Kelola pengelompokan dan kode klasifikasi surat untuk mendukung tertib administrasi persuratan desa.',
-            ],
-
-            'arsip-dokumen-surat' => [
-                'title' => 'Arsip Dokumen Surat',
-                'description' => 'Simpan, kelola, dan telusuri arsip digital dokumen surat Pemerintah Desa Tiaro.',
-            ],
-
-            'umum' => [
-                'title' => 'Pengaturan Umum',
-                'description' => 'Kelola konfigurasi umum aplikasi SIMDES untuk mendukung penyelenggaraan administrasi Pemerintahan Desa Tiaro.',
-            ],
-
-            'profil-desa' => [
-                'title' => 'Profil Desa',
-                'description' => 'Kelola informasi identitas dan profil Desa Tiaro sebagai informasi resmi dalam aplikasi SIMDES.',
-            ],
-
             'pengguna' => [
-                'title' => 'Manajemen Pengguna',
-                'description' => 'Kelola akun pengguna, informasi akses, dan hak akses untuk menggunakan aplikasi SIMDES.',
+                'title'       => 'Manajemen Pengguna',
+                'description' => "Kelola akun pengguna, informasi akses, dan hak akses untuk menggunakan aplikasi {$appName}.",
             ],
         ];
+    }
 
-        /*
-        |--------------------------------------------------------------------------
-        | Label Breadcrumb
-        |--------------------------------------------------------------------------
-        */
-
-        $labels = [
-            'dashboard' => 'Dashboard',
+    /**
+     * Label breadcrumb berdasarkan segmen URL.
+     */
+    private function getLabels(): array
+    {
+        return [
+            'dashboard'              => 'Dashboard',
 
             // Administrasi Umum
-            'admumum' => 'Adm Umum',
-            'buku-peraturan-desa' => 'Buku Peraturan Desa',
-            'buku-keputusan-kepala-desa' => 'Buku Keputusan Kepala Desa',
-            'buku-inventaris-dan-kekayaan-desa' => 'Buku Inventaris dan Kekayaan Desa',
-            'buku-aparat-pemerintah-desa' => 'Buku Aparat Pemerintah Desa',
-            'buku-tanah-kas-desa' => 'Buku Tanah Kas Desa',
-            'buku-tanah-di-desa' => 'Buku Tanah Desa',
-            'buku-agenda' => 'Buku Agenda',
-            'buku-ekspedisi' => 'Buku Ekspedisi',
-            'buku-lembaran-desa-dan-berita-desa' => 'Buku Lembaran Desa dan Berita Desa',
+            'admumum'                => 'Adm Umum',
+            'village-regulations'    => 'Peraturan di Desa',
+            'village-decrees'        => 'Keputusan Kepala Desa',
+            'village-assets'         => 'Inventaris dan Kekayaan Desa',
+            'village-officials'      => 'Aparat Pemerintah Desa',
+            'village-treasury-lands' => 'Tanah Kas Desa',
+            'village-lands'          => 'Tanah Desa',
+            'village-publications'   => 'Lembaran Desa dan Berita Desa',
 
             // Administrasi Penduduk
-            'admpenduduk' => 'Adm Penduduk',
-            'buku-induk-penduduk' => 'Buku Induk Penduduk',
-            'buku-mutasi-penduduk-desa' => 'Buku Mutasi Penduduk Desa',
-            'buku-rekapitulasi-jumlah-penduduk' => 'Buku Rekapitulasi Jumlah Penduduk',
-            'buku-penduduk-sementara' => 'Buku Penduduk Sementara',
-            'buku-ktp-dan-kk' => 'Buku KTP & KK',
+            'admpenduduk'            => 'Adm Penduduk',
+            'residents'              => 'Buku Induk Penduduk',
+            'mutations'              => 'Buku Mutasi Penduduk',
+            'recapts'                => 'Buku Rekapitulasi Penduduk',
+            'temporaryresidents'     => 'Buku Penduduk Sementara',
+            'familycards'            => 'Buku KTP & KK',
 
-            // Arsip Surat
-            'arsip-surat' => 'Arsip Surat',
-            'arsip-dokumen-surat' => 'Arsip Dokumen Surat',
+            // Arsip Digital
+            'agendas'                => 'Buku Agenda',
+            'expeditions'            => 'Buku Ekspedisi',
 
-            // Pengaturan Aplikasi
-            'pengaturan' => 'Pengaturan',
-            'umum' => 'Umum',
-            'profil-desa' => 'Profil Desa',
-            'pengguna' => 'Pengguna',
-
-            // =====================================================
-            // PENGATURAN APLIKASI
-            // =====================================================
-
-
+            // Pengaturan Sistem
+            'pengaturan'             => 'Pengaturan',
+            'pengguna'               => 'Pengguna',
         ];
-
-        /*
-        |--------------------------------------------------------------------------
-        | Menentukan Halaman Aktif
-        |--------------------------------------------------------------------------
-        */
-
-        $segments = request()->segments();
-
-        $currentPage = $segments ? end($segments) : 'dashboard';
-
-        /*
-        |--------------------------------------------------------------------------
-        | Mengambil Judul dan Deskripsi
-        |--------------------------------------------------------------------------
-        */
-
-        $page = $pages[$currentPage] ?? [
-            'title' => $labels[$currentPage] ?? Str::headline($currentPage),
-            'description' => 'Kelola data ' . strtolower($labels[$currentPage] ?? Str::headline($currentPage)) . ' Desa Tiaro.',
-        ];
-
-        $this->title = $page['title'];
-
-        $this->description = $page['description'];
-
-        /*
-        |--------------------------------------------------------------------------
-        | Membuat Breadcrumb Otomatis
-        |--------------------------------------------------------------------------
-        */
-
-        $this->breadcrumbs = collect($segments)
-            ->map(
-                fn($segment) => [
-                    'label' => $labels[$segment] ?? Str::headline($segment),
-                ],
-            )
-            ->values()
-            ->all();
     }
 
     public function render(): View|Closure|string

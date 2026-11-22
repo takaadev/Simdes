@@ -280,6 +280,22 @@
 
                 // Wrapper awal
                 wrapTableWithScroll(table.table().node());
+                $('#btnCetakMutasi').on('click', function() {
+                    window.openSimdesPrintModal({
+                        title: 'Buku Mutasi Penduduk Desa',
+                        url: @json(route('mutations.print')),
+                        filterMap: {
+                            sort_name: '#filterSortName',
+                            jenis_kelamin: '#filterGenderSelect',
+                            kewarganegaraan: '#filterCitizenshipSelect',
+                            tipe_mutasi: '#filterMutationTypeSelect',
+                            kategori_mutasi: '#filterMutationCategorySelect',
+                            deleted: '#filterDeletedSelect',
+                        },
+                        tableSelector: '#residentMutationTable',
+                        paper: 'A4 landscape',
+                    });
+                });
             });
         </script>
     @endpush

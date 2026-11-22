@@ -52,6 +52,7 @@
                 <i class="fa-solid fa-{{ $icon }}" aria-hidden="true"></i>
             </div>
         </div>
+        {{ $slot }}
     </article>
 </div>
 

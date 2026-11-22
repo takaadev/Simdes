@@ -398,4 +398,37 @@ class ResidentRecaptService
             ], 500);
         }
     }
+
+    public function getPrintData(Request $request): array
+    {
+        $rawTahun = $request->input('tahun');
+        $rawBulan = $request->input('bulan');
+        $search = trim((string) $request->input('search', ''));
+
+        $tahun = (filled($rawTahun) && $rawTahun !== 'all')? (int) $rawTahun: now()->year;
+
+        $bulan = (filled($rawBulan) && $rawBulan !== 'all')? (int) $rawBulan: now()->month;
+        $periodeDate = Carbon::create($tahun, $bulan, 1);
+        $records = RecaptDetail::query()
+            ->join('recapts', 'recapts.id', '=', 'recapt_details.recapt_id')
+            ->where('recapts.tahun', (string) $tahun)
+            ->whereDate('recapts.bulan', $periodeDate->toDateString())
+            ->when($search !== '', function ($q) use ($search) {
+                $q->where(function ($sub) use ($search) {
+                    $sub->where('recapt_details.lingkungan', 'like', "%{$search}%")
+                        ->orWhere('recapt_details.catatan', 'like', "%{$search}%");
+                });
+            })
+            ->select('recapt_details.*')
+            ->orderBy('recapt_details.lingkungan')
+            ->get();
+
+        $periodeLabel = $periodeDate->locale('id')->translatedFormat('F Y');
+
+        return [
+            'records' => $records,
+            'periodeLabel' => $periodeLabel,
+            'filterSummary' => "Periode: {$periodeLabel}",
+        ];
+    }
 }

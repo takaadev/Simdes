@@ -1,12 +1,22 @@
+@php
+    $appName = config('app.name');
+    $namaDesa = $appSetting?->nama_desa ?: 'Desa';
+    $deskripsi =
+        $appSetting?->deskripsi ?:
+        "Platform kerja digital perangkat Kantor {$namaDesa} untuk pengelolaan buku administrasi umum dan administrasi kependudukan secara terstruktur sesuai standar pemerintahan desa.";
+    $logoUrl = !empty($appSetting?->logo) ? asset('storage/' . $appSetting->logo) : asset('logo.png');
+@endphp
+
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name', 'SIMDES Desa Tiaro') }}</title>
-    <meta name="description" content="Dashboard Utama Sistem Informasi Manajemen Desa (SIMDES) Pemerintah Desa Tiaro.">
-    <link rel="icon" type="image/png" href="{{ asset('logo.png') }}">
+    <title>{{ $appName }} &mdash; {{ $namaDesa }}</title>
+    <meta name="description"
+        content="{{ $appSetting?->deskripsi ?: "Sistem Informasi Manajemen Desa ({$appName}) Pemerintah {$namaDesa}." }}">
+    <link rel="icon" type="image/png" href="{{ $logoUrl }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
@@ -16,32 +26,31 @@
     <link rel="stylesheet" href="{{ asset('assets/css/components.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/pages.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/fontawesome/css/all.min.css') }}">
-
 </head>
 
 <body>
 
     <div class="login-page">
         <!-- Left Civic Institutional Showcase (Desktop) -->
-        <aside class="login-showcase" aria-label="Identitas Sistem Informasi Manajemen Desa Tiaro">
+        <aside class="login-showcase" aria-label="Identitas Sistem Informasi Manajemen {{ $namaDesa }}">
             <div class="login-showcase-top">
                 <span class="login-official-pill">
                     <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
-                    Portal Resmi Pemerintah Desa Tiaro
+                    Portal Resmi Pemerintah Desa {{ $namaDesa }}
                 </span>
             </div>
 
             <div class="login-showcase-center">
                 <div class="login-crest-lockup">
-                    <img src="{{ asset('logo.png') }}" alt="Lambang Resmi Pemerintah Desa Tiaro" class="login-crest-img"
-                        width="72" height="72">
+                    <img src="{{ $logoUrl }}" alt="Lambang Resmi Pemerintah {{ $namaDesa }}"
+                        class="login-crest-img" width="72" height="72" style="object-fit: contain;">
                     <div>
                         <div class="fw-bold text-uppercase"
                             style="letter-spacing:0.08em; font-size:0.8rem; color:var(--simdes-accent);">
                             Sistem Informasi Manajemen Desa
                         </div>
-                        <div class="fw-bolder fs-4 text-white" style="letter-spacing:-0.01em;">
-                            SIMDES DESA TIARO
+                        <div class="fw-bolder fs-4 text-white text-uppercase" style="letter-spacing:-0.01em;">
+                            {{ $namaDesa }}
                         </div>
                     </div>
                 </div>
@@ -50,8 +59,7 @@
                     Tata Kelola Administrasi Desa yang <span>Tertib, Akurat,</span> dan Terpadu.
                 </h1>
                 <p class="login-lead">
-                    Platform kerja digital perangkat Kantor Desa Tiaro untuk pengelolaan buku administrasi umum dan
-                    administrasi kependudukan secara terstruktur sesuai standar pemerintahan desa.
+                    {{ $deskripsi }}
                 </p>
 
                 <div class="login-pillars">
@@ -79,8 +87,10 @@
             </div>
 
             <div class="login-showcase-bottom">
-                <span><i class="fa-solid fa-building-columns me-2 text-simdes-accent" aria-hidden="true"></i>Kantor
-                    Pemerintah Desa Tiaro</span>
+                <span>
+                    <i class="fa-solid fa-building-columns me-2 text-simdes-accent" aria-hidden="true"></i>
+                    Kantor Pemerintah {{ $namaDesa }}
+                </span>
                 <span>Standar Permendagri No. 47 Tahun 2016</span>
             </div>
         </aside>
@@ -89,10 +99,12 @@
         <main class="login-panel-wrap">
             {{ $slot }}
             <p class="mt-4 mb-0 text-center text-simdes-muted" style="font-size:0.78rem;">
-                &copy; 2026 Pemerintah Desa Tiaro &mdash; Sistem Informasi Manajemen Desa (SIMDES)
+                &copy; {{ date('Y') }} Pemerintah {{ $namaDesa }} &mdash; Sistem Informasi Manajemen Desa
+                ({{ $appName }})
             </p>
         </main>
     </div>
+
     <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('assets/js/jquery.js') }}"></script>
     <script src="{{ asset('assets/js/toast.js') }}"></script>

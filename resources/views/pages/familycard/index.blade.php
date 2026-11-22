@@ -2,7 +2,7 @@
     @include('pages.familycard.comp.widgets')
     @include('pages.familycard.comp.filter')
 
-    <x-table id="familCardTable">
+    <x-table id="familyCardTable">
         <tr>
             <th rowspan="2">No.</th>
             <th rowspan="2">Nomor KK</th>
@@ -35,18 +35,18 @@
 
     @push('header')
         <style>
-            #familCardTable tbody td[rowspan] {
+            #familyCardTable tbody td[rowspan] {
                 vertical-align: middle !important;
                 text-align: center;
                 font-weight: 600;
                 background-color: #fff;
             }
 
-            #familCardTable tbody tr {
+            #familyCardTable tbody tr {
                 vertical-align: middle;
             }
 
-            #familCardTable tbody td {
+            #familyCardTable tbody td {
                 white-space: nowrap;
             }
         </style>
@@ -55,24 +55,17 @@
     @push('footer')
         <script>
             $(document).ready(function() {
-                const tableElement = $('#familCardTable');
+                const tableElement = $('#familyCardTable');
 
                 if (!tableElement.length) return;
 
-                // =====================================================
-                // WRAPPER HORIZONTAL SCROLL
-                // =====================================================
                 function wrapTableWithScroll(tableNode) {
                     if (!tableNode) return;
 
                     const parent = tableNode.parentElement;
 
-                    if (
-                        parent &&
-                        !parent.classList.contains('wide-scroll-ledger')
-                    ) {
+                    if (parent && !parent.classList.contains('wide-scroll-ledger')) {
                         const scrollWrapper = document.createElement('div');
-
                         scrollWrapper.className = 'wide-scroll-ledger';
 
                         parent.insertBefore(scrollWrapper, tableNode);
@@ -80,161 +73,142 @@
                     }
                 }
 
-                // =====================================================
-                // DATATABLES
-                // =====================================================
+                function initTooltips(container) {
+                    if (!window.bootstrap?.Tooltip || !container) return;
+
+                    container.querySelectorAll('[data-bs-toggle="tooltip"]').forEach((el) => {
+                        bootstrap.Tooltip.getOrCreateInstance(el);
+                    });
+                }
+
+                const filterMap = {
+                    sort_date: '#filterSortDate',
+                    year: '#filterYearSelect',
+                    deleted: '#filterDeletedSelect',
+                };
+
                 const table = tableElement.DataTable({
                     processing: true,
                     serverSide: true,
-
                     scrollX: false,
                     autoWidth: false,
                     responsive: false,
 
                     ajax: {
                         url: @json(route('familycards.index')),
-                        type: 'GET'
+                        type: 'GET',
+                        data: function(d, settings) {
+                            const rawUrl = typeof settings?.ajax === 'string' ?
+                                settings.ajax :
+                                (settings?.ajax?.url || @json(route('familycards.index')));
+                            const currentUrl = new URL(rawUrl, window.location.origin);
+
+                            Object.entries(filterMap).forEach(([param, selector]) => {
+                                if (currentUrl.searchParams.has(param)) return;
+
+                                const val = $(selector).val();
+                                if (val !== undefined && val !== null && val !== '' && val !==
+                                    'all') {
+                                    d[param] = val;
+                                }
+                            });
+                        }
                     },
 
                     pageLength: 15,
                     ordering: false,
 
-                    // =================================================
-                    // COLUMNS
-                    // =================================================
-                    columns: [
-                        // 1. Nomor urut.
-                        {
+                    columns: [{
                             data: 'DT_RowIndex',
                             name: 'DT_RowIndex',
                             searchable: false,
                             orderable: false,
                             className: 'text-center'
                         },
-
-                        // 2. Nomor KK.
                         {
                             data: 'nomor_kk',
                             name: 'family_cards.nomor_kk',
                             orderable: false,
                             className: 'text-center'
                         },
-
-                        // 3. Nama lengkap.
                         {
                             data: 'nama_lengkap',
                             name: 'residents.nama_lengkap'
                         },
-
-                        // 4. NIK.
                         {
                             data: 'nik',
                             name: 'residents.nik'
                         },
-
-                        // 5. Jenis kelamin.
                         {
                             data: 'jenis_kelamin',
                             name: 'residents.jenis_kelamin',
                             className: 'text-center'
                         },
-
-                        // 6. Tempat lahir.
                         {
                             data: 'tempat_lahir',
                             name: 'residents.tempat_lahir'
                         },
-
-                        // 7. Tanggal lahir.
                         {
                             data: 'tgl_lahir',
                             name: 'residents.tgl_lahir',
                             className: 'text-center'
                         },
-
-                        // 8. Golongan darah.
                         {
                             data: 'gol_darah',
                             name: 'residents.gol_darah',
                             className: 'text-center'
                         },
-
-                        // 9. Agama.
                         {
                             data: 'agama',
                             name: 'residents.agama'
                         },
-
-                        // 10. Pendidikan.
                         {
                             data: 'pendidikan',
                             name: 'residents.pendidikan'
                         },
-
-                        // 11. Pekerjaan.
                         {
                             data: 'pekerjaan',
                             name: 'residents.pekerjaan'
                         },
-
-                        // 12. Alamat.
                         {
                             data: 'alamat',
                             name: 'residents.alamat',
                             orderable: false
                         },
-
-                        // 13. Status perkawinan.
                         {
                             data: 'status_perkawinan',
                             name: 'residents.status_perkawinan'
                         },
-
-                        // 14. Tempat dikeluarkan.
                         {
                             data: 'tempat_dikeluarkan',
                             name: 'residents.tempat_dikeluarkan'
                         },
-
-                        // 15. Tanggal dikeluarkan.
                         {
                             data: 'tgl_dikeluarkan',
                             name: 'residents.tgl_dikeluarkan',
                             className: 'text-center'
                         },
-
-                        // 16. Kedudukan dalam keluarga.
                         {
                             data: 'status_dalam_keluarga',
                             name: 'residents.status_dalam_keluarga'
                         },
-
-                        // 17. Kewarganegaraan.
                         {
                             data: 'kewarganegaraan',
                             name: 'residents.kewarganegaraan'
                         },
-
-                        // 18. Ayah.
                         {
                             data: 'ayah',
                             name: 'residents.ayah'
                         },
-
-                        // 19. Ibu.
                         {
                             data: 'ibu',
                             name: 'residents.ibu'
                         },
-
-                        // 20. Mulai tinggal.
                         {
                             data: 'tgl_mulai_tinggal',
                             name: 'residents.tgl_mulai_tinggal',
                             className: 'text-center'
                         },
-
-                        // 21. Aksi.
                         {
                             data: 'action',
                             name: 'action',
@@ -244,14 +218,8 @@
                         }
                     ],
 
-                    // =================================================
-                    // DEFAULT ORDER
-                    // =================================================
                     order: [],
 
-                    // =================================================
-                    // LANGUAGE
-                    // =================================================
                     language: {
                         emptyTable: 'Belum ada data Kartu Keluarga',
                         zeroRecords: 'Data Kartu Keluarga tidak ditemukan',
@@ -263,9 +231,6 @@
                         search: 'Pencarian:'
                     },
 
-                    // =================================================
-                    // LAYOUT
-                    // =================================================
                     layout: {
                         topStart: 'pageLength',
                         topEnd: 'search',
@@ -275,74 +240,72 @@
 
                     lengthMenu: [10, 15, 25, 50, 100, 150, 200],
 
-                    // =================================================
-                    // DRAW CALLBACK
-                    // =================================================
-
                     drawCallback: function() {
                         const api = this.api();
+                        const tableNode = api.table().node();
 
-                        wrapTableWithScroll(api.table().node());
+                        wrapTableWithScroll(tableNode);
+                        initTooltips(tableNode);
 
                         const rows = api.rows({
-                            page: 'current',
-                            order: 'applied',
-                            search: 'applied'
+                            page: 'current'
                         });
-
                         const data = rows.data().toArray();
                         const nodes = rows.nodes().toArray();
 
-                        let groupNumber = 0;
+                        let groupNumber = api.page.info().start;
                         let i = 0;
 
-                        // =================================================
-                        // PENGELOMPOKAN BERDASARKAN NOMOR KK
-                        // =================================================
                         while (i < data.length) {
-                            const currentKK = data[i].nomor_kk;
+                            const currentCardId = data[i].family_card_id;
                             let count = 1;
 
-                            // Hitung jumlah anggota dalam satu KK.
                             while (
                                 i + count < data.length &&
-                                data[i + count].nomor_kk === currentKK
+                                data[i + count].family_card_id === currentCardId
                             ) {
                                 count++;
                             }
 
                             groupNumber++;
 
-                            const firstRow = $(nodes[i]);
-                            const firstCells = firstRow.children('td');
+                            const firstCells = $(nodes[i]).children('td');
 
-                            // Gabungkan kolom nomor urut.
                             firstCells.eq(0)
                                 .text(groupNumber)
                                 .attr('rowspan', count)
                                 .addClass('text-center align-middle fw-semibold');
 
-                            // Gabungkan kolom nomor KK.
                             firstCells.eq(1)
                                 .attr('rowspan', count)
                                 .addClass('text-center align-middle fw-semibold');
 
-                            // Hapus dua kolom pertama dari anggota berikutnya.
+                            firstCells.last()
+                                .attr('rowspan', count)
+                                .addClass('text-center align-middle');
+
                             for (let j = 1; j < count; j++) {
                                 const memberCells = $(nodes[i + j]).children('td');
-
-                                // Hapus sekaligus agar indeks tidak bermasalah.
+                                memberCells.last().remove();
                                 memberCells.slice(0, 2).remove();
                             }
 
                             i += count;
                         }
                     }
-
                 });
 
-                // Wrapper awal.
                 wrapTableWithScroll(table.table().node());
+
+                $('#btnCetakFamilyCard').on('click', function() {
+                    window.openSimdesPrintModal({
+                        title: 'Buku KTP dan Kartu Keluarga',
+                        url: @json(route('familycards.print')),
+                        filterMap: filterMap,
+                        tableSelector: '#familyCardTable',
+                        paper: '330mm 215mm',
+                    });
+                });
             });
         </script>
     @endpush

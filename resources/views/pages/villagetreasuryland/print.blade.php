@@ -1,8 +1,6 @@
 @php
-    $fmtArea = fn ($val) => (float) $val > 0 ? number_format((float) $val, 2, ',', '.') : '-';
-    $fmtDate = fn ($date) => $date
-        ? \Carbon\Carbon::parse($date)->locale('id')->translatedFormat('d/m/Y')
-        : '-';
+    $fmtArea = fn($val) => (float) $val > 0 ? number_format((float) $val, 2, ',', '.') : '-';
+    $fmtDate = fn($date) => $date ? \Carbon\Carbon::parse($date)->locale('id')->translatedFormat('d/m/Y') : '-';
 
     $enumLabel = function ($value): string {
         if ($value instanceof \BackedEnum) {
@@ -13,13 +11,8 @@
     };
 @endphp
 
-<x-layouts.print-layout
-    title="Buku Tanah Kas Desa"
-    paper="330mm 215mm"
-    fontSize="6.8pt"
-    :totalRecords="$records->count()"
-    :filterSummary="$filterSummary"
->
+<x-layouts.print-layout title="Buku Tanah Kas Desa" paper="330mm 215mm" fontSize="6.8pt" :totalRecords="$records->count()"
+    :filterSummary="$filterSummary">
     <table class="print-table">
         <thead>
             <tr>
@@ -71,7 +64,7 @@
                     <td>{{ $enumLabel($row->asal_tanah) }}</td>
                     <td>{{ $row->nomor_sertifikat ?: '-' }}</td>
                     <td class="text-end fw-bold">{{ $fmtArea($row->luas_tanah) }}</td>
-                    <td class="text-center">{{ $enumLabel($row->kelas_tanah) }}</td>
+                    <td class="text-center">{{ $row->kelas_tanah->code() }}</td>
 
                     {{-- Perolehan Tanah Kas Desa --}}
                     <td class="text-end">{{ $fmtArea($row->lt_asli_desa) }}</td>

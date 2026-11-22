@@ -238,6 +238,20 @@
 
                 // Wrapper awal
                 wrapTableWithScroll(table.table().node());
+                $('#btnCetakPendudukSementara').on('click', function() {
+                    window.openSimdesPrintModal({
+                        title: 'Buku Penduduk Sementara',
+                        url: @json(route('temporary-residents.print')),
+                        filterMap: {
+                            year: '#filterYearSelect',
+                            jenis_kelamin: '#filterGenderSelect',
+                            kewarganegaraan: '#filterCitizenshipSelect',
+                            deleted: '#filterDeletedSelect',
+                        },
+                        tableSelector: '#temporaryResidentTable',
+                        paper: '330mm 215mm',
+                    });
+                });
             });
         </script>
     @endpush

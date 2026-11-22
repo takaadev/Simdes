@@ -382,4 +382,86 @@ class TemporaryResidentService
             ], 500);
         }
     }
+
+    public function getPrintData(Request $request)
+    {
+        $isTrashed = $request->input('deleted') === 'trashed';
+        $search = trim((string) $request->input('search', ''));
+
+        return TemporaryResident::query()
+            ->select([
+                'id',
+                'nama_lengkap',
+                'jenis_kelamin',
+                'nomor_identitas',
+                'tempat_lahir',
+                'tgl_lahir',
+                'umur',
+                'pekerjaan',
+                'kewarganegaraan',
+                'kebangsaan',
+                'keturunan',
+                'datang_dari',
+                'tujuan_kedatangan',
+                'alamat_tujuan',
+                'tgl_datang',
+                'tgl_pergi',
+                'catatan',
+            ])
+            ->when($isTrashed, fn($q) => $q->onlyTrashed())
+            ->when(
+                $request->filled('jenis_kelamin') && $request->input('jenis_kelamin') !== 'all',
+                fn($q) => $q->where('jenis_kelamin', $request->input('jenis_kelamin'))
+            )
+            ->when(
+                $request->filled('kewarganegaraan') && $request->input('kewarganegaraan') !== 'all',
+                fn($q) => $q->where('kewarganegaraan', $request->input('kewarganegaraan'))
+            )
+            ->when(
+                $request->filled('year') && $request->input('year') !== 'all',
+                fn($q) => $q->whereYear('tgl_datang', $request->input('year'))
+            )
+            ->when(
+                $request->filled('status') && $request->input('status') !== 'all',
+                function ($q) use ($request) {
+                    if ($request->input('status') === 'staying') {
+                        $q->whereNull('tgl_pergi');
+                    } elseif ($request->input('status') === 'left') {
+                        $q->whereNotNull('tgl_pergi');
+                    }
+                }
+            )
+            ->when($search !== '', function ($q) use ($search) {
+                $q->where(function ($sub) use ($search) {
+                    $sub->where('nama_lengkap', 'like', "%{$search}%")
+                        ->orWhere('nomor_identitas', 'like', "%{$search}%")
+                        ->orWhere('datang_dari', 'like', "%{$search}%")
+                        ->orWhere('tujuan_kedatangan', 'like', "%{$search}%")
+                        ->orWhere('alamat_tujuan', 'like', "%{$search}%")
+                        ->orWhere('catatan', 'like', "%{$search}%");
+                });
+            })
+            ->orderByDesc('tgl_datang')
+            ->get();
+    }
+
+    public function getFilterSummary(Request $request): ?string
+    {
+        $parts = [];
+
+        if ($request->filled('year') && $request->input('year') !== 'all') {
+            $parts[] = 'Tahun: ' . $request->input('year');
+        }
+        if ($request->filled('jenis_kelamin') && $request->input('jenis_kelamin') !== 'all') {
+            $parts[] = 'JK: ' . $request->input('jenis_kelamin');
+        }
+        if ($request->filled('kewarganegaraan') && $request->input('kewarganegaraan') !== 'all') {
+            $parts[] = 'Warga: ' . $request->input('kewarganegaraan');
+        }
+        if ($request->input('deleted') === 'trashed') {
+            $parts[] = 'Status Data: Dihapus';
+        }
+
+        return $parts ? implode(' | ', $parts) : null;
+    }
 }

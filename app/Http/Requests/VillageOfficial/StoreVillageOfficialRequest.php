@@ -4,34 +4,53 @@ namespace App\Http\Requests\VillageOfficial;
 
 use App\Enums\EducationList;
 use App\Enums\GenderList;
+use App\Enums\ReligionList;
+use App\Enums\RoleAccessType;
 use App\Enums\VillageOfficialStatusList;
-use App\Models\VillagePosition;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class StoreVillageOfficialRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
+        $isActive = $this->input('status') === VillageOfficialStatusList::ACTIVE->value;
+
+        $positionRules = [
+            'required',
+            'integer',
+            Rule::exists('village_positions', 'id')
+                ->where('is_active', true)
+                ->whereNull('deleted_at'),
+        ];
+
+        // Jabatan hanya boleh dimiliki satu aparat aktif.
+        if ($isActive) {
+            $positionRules[] = Rule::unique(
+                'village_officials',
+                'village_position_id'
+            )
+                ->where('status', VillageOfficialStatusList::ACTIVE->value)
+                ->whereNull('deleted_at');
+        }
+
         return [
             // A. Identitas Aparat
             'nama' => [
                 'required',
                 'string',
                 'max:150',
+            ],
+
+            'pangkat_golongan' => [
+                'nullable',
+                'string',
+                'max:16',
             ],
 
             'niap' => [
@@ -65,25 +84,18 @@ class StoreVillageOfficialRequest extends FormRequest
                 'before_or_equal:today',
             ],
 
-            // B. Pendidikan, Kepangkatan, dan Jabatan
+            'agama' => [
+                'required',
+                Rule::enum(ReligionList::class),
+            ],
+
             'pendidikan' => [
                 'required',
                 Rule::enum(EducationList::class),
             ],
 
-            'pangkat_golongan' => [
-                'nullable',
-                'string',
-                'max:100',
-            ],
-
-            'village_position_id' => [
-                'required',
-                'integer',
-                Rule::exists('village_positions', 'id')
-                    ->where('is_active', true)
-                    ->whereNull('deleted_at'),
-            ],
+            // B. Jabatan
+            'village_position_id' => $positionRules,
 
             // C. Keputusan Pengangkatan
             'nomor_pengangkatan' => [
@@ -98,27 +110,13 @@ class StoreVillageOfficialRequest extends FormRequest
                 'before_or_equal:today',
             ],
 
-            // D. Keputusan Pemberhentian
-            'nomor_pemberhentian' => [
-                'nullable',
-                'string',
-                'max:100',
-                'required_with:tgl_pemberhentian',
-            ],
-
-            'tgl_pemberhentian' => [
-                'nullable',
-                'date',
-                'after_or_equal:tgl_pengangkatan',
-                'required_with:nomor_pemberhentian',
-            ],
-
-            // E. Status dan Kontak
+            // D. Status Aparat
             'status' => [
                 'required',
                 Rule::enum(VillageOfficialStatusList::class),
             ],
 
+            // E. Kontak
             'telpon' => [
                 'required',
                 'string',
@@ -131,17 +129,26 @@ class StoreVillageOfficialRequest extends FormRequest
                 'string',
             ],
 
-            // F. Keterangan
+            // F. Catatan
             'notes' => [
                 'nullable',
                 'string',
             ],
+
+            // G. Akun Login
+            'has_user' => [
+                'required',
+                'boolean',
+            ],
+
+            'role' => [
+                'required_if:has_user,1',
+                'nullable',
+                Rule::enum(RoleAccessType::class),
+            ],
         ];
     }
 
-    /**
-     * Get custom validation messages.
-     */
     public function messages(): array
     {
         return [
@@ -157,6 +164,7 @@ class StoreVillageOfficialRequest extends FormRequest
             'nip.unique' => 'NIP sudah digunakan.',
 
             'jenis_kelamin.required' => 'Jenis kelamin wajib dipilih.',
+            'jenis_kelamin.enum' => 'Jenis kelamin yang dipilih tidak valid.',
 
             'tempat_lahir.required' => 'Tempat lahir wajib diisi.',
             'tempat_lahir.max' => 'Tempat lahir maksimal 100 karakter.',
@@ -164,41 +172,46 @@ class StoreVillageOfficialRequest extends FormRequest
             'tgl_lahir.required' => 'Tanggal lahir wajib diisi.',
             'tgl_lahir.before_or_equal' => 'Tanggal lahir tidak boleh melebihi hari ini.',
 
-            // Pendidikan, Kepangkatan, dan Jabatan
+            'agama.required' => 'Agama wajib dipilih.',
+            'agama.enum' => 'Agama yang dipilih tidak valid.',
+
             'pendidikan.required' => 'Pendidikan terakhir wajib dipilih.',
+            'pendidikan.enum' => 'Pendidikan terakhir yang dipilih tidak valid.',
 
-            'pangkat_golongan.max' => 'Pangkat atau golongan maksimal 100 karakter.',
-
+            // Jabatan
             'village_position_id.required' => 'Jabatan wajib dipilih.',
             'village_position_id.exists' => 'Jabatan yang dipilih tidak tersedia atau sudah tidak aktif.',
+            'village_position_id.unique' => 'Jabatan tersebut sudah dimiliki oleh aparat desa yang masih aktif.',
 
-            // Keputusan Pengangkatan
+            'pangkat_golongan.max' => 'Pangkat/golongan maksimal 16 karakter.',
+
+            // Pengangkatan
             'nomor_pengangkatan.required' => 'Nomor keputusan pengangkatan wajib diisi.',
             'nomor_pengangkatan.max' => 'Nomor keputusan pengangkatan maksimal 100 karakter.',
 
             'tgl_pengangkatan.required' => 'Tanggal keputusan pengangkatan wajib diisi.',
             'tgl_pengangkatan.before_or_equal' => 'Tanggal pengangkatan tidak boleh melebihi hari ini.',
 
-            // Keputusan Pemberhentian
-            'nomor_pemberhentian.required_with' => 'Nomor keputusan pemberhentian wajib diisi jika tanggal pemberhentian diisi.',
-
-            'tgl_pemberhentian.required_with' => 'Tanggal keputusan pemberhentian wajib diisi jika nomor pemberhentian diisi.',
-            'tgl_pemberhentian.after_or_equal' => 'Tanggal pemberhentian tidak boleh sebelum tanggal pengangkatan.',
-
-            // Status dan Kontak
+            // Status
             'status.required' => 'Status aparat wajib dipilih.',
+            'status.enum' => 'Status aparat yang dipilih tidak valid.',
 
+            // Kontak
             'telpon.required' => 'Nomor telepon wajib diisi.',
             'telpon.max' => 'Nomor telepon maksimal 30 karakter.',
             'telpon.unique' => 'Nomor telepon sudah digunakan.',
 
             'alamat.required' => 'Alamat wajib diisi.',
+
+            // Akun Login
+            'has_user.required' => 'Status pembuatan akun login wajib ditentukan.',
+            'has_user.boolean' => 'Status pembuatan akun login tidak valid.',
+
+            'role.required_if' => 'Hak akses wajib dipilih jika aparat dijadikan akun login.',
+            'role.enum' => 'Hak akses yang dipilih tidak valid.',
         ];
     }
 
-    /**
-     * Get custom attribute names.
-     */
     public function attributes(): array
     {
         return [
@@ -208,17 +221,18 @@ class StoreVillageOfficialRequest extends FormRequest
             'jenis_kelamin' => 'jenis kelamin',
             'tempat_lahir' => 'tempat lahir',
             'tgl_lahir' => 'tanggal lahir',
+            'agama' => 'agama',
             'pendidikan' => 'pendidikan terakhir',
-            'pangkat_golongan' => 'pangkat/golongan',
             'village_position_id' => 'jabatan',
+            'pangkat_golongan' => 'pangkat/golongan',
             'nomor_pengangkatan' => 'nomor keputusan pengangkatan',
             'tgl_pengangkatan' => 'tanggal keputusan pengangkatan',
-            'nomor_pemberhentian' => 'nomor keputusan pemberhentian',
-            'tgl_pemberhentian' => 'tanggal keputusan pemberhentian',
             'status' => 'status aparat',
             'telpon' => 'nomor telepon',
             'alamat' => 'alamat',
             'notes' => 'catatan',
+            'has_user' => 'akun login',
+            'role' => 'hak akses',
         ];
     }
 }

@@ -23,10 +23,7 @@
     </x-slot:filter>
 
     <x-slot:actions>
-        <button type="button" id="btnCetakRecapt" class="btn-simdes-outline">
-            <i class="fa-solid fa-print" aria-hidden="true"></i>
-            <span>Cetak</span>
-        </button>
+        <x-action-print id="btnCetakRecapt"/>
         @include('pages.recapt.create')
     </x-slot:actions>
 </x-filters>

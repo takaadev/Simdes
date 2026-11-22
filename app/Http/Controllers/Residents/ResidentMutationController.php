@@ -48,4 +48,14 @@ class ResidentMutationController extends Controller
     {
         return HandlesRestore::restore(ResidentMutation::onlyTrashed()->findOrFail($id));
     }
+
+    public function print(Request $request)
+    {
+        $records = $this->service->getPrintData($request);
+
+        return view('pages.mutation.print', [
+            'records' => $records,
+            'filterSummary' => $this->service->getFilterSummary($request),
+        ]);
+    }
 }

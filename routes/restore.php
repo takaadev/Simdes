@@ -23,6 +23,7 @@ Route::prefix('admumum')->group(function () {
     Route::patch('village-decree/{id}/restore', [VillageDecreeController::class, 'restore'])->name('village-decrees.restore');
     Route::patch('village-asset/{id}/restore', [VillageAssetController::class, 'restore'])->name('village-assets.restore');
     Route::patch('village-official/{id}/restore', [VillageOfficialController::class, 'restore'])->name('village-officials.restore');
+    Route::post('village-official/dismissal', [VillageOfficialController::class, 'dismissal'])->name('village-officials.dismissal');
     Route::patch('village-treasury-land/{id}/restore', [VillageTreasuryLandController::class, 'restore'])->name('village-treasury-lands.restore');
     Route::patch('village-land/{id}/restore', [VillageLandController::class, 'restore'])->name('village-lands.restore');
     Route::patch('village-publication/{id}/restore', [VillagePublicationController::class, 'restore'])->name('village-publications.restore');
@@ -34,7 +35,6 @@ Route::prefix('admumum')->group(function () {
     Route::get('village-treasury-lands/print', [VillageTreasuryLandController::class, 'print'])->name('village-treasury-lands.print');
     Route::get('village-lands/print', [VillageLandController::class, 'print'])->name('village-lands.print');
     Route::get('village-publications/print', [VillagePublicationController::class, 'print'])->name('village-publications.print');
-    Route::get('expeditions/print', [ExpeditionEntryController::class, 'print'])->name('expeditions.print');
 });
 
 Route::prefix('admpenduduk')->group(function () {
@@ -47,12 +47,18 @@ Route::prefix('admpenduduk')->group(function () {
     Route::patch('familycards/{id}/restore', [FamilyCardController::class, 'restore'])->name('familycards.restore');
     Route::post('familycards/mutation', [FamilyCardController::class, 'mutation'])->name('familycards.mutation');
     Route::match(['put', 'patch'], 'recapts/{detail}/update-note', [RecaptResidentController::class, 'updateNote'])->name('recapts.update-note');
+    // Print
     Route::get('residents/print', [ResidentController::class, 'print'])->name('residents.print');
+    Route::get('mutations/print', [ResidentMutationController::class, 'print'])->name('mutations.print');
+    Route::get('recapts/print', [RecaptResidentController::class, 'print'])->name('recapts.print');
+    Route::get('temporary-residents/print', [TemporaryResidentController::class, 'print'])->name('temporary-residents.print');
+    Route::get('familycards/print', [FamilyCardController::class, 'print'])->name('familycards.print');
 });
 Route::prefix('arsip')->group(function () {
     Route::patch('agenda/{id}/restore', [AgendaEntryController::class, 'restore'])->name('agendas.restore');
     Route::post('agendas/generate-number', [AgendaEntryController::class, 'generateNumber'])->name('agendas.generate-number');
     Route::patch('ekspedisi/{id}/restore', [ExpeditionEntryController::class, 'restore'])->name('expeditions.restore');
+    // Print
     Route::get('expeditions/print', [ExpeditionEntryController::class, 'print'])->name('expeditions.print');
     Route::get('agendas/print', [AgendaEntryController::class, 'print'])->name('agendas.print');
 });

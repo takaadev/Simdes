@@ -48,4 +48,14 @@ class TemporaryResidentController extends Controller
     {
         return HandlesRestore::restore(TemporaryResident::onlyTrashed()->findOrFail($id));
     }
+
+    public function print(Request $request)
+    {
+        $records = $this->service->getPrintData($request);
+
+        return view('pages.temporary.print', [
+            'records' => $records,
+            'filterSummary' => $this->service->getFilterSummary($request),
+        ]);
+    }
 }

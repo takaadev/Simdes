@@ -1,6 +1,6 @@
 <x-appcontent>
-    @include('pages.settings.user.comp.widgets')
-    @include('pages.settings.user.comp.filter')
+    @include('pages.user.comp.widgets')
+    @include('pages.user.comp.filter')
 
     <x-table id="userTable">
         <tr>
@@ -75,12 +75,12 @@
                     responsive: false,
 
                     ajax: {
-                        url: @json(route('settings.users.index')),
+                        url: @json(route('users.index')),
                         type: 'GET',
                         data: function(d, settings) {
                             const rawUrl = typeof settings?.ajax === 'string' ?
                                 settings.ajax :
-                                (settings?.ajax?.url || @json(route('settings.users.index')));
+                                (settings?.ajax?.url || @json(route('users.index')));
                             const currentUrl = new URL(rawUrl, window.location.origin);
 
                             Object.entries(filterMap).forEach(([param, selector]) => {

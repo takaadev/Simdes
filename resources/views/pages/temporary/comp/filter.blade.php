@@ -32,10 +32,7 @@
     </x-slot:filter>
 
     <x-slot:actions>
-        <button type="button" id="btnCetakPendudukSementara" class="btn-simdes-outline">
-            <i class="fa-solid fa-print" aria-hidden="true"></i>
-            <span>Cetak</span>
-        </button>
+        <x-action-print id="btnCetakPendudukSementara"/>
         {{-- <x-action-import-excel href="{{ route('temporaryresidents.importexcel') }}" /> --}}
         @include('pages.temporary.create')
     </x-slot:actions>

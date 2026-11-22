@@ -1,4 +1,4 @@
-<x-filters :url="route('settings.users.index')" table="#userTable">
+<x-filters :url="route('users.index')" table="#userTable">
     <x-slot:filter>
         {{-- Filter Role Type --}}
         <x-filter-item
@@ -35,6 +35,6 @@
     </x-slot:filter>
 
     <x-slot:actions>
-        @include('pages.settings.user.create')
+        @include('pages.user.create')
     </x-slot:actions>
 </x-filters>

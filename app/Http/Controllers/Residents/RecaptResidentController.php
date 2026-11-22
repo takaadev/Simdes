@@ -52,4 +52,11 @@ class RecaptResidentController extends Controller
 
         return $this->service->getUpdateNote($recaptDetail, $validated);
     }
+
+    public function print(Request $request)
+    {
+        $printData = $this->service->getPrintData($request);
+
+        return view('pages.recapt.print', $printData);
+    }
 }

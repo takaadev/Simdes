@@ -28,7 +28,12 @@ class Menu extends Component
                 'icon' => 'table-columns',
                 'route' => 'dashboard',
             ],
-
+            [
+                'type' => 'link',
+                'label' => 'Master Data',
+                'icon' => 'database',
+                'route' => 'expeditions.index',
+            ],
             [
                 'type' => 'label',
                 'label' => 'MODUL ADMINISTRASI',
@@ -82,16 +87,20 @@ class Menu extends Component
             ],
 
             [
-                'type' => 'group',
-                'group' => 'pengaturan',
+                'type' => 'label',
+                'label' => 'Pengaturan Sistem',
+            ],
+            [
+                'type' => 'link',
                 'label' => 'Pengaturan',
                 'icon' => 'gear',
-                'tooltip' => 'Pengaturan Aplikasi',
-                'items' => [
-                    ['no' => '1', 'route' => '#', 'label' => 'Umum', 'ready' => true],
-                    ['no' => '2', 'route' => '#', 'label' => 'Profil Desa', 'ready' => true],
-                    ['no' => '3', 'route' => 'settings.users.index', 'label' => 'Pengguna', 'ready' => true],
-                ],
+                'route' => 'settings.index',
+            ],
+            [
+                'type' => 'link',
+                'label' => 'Pengguna',
+                'icon' => 'user',
+                'route' => 'users.index',
             ],
         ];
     }

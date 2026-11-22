@@ -391,6 +391,18 @@
 
                 // Wrapper awal
                 wrapTableWithScroll(table.table().node());
+                $('#btnCetakRecapt').on('click', function() {
+                    window.openSimdesPrintModal({
+                        title: 'Buku Rekapitulasi Jumlah Penduduk',
+                        url: @json(route('recapts.print')),
+                        filterMap: {
+                            tahun: '#filterYearSelect',
+                            bulan: '#filterMonthSelect',
+                        },
+                        tableSelector: '#residentRecaptTable',
+                        paper: '330mm 215mm', // F4 Landscape agar seluruh 33 kolom muat rapi
+                    });
+                });
             });
         </script>
     @endpush

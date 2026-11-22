@@ -47,4 +47,11 @@ class FamilyCardController extends Controller
     {
         return $this->service->getMutation($request);
     }
+
+    public function print(Request $request)
+    {
+        $printData = $this->service->getPrintData($request);
+
+        return view('pages.familycard.print', $printData);
+    }
 }

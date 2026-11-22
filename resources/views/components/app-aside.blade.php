@@ -1,10 +1,15 @@
+@php
+    $appName = $appSetting?->app_name ?? config('app.name');
+    $namaDesa = $appSetting?->nama_desa ?? 'Desa';
+    $logoUrl = !empty($appSetting?->logo) ? asset('storage/' . $appSetting->logo) : asset('logo.png');
+@endphp
 <aside class="app-sidebar" id="appSidebar" aria-label="Navigasi Utama SIMDES">
     <!-- Brand Identity -->
     <div class="sidebar-brand">
-        <img src="{{ asset('logo.png') }}" alt="Lambang Desa Tiaro" class="sidebar-brand-logo" width="42" height="42">
+        <img src="{{ $logoUrl }}" alt="Lambang {{ $namaDesa }}" class="sidebar-brand-logo" width="42" height="42">
         <div class="sidebar-brand-text">
-            <span class="sidebar-brand-title">SIMDES TIARO</span>
-            <span class="sidebar-brand-subtitle">Pemerintah Desa Tiaro</span>
+            <span class="sidebar-brand-title">{{$appName}}</span>
+            <span class="sidebar-brand-subtitle">{{$namaDesa}}</span>
         </div>
         <button type="button" id="sidebarCloseMobileBtn" class="sidebar-logout-btn d-lg-none ms-auto"
             aria-label="Tutup menu navigasi">

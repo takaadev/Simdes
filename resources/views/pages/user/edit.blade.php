@@ -1,4 +1,4 @@
-<x-action-edit :id="$data->id" href="{{ route('settings.users.update', $data->id) }}">
+<x-action-edit :id="$data->id" href="{{ route('users.update', $data->id) }}">
     <x-fieldset label="Data Perangkat Desa">
         <div class="row g-3">
             <div class="col-12">

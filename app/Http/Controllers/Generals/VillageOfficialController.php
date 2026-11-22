@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Generals;
 
 use App\Http\Controllers\Concerns\HandlesRestore;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\VillageOfficial\DismissalVillageOfficialRequest;
 use App\Http\Requests\VillageOfficial\StoreVillageOfficialRequest;
 use App\Http\Requests\VillageOfficial\UpdateVillageOfficialRequest;
 use App\Models\VillageOfficial;
@@ -50,5 +51,9 @@ class VillageOfficialController extends Controller
             'records' => $records,
             'filterSummary' => $this->service->getFilterSummary($request),
         ]);
+    }
+
+    public function dismissal(DismissalVillageOfficialRequest $request):JsonResponse{
+        return $this->service->getDismissal($request->validated());
     }
 }

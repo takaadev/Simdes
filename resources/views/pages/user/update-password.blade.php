@@ -1,4 +1,4 @@
-<x-action-edit :id="$data->id" href="{{ route('settings.users.update-password', $data->id) }}"
+<x-action-edit :id="$data->id" href="{{ route('users.update-password', $data->id) }}"
     icon="key" modalTitle="Ganti Sandi" labelSubmit="Ganti Sandi">
     <x-fieldset label="Ubah Kata Sandi">
         <div class="row g-3">

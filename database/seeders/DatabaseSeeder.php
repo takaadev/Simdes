@@ -13,7 +13,6 @@ use App\Models\VillageAsset;
 use App\Models\VillageDecree;
 use App\Models\VillageLand;
 use App\Models\VillageOfficial;
-use App\Models\VillageProfile;
 use App\Models\VillageRegulation;
 use App\Models\VillageTreasuryLand;
 use Illuminate\Database\Seeder;
@@ -29,9 +28,8 @@ class DatabaseSeeder extends Seeder
             'role' => 'admin'
         ]);
 
-        VillageProfile::factory()->create();
 
-        AppSetting::factory(10)->create([
+        AppSetting::factory(1)->create([
             'updated_by' => $admin->id,
         ]);
 
@@ -40,7 +38,7 @@ class DatabaseSeeder extends Seeder
         ResidentMutation::factory(50)->create();
         TemporaryResident::factory(20)->create();
 
-        VillageOfficial::factory(15)->create();
+        VillageOfficial::factory(5)->create();
         VillageRegulation::factory(10)->create();
         VillageDecree::factory(10)->create();
         // VillagePublication::factory(10)->create();

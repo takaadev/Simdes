@@ -1,4 +1,4 @@
-<x-action-create href="{{ route('settings.users.store') }}">
+<x-action-create href="{{ route('users.store') }}">
     <x-fieldset label="Data Perangkat Desa">
         <div class="row g-3">
             <div class="col-12">

@@ -4,7 +4,7 @@ use App\Http\Controllers\Archieves\AgendaEntryController;
 use App\Http\Controllers\Archieves\ExpeditionEntryController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
-use App\Http\Controllers\HomeController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Generals\VillageAssetController;
 use App\Http\Controllers\Generals\VillageDecreeController;
 use App\Http\Controllers\Generals\VillageLandController;
@@ -30,8 +30,8 @@ Route::prefix('login')->middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
-    Route::get('/dashboard', HomeController::class)->name('dashboard');
 
+    Route::get('/dashboard', DashboardController::class)->name('dashboard');
     Route::prefix('admumum')->group(function () {
         Route::resource('peraturan-desa', VillageRegulationController::class)
             ->parameters(['peraturan-desa' => 'villageRegulation'])
@@ -113,6 +113,8 @@ Route::middleware('auth')->group(function () {
             ->except(['create', 'edit', 'show'])
             ->withTrashed(['update', 'destroy']);
     });
+
+
 });
 
 require __DIR__ . '/settings.php';

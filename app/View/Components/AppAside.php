@@ -2,23 +2,20 @@
 
 namespace App\View\Components;
 
+use App\Models\AppSetting;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
 class AppAside extends Component
 {
-    /**
-     * Create a new component instance.
-     */
-    public function __construct()
+    public ?AppSetting $appSetting;
+
+    public function __construct(?AppSetting $appSetting = null)
     {
-        //
+        $this->appSetting = $appSetting ?? AppSetting::first();
     }
 
-    /**
-     * Get the view / contents that represent the component.
-     */
     public function render(): View|Closure|string
     {
         return view('components.app-aside');

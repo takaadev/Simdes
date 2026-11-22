@@ -26,5 +26,6 @@ class AppServiceProvider extends ServiceProvider
                 'last_login_at' => now(),
             ])->save();
         });
+        
     }
 }

@@ -1,12 +1,19 @@
+@php
+    $appName = $appSetting?->app_name ?? config('app.name', 'SIMDES');
+    $namaDesa = $appSetting?->nama_desa ?? 'Desa';
+    $logoUrl = !empty($appSetting?->logo) ? asset('storage/' . $appSetting->logo) : asset('logo.png');
+@endphp
+
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name', 'SIMDES Desa Tiaro') }}</title>
-    <meta name="description" content="Dashboard Utama Sistem Informasi Manajemen Desa (SIMDES) Pemerintah Desa Tiaro.">
-    <link rel="icon" type="image/png" href="{{ asset('logo.png') }}">
+    <title>{{ $appName }} &mdash; {{ $namaDesa }}</title>
+    <meta name="description"
+        content="{{ $appSetting?->deskripsi ?? 'Dashboard Utama Sistem Informasi Manajemen Desa (' . $appName . ') Pemerintah ' . $namaDesa . '.' }}">
+    <link rel="icon" type="image/png" href="{{ $logoUrl }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
@@ -24,10 +31,10 @@
     {{-- <a href="#mainContent" class="skip-link">Lewati ke konten utama</a> --}}
 
     <div class="app-shell">
-        <x-app-aside />
+        <x-app-aside :appSetting="$appSetting" />
         <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
         <div class="app-main" id="appMainWrapper">
-            <x-app-header />
+            <x-app-header :appSetting="$appSetting" />
             {{ $slot }}
             {{-- <x-app-footer /> --}}
         </div>

@@ -19,7 +19,7 @@
             updateWidgetCounter('statKK', summary.total_kk ?? 0);
         }
 
-        $('#familCardTable').on('xhr.dt', function(e, settings, json) {
+        $('#familyCardTable').on('xhr.dt', function(e, settings, json) {
             updateSummary(json?.summary);
         });
     </script>

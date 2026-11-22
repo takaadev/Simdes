@@ -508,7 +508,7 @@ class ResidentMutationService
         }
     }
 
-    public function getImportExcel(ImportExcelResidentRequest $request): \Illuminate\Http\JsonResponse
+    public function getImportExcel(ImportExcelResidentRequest $request): JsonResponse
     {
         try {
             $import = new ResidentImport();
@@ -561,5 +561,92 @@ class ResidentMutationService
                 'message' => 'Import gagal. Tidak ada data yang berhasil disimpan.',
             ], 500);
         }
+    }
+
+    public function getPrintData(Request $request)
+    {
+        $isTrashed = $request->input('deleted') === 'trashed';
+        $search = trim((string) $request->input('search', ''));
+
+        $query = ResidentMutation::query()
+            ->leftJoin('residents', 'residents.id', '=', 'resident_mutations.resident_id')
+            ->select([
+                'resident_mutations.id',
+                'resident_mutations.resident_id',
+                'resident_mutations.nomor_identitas',
+                'resident_mutations.tipe_mutasi',
+                'resident_mutations.kategori_mutasi',
+                'resident_mutations.tgl_mutasi',
+                'resident_mutations.tujuan_mutasi',
+                'resident_mutations.catatan',
+            ])
+            ->with([
+                'resident' => fn($q) => $q->withTrashed()->select([
+                    'id',
+                    'nama_lengkap',
+                    'tempat_lahir',
+                    'tgl_lahir',
+                    'jenis_kelamin',
+                    'kewarganegaraan',
+                ]),
+            ])
+            ->when($isTrashed, fn($q) => $q->onlyTrashed())
+            ->when(
+                $request->filled('jenis_kelamin') && $request->input('jenis_kelamin') !== 'all',
+                fn($q) => $q->where('residents.jenis_kelamin', $request->input('jenis_kelamin'))
+            )
+            ->when(
+                $request->filled('kewarganegaraan') && $request->input('kewarganegaraan') !== 'all',
+                fn($q) => $q->where('residents.kewarganegaraan', $request->input('kewarganegaraan'))
+            )
+            ->when(
+                $request->filled('tipe_mutasi') && $request->input('tipe_mutasi') !== 'all',
+                fn($q) => $q->where('resident_mutations.tipe_mutasi', $request->input('tipe_mutasi'))
+            )
+            ->when(
+                $request->filled('kategori_mutasi') && $request->input('kategori_mutasi') !== 'all',
+                fn($q) => $q->where('resident_mutations.kategori_mutasi', $request->input('kategori_mutasi'))
+            )
+            ->when($search !== '', function ($q) use ($search) {
+                $q->where(function ($sub) use ($search) {
+                    $sub->where('residents.nama_lengkap', 'like', "%{$search}%")
+                        ->orWhere('residents.nik', 'like', "%{$search}%")
+                        ->orWhere('residents.tempat_lahir', 'like', "%{$search}%")
+                        ->orWhere('resident_mutations.nomor_identitas', 'like', "%{$search}%")
+                        ->orWhere('resident_mutations.tujuan_mutasi', 'like', "%{$search}%")
+                        ->orWhere('resident_mutations.catatan', 'like', "%{$search}%");
+                });
+            });
+
+        if (in_array($request->input('sort_name'), ['asc', 'desc'], true)) {
+            $query->orderBy('residents.nama_lengkap', $request->input('sort_name'));
+        } else {
+            $query->orderByDesc('resident_mutations.tgl_mutasi');
+        }
+
+        return $query->get();
+    }
+
+    public function getFilterSummary(Request $request): ?string
+    {
+        $parts = [];
+
+        if ($request->filled('jenis_kelamin') && $request->input('jenis_kelamin') !== 'all') {
+            $parts[] = 'JK: ' . $request->input('jenis_kelamin');
+        }
+        if ($request->filled('kewarganegaraan') && $request->input('kewarganegaraan') !== 'all') {
+            $parts[] = 'Warga: ' . $request->input('kewarganegaraan');
+        }
+        if ($request->filled('tipe_mutasi') && $request->input('tipe_mutasi') !== 'all') {
+            $parts[] = 'Tipe: ' . $request->input('tipe_mutasi');
+        }
+        if ($request->filled('kategori_mutasi') && $request->input('kategori_mutasi') !== 'all') {
+            $parts[] = 'Kategori: ' . $request->input('kategori_mutasi');
+        }
+        if ($request->input('deleted') === 'trashed') {
+            $parts[] = 'Status Data: Dihapus';
+        }
+
+        return $parts ? implode(' | ', $parts) : null;
     }
 }

@@ -17,6 +17,9 @@ class FamilyCardService
     public function getData(Request $request)
     {
         $isTrashed = $request->input('deleted') === 'trashed';
+        $sortDate = in_array($request->input('sort_date'), ['asc', 'desc'], true)
+            ? $request->input('sort_date')
+            : 'desc';
 
         // =====================================================
         // QUERY DASAR
@@ -27,19 +30,12 @@ class FamilyCardService
             ->when($isTrashed, fn($q) => $q->onlyTrashed());
 
         // =====================================================
-        // FILTER DATA PENDUDUK
+        // FILTER TAHUN DIMASUKKAN
         // =====================================================
         $applyFilters = function ($query) use ($request) {
             $query->when(
-                $request->filled('jenis_kelamin')
-                    && $request->input('jenis_kelamin') !== 'all',
-                fn($q) => $q->where('residents.jenis_kelamin', $request->input('jenis_kelamin'))
-            );
-
-            $query->when(
-                $request->filled('kewarganegaraan')
-                    && $request->input('kewarganegaraan') !== 'all',
-                fn($q) => $q->where('residents.kewarganegaraan', $request->input('kewarganegaraan'))
+                $request->filled('year') && $request->input('year') !== 'all',
+                fn($q) => $q->whereYear('family_cards.created_at', $request->input('year'))
             );
 
             return $query;
@@ -71,7 +67,7 @@ class FamilyCardService
         };
 
         // =====================================================
-        // HELPER HITUNG JUMLAH KELOMPOK KK
+        // HITUNG JUMLAH KELOMPOK KK
         // =====================================================
         $countGroups = fn($query) => (int) (clone $query)
             ->reorder()
@@ -92,8 +88,8 @@ class FamilyCardService
             ->reorder()
             ->selectRaw("
             COUNT(residents.id) AS total_penduduk,
-            SUM(CASE WHEN residents.jenis_kelamin = 'L' THEN 1 ELSE 0 END) AS laki_laki,
-            SUM(CASE WHEN residents.jenis_kelamin = 'P' THEN 1 ELSE 0 END) AS perempuan,
+            COALESCE(SUM(CASE WHEN residents.jenis_kelamin = 'L' THEN 1 ELSE 0 END), 0) AS laki_laki,
+            COALESCE(SUM(CASE WHEN residents.jenis_kelamin = 'P' THEN 1 ELSE 0 END), 0) AS perempuan,
             COUNT(DISTINCT family_cards.id) AS total_kk
         ")
             ->first();
@@ -109,10 +105,11 @@ class FamilyCardService
             ->select([
                 'family_cards.id',
                 'family_cards.nomor_kk',
+                'family_cards.created_at',
             ])
-            ->groupBy('family_cards.id', 'family_cards.nomor_kk')
-            ->orderBy('family_cards.nomor_kk')
-            ->orderBy('family_cards.id');
+            ->groupBy('family_cards.id', 'family_cards.nomor_kk', 'family_cards.created_at')
+            ->orderBy('family_cards.created_at', $sortDate)
+            ->orderBy('family_cards.id', $sortDate);
 
         if ($length !== -1) {
             $groupQuery->offset($start)->limit(max(1, $length));
@@ -120,7 +117,6 @@ class FamilyCardService
 
         $familyCardIds = $groupQuery->pluck('family_cards.id');
 
-        // Jika tidak ada KK yang cocok, langsung kembalikan data kosong.
         if ($familyCardIds->isEmpty()) {
             return response()->json([
                 'draw' => (int) $request->input('draw'),
@@ -136,7 +132,6 @@ class FamilyCardService
             ]);
         }
 
-        // Urutan status dalam keluarga (dipakai ulang di query anggota & relasi KK).
         $statusOrderSql = "
         CASE %s
             WHEN 'Kepala Keluarga' THEN 1
@@ -155,6 +150,8 @@ class FamilyCardService
         // =====================================================
         // AMBIL ANGGOTA DARI KK TERPILIH
         // =====================================================
+        $orderedIds = $familyCardIds->map(fn($id) => (int) $id)->implode(',');
+
         $residents = $applySearch($applyFilters(clone $baseQuery))
             ->whereIn('residents.family_card_id', $familyCardIds)
             ->select([
@@ -183,10 +180,9 @@ class FamilyCardService
                 'residents.tgl_mulai_tinggal',
                 'residents.deleted_at',
             ])
-            ->orderBy('family_cards.nomor_kk')
-            ->orderBy('family_cards.id')
+            ->orderByRaw("FIELD(residents.family_card_id, {$orderedIds})")
             ->orderByRaw(sprintf($statusOrderSql, 'residents.status_dalam_keluarga'))
-            ->orderBy('residents.nama_lengkap')
+            ->orderBy('residents.nama_lengkap', 'asc')
             ->get();
 
         // =====================================================
@@ -203,7 +199,6 @@ class FamilyCardService
             ->get()
             ->keyBy('id');
 
-        // Helper aman untuk membaca nilai Enum atau string.
         $enumLabel = function ($field): string {
             if ($field instanceof \BackedEnum) {
                 return method_exists($field, 'label') ? $field->label() : (string) $field->value;
@@ -232,7 +227,6 @@ class FamilyCardService
                     $rw ? "RW {$rw}" : null,
                 ])->filter()->implode(', ');
 
-                // Aksi hanya ditampilkan satu kali untuk setiap KK.
                 $isFirstMember = $lastFamilyCardId !== $row->family_card_id;
                 $lastFamilyCardId = $row->family_card_id;
 
@@ -269,9 +263,6 @@ class FamilyCardService
             }
         );
 
-        // =====================================================
-        // RESPONSE DATATABLE
-        // =====================================================
         return response()->json([
             'draw' => (int) $request->input('draw'),
             'recordsTotal' => $recordsTotal,
@@ -534,5 +525,98 @@ class FamilyCardService
                 'message' => 'Terjadi kesalahan saat memproses mutasi Kartu Keluarga.',
             ], 500);
         }
+    }
+
+    public function getPrintData(Request $request): array
+    {
+        $isTrashed = $request->input('deleted') === 'trashed';
+        $sortDate = in_array($request->input('sort_date'), ['asc', 'desc'], true)
+            ? $request->input('sort_date')
+            : 'desc';
+        $search = trim((string) $request->input('search', ''));
+
+        $statusOrderSql = "
+        CASE residents.status_dalam_keluarga
+            WHEN 'Kepala Keluarga' THEN 1
+            WHEN 'Istri' THEN 2
+            WHEN 'Anak' THEN 3
+            WHEN 'Menantu' THEN 4
+            WHEN 'Cucu' THEN 5
+            WHEN 'Orang Tua' THEN 6
+            WHEN 'Mertua' THEN 7
+            WHEN 'Famili Lain' THEN 8
+            WHEN 'Pembantu' THEN 9
+            ELSE 10
+        END ASC
+    ";
+
+        $residents = Resident::query()
+            ->join('family_cards', 'family_cards.id', '=', 'residents.family_card_id')
+            ->whereNull('family_cards.deleted_at')
+            ->when($isTrashed, fn($q) => $q->onlyTrashed())
+            ->when(
+                $request->filled('year') && $request->input('year') !== 'all',
+                fn($q) => $q->whereYear('family_cards.created_at', $request->input('year'))
+            )
+            ->when($search !== '', function ($q) use ($search) {
+                $q->where(function ($sub) use ($search) {
+                    $sub->where('family_cards.nomor_kk', 'like', "%{$search}%")
+                        ->orWhere('residents.nama_lengkap', 'like', "%{$search}%")
+                        ->orWhere('residents.nik', 'like', "%{$search}%")
+                        ->orWhere('residents.alamat', 'like', "%{$search}%")
+                        ->orWhere('residents.ayah', 'like', "%{$search}%")
+                        ->orWhere('residents.ibu', 'like', "%{$search}%");
+                });
+            })
+            ->select([
+                'residents.id',
+                'residents.family_card_id',
+                'family_cards.nomor_kk',
+                'family_cards.created_at as kk_created_at',
+                'residents.nama_lengkap',
+                'residents.nik',
+                'residents.jenis_kelamin',
+                'residents.tempat_lahir',
+                'residents.tgl_lahir',
+                'residents.gol_darah',
+                'residents.agama',
+                'residents.pendidikan',
+                'residents.pekerjaan',
+                'residents.alamat',
+                'residents.rt',
+                'residents.rw',
+                'residents.status_perkawinan',
+                'residents.tempat_dikeluarkan',
+                'residents.tgl_dikeluarkan',
+                'residents.status_dalam_keluarga',
+                'residents.kewarganegaraan',
+                'residents.ayah',
+                'residents.ibu',
+                'residents.tgl_mulai_tinggal',
+                'residents.catatan',
+            ])
+            ->orderBy('family_cards.created_at', $sortDate)
+            ->orderBy('family_cards.id', $sortDate)
+            ->orderByRaw($statusOrderSql)
+            ->orderBy('residents.nama_lengkap', 'asc')
+            ->get();
+
+        // Kelompokkan per family_card_id agar rowspan di view cetak rapi.
+        $groups = $residents->groupBy('family_card_id');
+
+        $parts = [];
+        if ($request->filled('year') && $request->input('year') !== 'all') {
+            $parts[] = 'Tahun: ' . $request->input('year');
+        }
+        if ($isTrashed) {
+            $parts[] = 'Status Data: Dihapus';
+        }
+        $parts[] = 'Total KK: ' . $groups->count();
+
+        return [
+            'groups' => $groups,
+            'totalResidents' => $residents->count(),
+            'filterSummary' => implode(' | ', $parts),
+        ];
     }
 }
