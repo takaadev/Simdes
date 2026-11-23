@@ -22,13 +22,6 @@
         {{-- Kategori Mutasi --}}
         <x-filter-item label="Kategori Mutasi" id="filterMutationCategorySelect" name="kategori_mutasi"
             :options="\App\Enums\MutationCategoryList::options()" placeholder="Semua Kategori" />
-
-        {{-- Status Data --}}
-        <x-filter-item label="Status Data" id="filterDeletedSelect" name="deleted" :options="[
-            'active' => 'Aktif',
-            'trashed' => 'Dihapus',
-        ]"
-            placeholder="Status Data" />
     </x-slot:filter>
 
     <x-slot:actions>

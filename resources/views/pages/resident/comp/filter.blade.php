@@ -22,13 +22,13 @@
         />
 
         {{-- Kewarganegaraan --}}
-        <x-filter-item
+        {{-- <x-filter-item
             label="Kewarganegaraan"
             id="filterCitizenshipSelect"
             name="kewarganegaraan"
             placeholder="Semua Kewarganegaraan"
             :options="\App\Enums\CitizenshipList::options()"
-        />
+        /> --}}
 
         {{-- Status Perkawinan --}}
         <x-filter-item
@@ -49,22 +49,22 @@
         />
 
         {{-- Agama --}}
-        <x-filter-item
+        {{-- <x-filter-item
             label="Agama"
             id="filterReligionSelect"
             name="agama"
             placeholder="Semua Agama"
             :options="\App\Enums\ReligionList::options()"
-        />
+        /> --}}
 
         {{-- Pekerjaan --}}
-        <x-filter-item
+        {{-- <x-filter-item
             label="Pekerjaan"
             id="filterOccupationSelect"
             name="pekerjaan"
             placeholder="Semua Pekerjaan"
             :options="\App\Enums\OccupationList::options()"
-        />
+        /> --}}
 
         {{-- RT --}}
         <x-filter-item
@@ -76,25 +76,14 @@
         />
 
         {{-- Tahun Kelahiran --}}
-        <x-filter-item
+        {{-- <x-filter-item
             label="Tahun Kelahiran"
             id="filterYearSelect"
             name="year"
             placeholder="Semua Tahun"
             :options="\App\Enums\ListYear::options()"
-        />
+        /> --}}
 
-        {{-- Status Data --}}
-        <x-filter-item
-            label="Status Data"
-            id="filterDeletedSelect"
-            name="deleted"
-            placeholder="Status Data"
-            :options="[
-                'active' => 'Aktif',
-                'trashed' => 'Dihapus',
-            ]"
-        />
     </x-slot:filter>
 
     <x-slot:actions>

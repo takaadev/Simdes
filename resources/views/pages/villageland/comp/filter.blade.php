@@ -35,12 +35,6 @@
                 'tanahKosong' => 'Tanah Kosong',
                 'lainLain' => 'Lain-lain',
             ]" />
-
-        {{-- Filter Status Data --}}
-        <x-filter-item label="Status Data" id="filterDeletedSelect" name="deleted" :options="[
-            'active' => 'Aktif',
-            'trashed' => 'Dihapus',
-        ]" />
     </x-slot:filter>
     <x-slot:actions>
         <x-action-print id="btnCetakTanah"/>

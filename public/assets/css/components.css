@@ -7,21 +7,26 @@
    Buttons
    -------------------------------------------------------------------------- */
 .btn-simdes-primary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.50rem 0.50rem;
-  min-block-size: 42px;
-  font-weight: 500;
-  font-size: 0.875rem;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--simdes-primary);
-  background-color: var(--simdes-primary);
-  color: #FFFFFF;
-  box-shadow: 0 2px 6px rgba(23, 76, 58, 0.18);
-  cursor: pointer;
-  transition: background-color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.75rem;
+    min-block-size: calc(1.5em + 0.75rem + 2px);
+    font-weight: 500;
+    font-size: 0.80rem;
+    line-height: 1.5;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--simdes-primary);
+    background-color: var(--simdes-primary);
+    color: #FFFFFF;
+    box-shadow: 0 2px 6px rgba(23, 76, 58, 0.18);
+    cursor: pointer;
+    transition:
+        background-color var(--transition-fast),
+        border-color var(--transition-fast),
+        transform var(--transition-fast),
+        box-shadow var(--transition-fast);
 }
 
 .btn-simdes-primary:hover {
@@ -42,20 +47,24 @@
 }
 
 .btn-simdes-outline {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.58rem 1rem;
-  min-block-size: 42px;
-  font-weight: 600;
-  font-size: 0.875rem;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--simdes-border);
-  background-color: var(--simdes-surface);
-  color: var(--simdes-text);
-  cursor: pointer;
-  transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.75rem;
+    min-block-size: calc(1.5em + 0.75rem + 2px);
+    font-weight: 600;
+    font-size: 0.80rem;
+    line-height: 1.5;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--simdes-border);
+    background-color: var(--simdes-surface);
+    color: var(--simdes-text);
+    cursor: pointer;
+    transition:
+        background-color var(--transition-fast),
+        border-color var(--transition-fast),
+        color var(--transition-fast);
 }
 
 .btn-simdes-outline:hover:not(:disabled) {
@@ -70,20 +79,24 @@
 }
 
 .btn-simdes-excel {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.58rem 1rem;
-  min-block-size: 42px;
-  font-weight: 600;
-  font-size: 0.875rem;
-  border-radius: var(--radius-sm);
-  border: 1px solid rgba(30, 111, 80, 0.34);
-  background-color: var(--simdes-success-bg);
-  color: var(--simdes-primary);
-  cursor: pointer;
-  transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-block-size: calc(1.5em + 0.75rem + 2px);
+    padding: 0.375rem 0.75rem;
+    font-weight: 600;
+    font-size: 0.80rem;
+    line-height: 1.5;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(30, 111, 80, 0.34);
+    background-color: var(--simdes-success-bg);
+    color: var(--simdes-primary);
+    cursor: pointer;
+    transition:
+        background-color var(--transition-fast),
+        border-color var(--transition-fast),
+        color var(--transition-fast),
+        box-shadow var(--transition-fast);
 }
 
 .btn-simdes-excel i {
@@ -103,20 +116,23 @@
 }
 
 .btn-simdes-accent {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.58rem 1.05rem;
-  min-block-size: 42px;
-  font-weight: 700;
-  font-size: 0.875rem;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--simdes-accent);
-  background-color: var(--simdes-accent);
-  color: var(--simdes-deep-green);
-  cursor: pointer;
-  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.75rem;
+    min-block-size: calc(1.5em + 0.75rem + 2px);
+    font-weight: 700;
+    font-size: 0.80rem;
+    line-height: 1.5;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--simdes-accent);
+    background-color: var(--simdes-accent);
+    color: var(--simdes-deep-green);
+    cursor: pointer;
+    transition:
+        background-color var(--transition-fast),
+        border-color var(--transition-fast);
 }
 
 .btn-simdes-accent:hover {
@@ -1400,7 +1416,7 @@ table.dataTable thead tr:nth-child(2) > th[rowspan] {
   border: 1px solid var(--simdes-border);
   background-color: var(--simdes-surface);
   color: var(--simdes-text);
-  font-size: 0.82rem;
+  font-size: 5rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   display: inline-flex;

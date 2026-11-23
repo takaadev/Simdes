@@ -21,17 +21,6 @@
                 'never' => 'Belum Pernah Login',
             ]"
         />
-
-        {{-- Filter Status Data (SoftDeletes) --}}
-        <x-filter-item
-            label="Status Data"
-            id="filterDeletedSelect"
-            name="deleted"
-            :options="[
-                'active' => 'Aktif',
-                'trashed' => 'Dihapus',
-            ]"
-        />
     </x-slot:filter>
 
     <x-slot:actions>

@@ -2,23 +2,23 @@
 
 namespace App\Models;
 
-use App\Enums\VillagePositionCategoryList;
+use App\Contracts\Restorable;
+use App\Models\Concerns\RestoresSoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class VillagePosition extends Model
+class VillagePosition extends Model implements Restorable
 {
     /** @use HasFactory<\Database\Factories\VillagePositionFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, RestoresSoftDeletes;
 
     protected $guarded = ['id'];
 
     protected function casts(): array
     {
         return [
-            'category' => VillagePositionCategoryList::class,
             'is_active' => 'boolean',
         ];
     }

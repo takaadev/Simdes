@@ -20,6 +20,7 @@ class DashboardController extends Controller
         return response()->json([
             'success'    => true,
             'dataWidget' => $this->service->getDataWidget(),
+            'dataPieCart'=>$this->service->getDataPieCart(),
         ]);
     }
 }

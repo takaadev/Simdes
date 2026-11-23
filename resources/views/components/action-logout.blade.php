@@ -3,25 +3,30 @@
     <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title" id="logoutConfirmModalLabel">Konfirmasi Keluar</h3>
+                <h3 class="modal-title" id="logoutConfirmModalLabel">Konfirmasi</h3>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
             </div>
             <div class="modal-body" style="font-size:0.875rem; color:var(--simdes-text-muted);">
-                Apakah Anda yakin ingin mengakhiri sesi kerja pada <strong>SIMDES Desa Tiaro</strong> dan
-                kembali ke halaman masuk?
+                Yakin ingin mengakhiri sesi?
             </div>
-            <div class="modal-footer border-0 pt-0">
-                <button type="button" id="cancelLogoutBtn" class="btn-simdes-outline" data-bs-dismiss="modal">
-                    Batal
+            <div class="modal-footer border-0 pt-2 pb-3 px-3 d-flex gap-2 bg-white">
+
+                <button type="button" id="cancelLogoutBtn" class="btn-simdes-outline flex-fill"
+                    data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark me-1" aria-hidden="true"></i>
+                    <span>Batal</span>
                 </button>
-                <form id="simdesLogoutForm" action="{{ route('logout') }}" method="POST" class="m-0">
+
+                <form id="simdesLogoutForm" action="{{ route('logout') }}" method="POST" class="flex-fill m-0">
                     @csrf
-                    <button type="submit" id="confirmLogoutBtn" class="btn-simdes-primary"
-                        style="background-color:var(--simdes-danger); border-color:var(--simdes-danger);">
-                        <i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i>
+
+                    <button type="submit" id="confirmLogoutBtn" class="btn-simdes-primary w-100"
+                        style="background-color: var(--simdes-danger); border-color: var(--simdes-danger);">
+                        <i class="fa-solid fa-arrow-right-from-bracket me-1" aria-hidden="true"></i>
                         <span>Ya, Keluar</span>
                     </button>
                 </form>
+
             </div>
         </div>
     </div>
@@ -76,7 +81,7 @@
                             '<i class="fa-solid fa-circle-check" aria-hidden="true"></i><span>Mengalihkan...</span>'
                         );
                         window.location.href = response.redirect ||
-                        @json(route('login'));
+                            @json(route('login'));
                     },
                     error: function(xhr) {
                         if (xhr.status === 419 || xhr.status === 401) {

@@ -13,7 +13,7 @@
         <x-filter-item label="Kewarganegaraan" id="filterCitizenshipSelect" name="kewarganegaraan" :options="\App\Enums\CitizenshipList::options()" />
 
         {{-- Pekerjaan --}}
-        <x-filter-item label="Pekerjaan" id="filterOccupationSelect" name="pekerjaan" :options="\App\Enums\OccupationList::options()" />
+        {{-- <x-filter-item label="Pekerjaan" id="filterOccupationSelect" name="pekerjaan" :options="\App\Enums\OccupationList::options()" /> --}}
 
         {{-- Status Tinggal --}}
         <x-filter-item label="Status Tinggal" id="filterStayStatusSelect" name="status_tinggal" :options="[
@@ -23,12 +23,6 @@
 
         {{-- Tahun Kedatangan --}}
         <x-filter-item label="Tahun Datang" id="filterYearSelect" name="year" :options="\App\Enums\ListYear::options()" />
-
-        {{-- Status Data --}}
-        <x-filter-item label="Status Data" id="filterDeletedSelect" name="deleted" :options="[
-            'active' => 'Aktif',
-            'trashed' => 'Dihapus',
-        ]" />
     </x-slot:filter>
 
     <x-slot:actions>

@@ -1,5 +1,5 @@
 <x-action-edit id="sistem" variant="button" label="Sistem" modalTitle="Perbarui Pengaturan Sistem"
-    color="btn-outline-primary" href="#">
+    color="btn-simdes-accent" href="#">
 
     <x-fieldset label="Identitas Aplikasi">
         <x-input-text name="app_name" value="{{ config('app.name') }}" label="Nama Aplikasi" disabled

@@ -12,6 +12,7 @@ use App\Http\Controllers\Generals\VillageOfficialController;
 use App\Http\Controllers\Generals\VillagePublicationController;
 use App\Http\Controllers\Generals\VillageRegulationController;
 use App\Http\Controllers\Generals\VillageTreasuryLandController;
+use App\Http\Controllers\Master\VillagePositionController;
 use App\Http\Controllers\Residents\FamilyCardController;
 use App\Http\Controllers\Residents\RecaptResidentController;
 use App\Http\Controllers\Residents\ResidentController;
@@ -32,6 +33,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
 
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
+    Route::prefix('datamaster')->group(function () {
+        Route::resource('jabatan', VillagePositionController::class)
+            ->parameters(['jabatan' => 'villagePosition'])
+            ->names('village-positions')
+            ->except(['create', 'edit', 'show'])->withTrashed(['update', 'destroy']);
+    });
+
     Route::prefix('admumum')->group(function () {
         Route::resource('peraturan-desa', VillageRegulationController::class)
             ->parameters(['peraturan-desa' => 'villageRegulation'])
@@ -113,8 +121,6 @@ Route::middleware('auth')->group(function () {
             ->except(['create', 'edit', 'show'])
             ->withTrashed(['update', 'destroy']);
     });
-
-
 });
 
 require __DIR__ . '/settings.php';

@@ -36,7 +36,6 @@ class VillageOfficialFactory extends Factory
                 ['kode' => $position['kode']],
                 [
                     'nama' => $position['nama'],
-                    'kategori' => $position['kategori'],
                     'is_active' => true,
                     'deleted_at' => null,
                 ]

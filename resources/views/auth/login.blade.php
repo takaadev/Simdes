@@ -92,8 +92,7 @@
             </div>
 
             {{-- Submit Button --}}
-            <button type="submit" id="btnLoginSubmit" class="btn-simdes-primary w-100"
-                style="min-block-size:48px; font-size:0.95rem;">
+            <button type="submit" id="btnLoginSubmit" class="btn-simdes-primary w-100">
                 <i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i>
                 <span>Masuk ke SIMDES</span>
             </button>

@@ -16,7 +16,7 @@ class AppSettingFactory extends Factory
             'logo' => null,
             'time_zone' => 'Asia/Jakarta',
             'kode_wilayah' => '15.02.03.2013',
-            'nama_desa' => 'Desa Tiaro',
+            'nama_desa' => 'Tiaro',
             'kecamatan' => 'Muara Siau',
             'kabupaten' => 'Merangin',
             'provinsi' => 'Jambi',

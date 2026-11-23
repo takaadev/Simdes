@@ -16,16 +16,6 @@
             :options="\App\Enums\GenderList::options()"
         />
         <x-filter-item label="Tahun Pengangkatan" id="filterYearSelect" name="year" :options="\App\Enums\ListYear::options()" />
-        {{-- Status Data --}}
-        <x-filter-item
-            label="Status Data"
-            id="filterDeletedSelect"
-            name="deleted"
-            :options="[
-                'active' => 'Aktif',
-                'trashed' => 'Dihapus',
-            ]"
-        />
     </x-slot:filter>
     <x-slot:actions>
         <x-action-print id="btnCetakAparat"/>

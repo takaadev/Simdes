@@ -20,18 +20,6 @@
             placeholder="Semua Tahun"
             :options="\App\Enums\ListYear::options()"
         />
-
-        {{-- Status Data --}}
-        <x-filter-item
-            label="Status Data"
-            id="filterDeletedSelect"
-            name="deleted"
-            placeholder="Status Data"
-            :options="[
-                'active' => 'Aktif',
-                'trashed' => 'Dihapus',
-            ]"
-        />
     </x-slot:filter>
 
     <x-slot:actions>

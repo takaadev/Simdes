@@ -13,7 +13,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $appName }} &mdash; {{ $namaDesa }}</title>
+    <title>{{ $appName }}</title>
     <meta name="description"
         content="{{ $appSetting?->deskripsi ?: "Sistem Informasi Manajemen Desa ({$appName}) Pemerintah {$namaDesa}." }}">
     <link rel="icon" type="image/png" href="{{ $logoUrl }}">

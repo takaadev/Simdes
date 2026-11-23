@@ -32,7 +32,7 @@ class Menu extends Component
                 'type' => 'link',
                 'label' => 'Master Data',
                 'icon' => 'database',
-                'route' => 'expeditions.index',
+                'route' => 'village-positions.index',
             ],
             [
                 'type' => 'label',

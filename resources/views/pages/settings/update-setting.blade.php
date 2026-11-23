@@ -1,4 +1,4 @@
-<x-action-edit id="updateProfileDesa" variant="button" label="Profil" modalTitle="Profil Desa" color="btn-outline-success"
+<x-action-edit id="updateProfileDesa" variant="button" label="Profil" modalTitle="Profil Desa" color="btn-simdes-primary"
     size="lg" href="#">
     <x-fieldset label="Perbarui Informasi Profil Desa">
         <div class="row">

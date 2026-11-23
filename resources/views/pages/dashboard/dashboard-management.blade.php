@@ -71,33 +71,7 @@
        </div>
 
        <!-- Right: Population Distribution by Dusun -->
-       <div class="col-12 col-lg-5 col-xl-4">
-           <div class="simdes-card">
-               <div class="simdes-card-header">
-                   <div>
-                       <h2 class="simdes-card-title">
-                           <i class="fa-solid fa-chart-pie text-simdes-primary" aria-hidden="true"></i>
-                           Sebaran Penduduk per Dusun
-                       </h2>
-                       <p class="simdes-card-subtitle">Distribusi warga terdaftar pada wilayah
-                           Desa Tiaro</p>
-                   </div>
-               </div>
-               <div class="simdes-card-body">
-                   <div class="donut-wrap">
-                       <div class="donut-svg-box">
-                           <div id="dusunDonutSvgWrap"></div>
-                           <div class="donut-center-label">
-                               <span class="donut-total-num" id="donutCenterNumber">3.482</span>
-                               <span class="donut-total-caption" id="donutCenterCaption">Total
-                                   Jiwa (4 Dusun)</span>
-                           </div>
-                       </div>
-                       <div class="dusun-breakdown-list" id="dusunBreakdownList"></div>
-                   </div>
-               </div>
-           </div>
-       </div>
+       @include('pages.dashboard.pie-cart')
    </section>
 
    <!-- Summary of Administrasi Umum & Administrasi Penduduk -->

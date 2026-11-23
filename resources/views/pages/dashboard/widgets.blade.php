@@ -59,7 +59,7 @@
                     } = res.dataWidget;
 
                     // 1. Total Penduduk
-                    $('#widget-penduduk .stat-value').text(formatNumber(penduduk.total));
+                    updateWidgetCounter('widget-penduduk', penduduk.total ?? 0);
                     $('#meta-penduduk-gender').html(
                         `${formatNumber(penduduk.laki_laki)} L &bull; ${formatNumber(penduduk.perempuan)} P`
                     );
@@ -68,22 +68,33 @@
                     );
 
                     // 2. Kepala Keluarga
-                    $('#widget-kk .stat-value').text(formatNumber(kk.total));
+                    updateWidgetCounter('widget-kk', kk.total ?? 0);
                     $('#meta-kk-wilayah').html(
                         `${formatNumber(kk.total_rw)} RW &bull; ${formatNumber(kk.total_rt)} RT`
                     );
 
                     // 3. Arsip Administrasi Umum
-                    $('#widget-arsip .stat-value').text(formatNumber(arsip_umum.total));
+                    updateWidgetCounter('widget-arsip', arsip_umum.total ?? 0);
                     $('#meta-arsip-buku').text(`${arsip_umum.buku_aktif} Buku Register Aktif`);
                     $('#meta-arsip-bulan').text(
-                        `+${formatNumber(arsip_umum.bulan_ini)} ${arsip_umum.label_bln}`);
+                        `+${formatNumber(arsip_umum.bulan_ini)} ${arsip_umum.label_bln}`
+                    );
 
                     // 4. Aset & Tanah Kas Desa
-                    $('#widget-aset .stat-value').text(formatNumber(aset_desa.total));
+                    updateWidgetCounter('widget-aset', aset_desa.total ?? 0);
                     $('#meta-aset-detail').html(
                         `${formatNumber(aset_desa.inventaris)} Inventaris &bull; ${formatNumber(aset_desa.tanah_kas)} Bidang`
                     );
+                },
+                error: function() {
+                    if (typeof window.showToast === 'function') {
+                        window.showToast({
+                            title: 'Gagal Memuat Statistik',
+                            message: 'Data ringkasan dashboard tidak dapat diambil. Silakan muat ulang halaman.',
+                            variant: 'danger',
+                            duration: 4000
+                        });
+                    }
                 }
             });
         });

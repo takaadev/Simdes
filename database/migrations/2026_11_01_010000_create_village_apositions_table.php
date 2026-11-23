@@ -13,7 +13,6 @@ return new class extends Migration
             $table->id();
             $table->string('kode', 10)->unique();
             $table->string('nama');
-            $table->string('kategori', 10);
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();

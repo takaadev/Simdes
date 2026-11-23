@@ -9,6 +9,7 @@ use App\Http\Controllers\Generals\VillageOfficialController;
 use App\Http\Controllers\Generals\VillagePublicationController;
 use App\Http\Controllers\Generals\VillageRegulationController;
 use App\Http\Controllers\Generals\VillageTreasuryLandController;
+use App\Http\Controllers\Master\VillagePositionController;
 use App\Http\Controllers\Residents\FamilyCardController;
 use App\Http\Controllers\Residents\RecaptResidentController;
 use App\Http\Controllers\Residents\ResidentController;
@@ -24,6 +25,7 @@ Route::prefix('admumum')->group(function () {
     Route::patch('village-asset/{id}/restore', [VillageAssetController::class, 'restore'])->name('village-assets.restore');
     Route::patch('village-official/{id}/restore', [VillageOfficialController::class, 'restore'])->name('village-officials.restore');
     Route::post('village-official/dismissal', [VillageOfficialController::class, 'dismissal'])->name('village-officials.dismissal');
+    Route::patch('village-position/{id}/restore', [VillagePositionController::class, 'restore'])->name('village-positions.restore');
     Route::patch('village-treasury-land/{id}/restore', [VillageTreasuryLandController::class, 'restore'])->name('village-treasury-lands.restore');
     Route::patch('village-land/{id}/restore', [VillageLandController::class, 'restore'])->name('village-lands.restore');
     Route::patch('village-publication/{id}/restore', [VillagePublicationController::class, 'restore'])->name('village-publications.restore');

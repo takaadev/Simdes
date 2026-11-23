@@ -1,7 +1,7 @@
-
 @props([
     'url' => '',
     'table' => '#dataTable',
+    'trashed' => true,
 ])
 
 @php
@@ -10,6 +10,7 @@
     $toggleId = $toolbarId . '-toggle';
     $countId = $toolbarId . '-count';
     $resetId = $toolbarId . '-reset';
+    $trashedId = $toolbarId . '-trashed';
     $applyId = $toolbarId . '-apply';
 @endphp
 
@@ -19,6 +20,7 @@
     data-ledger-toolbar
     data-url="{{ $url }}"
     data-table="{{ $table }}"
+    data-trashed="false"
 >
     {{-- KIRI: FILTER --}}
     @if (isset($filter))
@@ -55,17 +57,32 @@
                     <div class="ledger-filter-header">
                         <div>
                             <strong>Filter Data</strong>
-                            <small>Sesuaikan data yang ingin ditampilkan.</small>
+                            <small>Yang ingin ditampilkan.</small>
                         </div>
 
-                        <button
-                            type="button"
-                            id="{{ $resetId }}"
-                            class="filter-reset-btn"
-                            data-ledger-filter-reset
-                        >
-                            Reset
-                        </button>
+                        <div class="ledger-filter-header-actions">
+                            <button
+                                type="button"
+                                id="{{ $resetId }}"
+                                class="filter-reset-btn"
+                                data-ledger-filter-reset
+                            >
+                                Reset
+                            </button>
+
+                            @if ($trashed)
+                                <button
+                                    type="button"
+                                    id="{{ $trashedId }}"
+                                    class="filter-trashed-btn"
+                                    data-ledger-filter-trashed
+                                    aria-pressed="false"
+                                    title="Tampilkan data yang sudah dihapus"
+                                >
+                                    <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+                                </button>
+                            @endif
+                        </div>
                     </div>
 
                     <div class="ledger-filter-body">
@@ -76,7 +93,7 @@
                         <button
                             type="button"
                             id="{{ $applyId }}"
-                            class="btn-simdes-primary"
+                            class="btn-simdes-primary w-100"
                             data-ledger-filter-apply
                         >
                             <i class="fa-solid fa-filter me-1"></i>
@@ -189,10 +206,11 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 0.75rem;
             border-block-end: 1px solid var(--simdes-border);
         }
 
-        .ledger-filter-header > div {
+        .ledger-filter-header > div:first-child {
             display: flex;
             flex-direction: column;
             gap: 3px;
@@ -208,6 +226,13 @@
             color: var(--simdes-text-muted);
         }
 
+        .ledger-filter-header-actions {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.65rem;
+            flex-shrink: 0;
+        }
+
         .filter-reset-btn {
             padding: 0;
             border: 0;
@@ -220,6 +245,32 @@
 
         .filter-reset-btn:hover {
             text-decoration: underline;
+        }
+
+        .filter-trashed-btn {
+            width: 30px;
+            height: 30px;
+            padding: 0;
+            border: 1px solid rgba(220, 53, 69, 0.25);
+            border-radius: 8px;
+            background: transparent;
+            color: #dc3545;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .filter-trashed-btn:hover {
+            background: rgba(220, 53, 69, 0.08);
+            border-color: rgba(220, 53, 69, 0.5);
+        }
+
+        .filter-trashed-btn.active {
+            background: #dc3545;
+            border-color: #dc3545;
+            color: #fff;
         }
 
         .ledger-filter-body {
@@ -248,14 +299,12 @@
 
         .ledger-filter-footer {
             padding: 0.85rem 1rem;
-            border-block-start: 1px solid var(--simdes-border);
             display: flex;
-            justify-content: flex-end;
+            justify-content: center;
         }
 
         .ledger-filter-footer button {
-            min-height: 38px;
-            font-size: 0.8rem;
+            font-size: 0.80rem;
         }
 
         /* Responsive */
@@ -298,34 +347,70 @@
                     .attr('aria-expanded', 'false');
             }
 
+            function isTrashedMode($toolbar) {
+                return $toolbar.attr('data-trashed') === 'true';
+            }
+
+            function setTrashedMode($toolbar, active) {
+                const isActive = Boolean(active);
+
+                $toolbar.attr('data-trashed', isActive ? 'true' : 'false');
+
+                $toolbar.find('[data-ledger-filter-trashed]')
+                    .toggleClass('active', isActive)
+                    .attr('aria-pressed', isActive ? 'true' : 'false')
+                    .attr(
+                        'title',
+                        isActive
+                            ? 'Kembali ke data aktif'
+                            : 'Tampilkan data yang sudah dihapus'
+                    );
+            }
+
             function getFilters($toolbar) {
                 const filters = {};
+
                 $toolbar.find('[data-simdes-filter]').each(function () {
                     const $select = $(this);
                     const name = $select.attr('name');
                     const value = $select.val();
 
-                    if (name && value !== 'all') {
+                    if (name && value !== null && value !== '' && value !== 'all') {
                         filters[name] = value;
                     }
                 });
+
+                if (isTrashedMode($toolbar)) {
+                    filters.deleted = 'trashed';
+                }
+
                 return filters;
             }
 
             function updateFilterCount($toolbar) {
                 let count = 0;
+                let hasDeletedSelect = false;
 
                 $toolbar.find('[data-simdes-filter]').each(function () {
                     const $select = $(this);
+                    const name = $select.attr('name');
                     const value = String($select.val() ?? '');
                     const defaultValue = String(
                         $select.attr('data-default-value') ?? 'all'
                     );
 
+                    if (name === 'deleted') {
+                        hasDeletedSelect = true;
+                    }
+
                     if (value !== defaultValue && value !== '') {
                         count++;
                     }
                 });
+
+                if (isTrashedMode($toolbar) && !hasDeletedSelect) {
+                    count++;
+                }
 
                 const $badge = $toolbar.find('[data-ledger-filter-count]');
 
@@ -386,6 +471,14 @@
                 });
             });
 
+            // Toggle tampilkan data terhapus (deleted=trashed).
+            $(document).on('click', '[data-ledger-filter-trashed]', function () {
+                const $toolbar = $(this).closest(toolbarSelector);
+
+                setTrashedMode($toolbar, !isTrashedMode($toolbar));
+                applyFilters($toolbar);
+            });
+
             // Terapkan filter.
             $(document).on('click', '[data-ledger-filter-apply]', function () {
                 const $toolbar = $(this).closest(toolbarSelector);
@@ -393,14 +486,16 @@
                 applyFilters($toolbar);
             });
 
-            // Reset filter.
+            // Reset filter & kembalikan dari mode terhapus.
             $(document).on('click', '[data-ledger-filter-reset]', function () {
                 const $toolbar = $(this).closest(toolbarSelector);
 
                 $toolbar.find('[data-simdes-filter]').each(function () {
-                    $(this).val('all');
+                    const defaultValue = $(this).attr('data-default-value') ?? 'all';
+                    $(this).val(defaultValue);
                 });
 
+                setTrashedMode($toolbar, false);
                 applyFilters($toolbar);
             });
 

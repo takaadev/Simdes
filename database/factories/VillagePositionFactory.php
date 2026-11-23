@@ -14,26 +14,23 @@ class VillagePositionFactory extends Factory
 
     private const POSITIONS = [
         // Pemerintah Desa
-        ['kode' => '101', 'nama' => 'Kepala Desa', 'kategori' => '10'],
-        ['kode' => '102', 'nama' => 'Sekretaris Desa', 'kategori' => '10'],
-        ['kode' => '103', 'nama' => 'Bendahara Desa', 'kategori' => '10'],
-
-        // KAUR
-        ['kode' => '201', 'nama' => 'Kepala KAUR Keuangan', 'kategori' => '20'],
-        ['kode' => '202', 'nama' => 'Kepala KAUR Tata Usaha dan Umum', 'kategori' => '20'],
-        ['kode' => '203', 'nama' => 'Kepala KAUR Perencanaan', 'kategori' => '20'],
+        ['kode' => 'A1', 'nama' => 'Kepala Desa'],
+        ['kode' => 'A2', 'nama' => 'Sekretaris Desa'],
+        ['kode' => 'A3', 'nama' => 'Kaur Keuangan'],
+        ['kode' => 'A4', 'nama' => 'Kaur Tata Usaha dan Umum'],
+        ['kode' => 'A5', 'nama' => 'Kaur Perencanaan'],
 
         // BPD
-        ['kode' => '301', 'nama' => 'Ketua BPD', 'kategori' => '30'],
-        ['kode' => '302', 'nama' => 'Wakil Ketua BPD', 'kategori' => '30'],
-        ['kode' => '303', 'nama' => 'Sekretaris BPD', 'kategori' => '30'],
-        ['kode' => '304', 'nama' => 'Anggota BPD', 'kategori' => '30'],
+        ['kode' => 'B1', 'nama' => 'Ketua BPD'],
+        ['kode' => 'B2', 'nama' => 'Wakil Ketua BPD'],
+        ['kode' => 'B3', 'nama' => 'Sekretaris BPD'],
+        ['kode' => 'B4', 'nama' => 'Anggota BPD'],
 
         // LAD
-        ['kode' => '401', 'nama' => 'Ketua LAD', 'kategori' => '40'],
-        ['kode' => '402', 'nama' => 'Wakil Ketua LAD', 'kategori' => '40'],
-        ['kode' => '403', 'nama' => 'Sekretaris LAD', 'kategori' => '40'],
-        ['kode' => '404', 'nama' => 'Anggota LAD', 'kategori' => '40'],
+        ['kode' => 'C1', 'nama' => 'Ketua LAD'],
+        ['kode' => 'C2', 'nama' => 'Wakil Ketua LAD'],
+        ['kode' => 'C3', 'nama' => 'Sekretaris LAD'],
+        ['kode' => 'C4', 'nama' => 'Anggota LAD'],
     ];
 
     public function definition(): array
