@@ -1,4 +1,4 @@
-<x-action-create icon="user-x" color="btn-simdes-excel" label="Pemberhentian" modalTitle="Pemberhentian Aparat Desa" icon="file-circle-xmark" href="{{ route('village-officials.dismissal') }}">
+<x-action-create icon="user-x" color="btn-simdes-accent" label="Pemberhentian" modalTitle="Pemberhentian Aparat Desa" icon="file-circle-xmark" href="{{ route('village-officials.dismissal') }}">
     <x-fieldset label="Formulir Pemberhentian Aparat Desa">
         <div class="row g-3">
 
